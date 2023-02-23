@@ -1,0 +1,130 @@
+.share-container {
+  clear: both;
+  top: 25px;
+  font-size: 10pt;
+  text-align: center;
+  position: relative;
+  padding-bottom:80px;
+  background-color: #222;
+}
+#sharing-buttons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: inherit
+}
+.share-wrap {
+  display: inline-block;
+  color: #aaa;
+  text-align: center;
+  width: 5.5em;
+  overflow: visible;
+  margin-bottom: 1em;
+  user-select: none;
+}
+.share-wrap p {
+	padding: 0em;
+	margin: 0em;
+	margin-top: 0.2em;
+}
+
+.share-link,
+.share-icon {
+  display: inline-block
+}
+.share-link {
+  text-decoration: none;
+  color: #fff;
+  margin: 0.2em;
+}
+.share-button {
+  border-radius: 2.5em;
+  transition: 200ms ease-out;
+  padding: 1.25em 1.25em;
+}
+.share-button:hover {
+  box-shadow: 0 0.15em 0.75em #555;
+}
+.share-icon svg {
+  width: 2.5em;
+  height: 2.5em;
+  margin: 0;
+  vertical-align: middle
+}
+.share-icon {
+  fill: #fff;
+  stroke: none
+}
+
+.share-facebook {
+  background-color: #3b5998;
+}
+.share-facebook:hover,
+.share-facebook:active {
+  background-color: #2d4373;
+}
+.share-twitter {
+  background-color: #55acee;
+  border-color: #55acee;
+}
+.share-twitter:hover,
+.share-twitter:active {
+  background-color: #2795e9;
+}
+.share-tumblr {
+  background-color: #35465C;
+}
+.share-tumblr:hover,
+.share-tumblr:active {
+  background-color: #222d3c;
+}
+.share-email {
+  background-color: #777777;
+}
+.share-email:hover,
+.share-email:active {
+  background-color: #5e5e5e;
+}
+.share-pinterest {
+  background-color: #bd081c;
+}
+.share-pinterest:hover,
+.share-pinterest:active {
+  background-color: #8c0615;
+}
+.share-linkedin {
+  background-color: #0077b5;
+}
+.share-linkedin:hover,
+.share-linkedin:active {
+  background-color: #046293;
+}
+.share-reddit {
+  background-color: #5f99cf;
+}
+.share-reddit:hover,
+.share-reddit:active {
+  background-color: #3a80c1;
+}
+.share-xing {
+  background-color: #1a7576;
+}
+.share-xing:hover
+.share-xing:active {
+  background-color: #114C4C;
+}
+.share-whatsapp {
+  background-color: #25D366;
+}
+.share-whatsapp:hover,
+.share-whatsapp:active {
+  background-color: #1DA851;
+}
+.share-telegram {
+  background-color: #54A9EB;
+}
+.share-telegram:hover
+.share-telegram:active{
+  background-color: #4B97D1;
+}

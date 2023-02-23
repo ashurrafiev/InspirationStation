@@ -1,0 +1,52 @@
+div.keybonk {
+	position: fixed;
+	width: 540px;
+	left: 630px;
+	bottom: 10px
+}
+.keybonk-key {
+	float: left;
+	box-sizing: border-box;
+	text-align: center;
+	cursor: pointer;
+	
+	height: 35px;
+	line-height: 35px;
+	font-size: 15px;
+
+	color: #eee;
+	background: #000;
+	
+	border: 1px solid #777;
+	border-radius: 5px;
+	box-shadow: 0px 2px 4px #444;
+	user-select: none;
+}
+.keybonk-key-active {
+	background: #444;
+}
+.keybonk-suggest {
+	height: 30px;
+	padding-bottom: 5px;
+	white-space: nowrap;
+}
+.keybonk-suggest-item {
+	display: inline-block;
+	box-sizing: border-box;
+	text-align: center;
+	cursor: pointer;
+	
+	height: 30px;
+	padding: 0px 20px;
+	line-height: 27px;
+	font-size: 14px;
+	margin: 2px;
+
+	color: #000;
+	background: #ccc;
+	
+	border: 1px solid #fff;
+	border-radius: 5px;
+	box-shadow: 0px 2px 4px #444;
+	user-select: none;
+}
