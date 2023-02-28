@@ -4,13 +4,14 @@ import os.path
 import re
 from urllib.parse import quote as urlencode
 
-from psycopg2 import connect
-from psycopg2 import Error as PostgresError
-
 from jinja2 import Environment, FileSystemLoader
 import cherrypy
 from cherrypy.lib import file_generator
 import qrcode
+
+from storymod import StoryMod
+import storydb
+
 
 def load_config() -> dict:
     with io.open('config.json') as f:
@@ -21,53 +22,8 @@ def load_object_data() -> dict:
         return json.load(f)
 
 def check_uid(uid):
-    if not re.match(r"^[A-Fa-f0-9\-]{8,40}$", uid):
-        raise cherrypy.HTTPError(400)
+    return re.match(r"^[A-Fa-f0-9\-]{8,40}$", uid)
 
-def db_connect(cfg):
-    db = cfg['database']
-    return connect(
-        host=db['host'],
-        port=db.get('port', 5432),
-        user=db.get('user', 'root'),
-        password=db.get('pwd', ''),
-        database=db['name']
-    )
-
-def db_post_story(cfg, data):
-    try:
-        with db_connect(cfg) as connection:
-            with connection.cursor() as cursor:
-                cursor.execute("""
-                    INSERT INTO "stories" ("uid", "obj", "q1", "q2", "q3", "time")
-                    VALUES (gen_random_uuid(), %(obj)s, %(q1)s, %(q2)s, %(q3)s, now())
-                    RETURNING "uid"
-                """, data)
-                row = cursor.fetchone()
-                connection.commit()
-                return row[0] if row else None
-    except PostgresError as e:
-        cherrypy.log.error(f"Database error: {str(e)}")
-        raise cherrypy.HTTPError(500)
-
-def db_get_story(cfg, uid):
-    try:
-        with db_connect(cfg) as connection:
-            with connection.cursor() as cursor:
-                cursor.execute("""
-                    SELECT "obj", "q1", "q2", "q3",
-                        extract(epoch from "time")::integer
-                    FROM "stories"
-                    WHERE "uid"=%s
-                """, (uid,))
-                row = cursor.fetchone()
-                if row:
-                    return dict(zip(['obj', 'q1', 'q2', 'q3', 'time'], row))
-                else:
-                    return None
-    except PostgresError as e:
-        cherrypy.log.error(f"Database error: {str(e)}")
-        raise cherrypy.HTTPError(500)
 
 class InspirationStation(object):
     def __init__(self):
@@ -81,9 +37,10 @@ class InspirationStation(object):
 
     @cherrypy.expose
     def story(self, uid=''):
-        check_uid(uid)
+        if not check_uid(uid):
+            raise cherrypy.HTTPError(404)
         cfg = load_config()
-        data = db_get_story(cfg, uid)
+        data = storydb.get_story(cfg, uid)
         if not data:
             raise cherrypy.HTTPError(404)
 
@@ -108,7 +65,7 @@ class InspirationStation(object):
             raise cherrypy.HTTPError(400)
 
         cfg = load_config()
-        uid = db_post_story(cfg, data={ 'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3 })
+        uid = storydb.post_story(cfg, data={ 'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3 })
         return {
             'uid': uid,
             'story': cfg['storyURL'] + uid,
@@ -118,7 +75,8 @@ class InspirationStation(object):
     @cherrypy.expose
     def qr(self, uid=''):
         cfg = load_config()
-        check_uid(uid)
+        if not check_uid(uid):
+            raise cherrypy.HTTPError(400)
         img = qrcode.make(cfg['storyURL'] + uid)
         buffer = io.BytesIO()
         img.save(buffer, "PNG")
@@ -134,16 +92,28 @@ if __name__ == '__main__':
         },
         '/static': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': './static'
+            'tools.staticdir.dir': './static',
+            'tools.expires.on' : True,
+            'tools.expires.secs' : 3600
         },
         '/media': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': './media'
+            'tools.staticdir.dir': './media',
+            'tools.expires.on' : True,
+            'tools.expires.secs' : 86400
+        }
+    }
+    mod_conf = {
+        '/': {
+            'tools.staticdir.root': os.path.abspath(os.getcwd())
         }
     }
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
         'server.socket_port': 8080,
-        'request.show_tracebacks': False
+        'request.show_tracebacks': True # False
     })
-    cherrypy.quickstart(InspirationStation(), '/', conf)
+    cherrypy.tree.mount(InspirationStation(), '/', conf)
+    cherrypy.tree.mount(StoryMod(), '/storymod', mod_conf)
+    cherrypy.engine.start()
+    cherrypy.engine.block()

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="robots" content="noindex, nofollow" />
+<meta charset="UTF-8" />
+<title>Welcome</title>
+<link rel="stylesheet" href="/static/basic.css">
+</head>
+<body>
+<div class="blk">
+<p>Welcome, <b>{{ user }}</b>! <a href="{{ '/logout' | app }}">Logout</a></p>
+</div>
+<div class="blk">
+<p>Your cookies:</p>
+<pre>{{ cookies }}</pre>
+</div>
+</body>

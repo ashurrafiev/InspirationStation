@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="robots" content="noindex, nofollow" />
+<meta charset="UTF-8" />
+<title>Login</title>
+<link rel="stylesheet" href="/static/basic.css">
+<script>
+function init() {
+	if('https:' != document.location.protocol)
+		document.getElementById('nohttps').style.display = 'block';
+}
+</script>
+</head>
+<body onload="init()">
+<div class="blk">
+<form method="post">
+	<p id="nohttps" class="err" style="display:none">Connection is not secure!<br/>Shout your password to everyone by clicking Login.</p>
+{%- if error %}
+    <p class="err">{{ error }}</p>
+{%- endif %}
+	<p><label for="user">User:</label><br/>
+	<input id="user" type="text" name="user" value="{{ user }}" /></p>
+	<p><label for="pwd">Password:</label><br/>
+	<input id="pwd" type="password" name="pwd" /></p>
+	<p class="submit"><input type="submit" value="Login" /></p>
+</form>
+</div>
+</body>

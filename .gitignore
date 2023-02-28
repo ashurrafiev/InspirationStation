@@ -1,4 +1,6 @@
 config.json
+auth.json
+logins.txt
 object_data.json
 static/words.js
 static/data.js
