@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="robots" content="noindex, nofollow" />
+<meta charset="UTF-8" />
+<title>Welcome</title>
+<link rel="stylesheet" href="/static/basic.css">
+</head>
+<body>
+
+<div class="blk bar">
+<div><a href="{{ '/' | app }}">Dashboard</a></div>
+<div style="flex-grow:1; text-align:right">Welcome, <b>{{ user }}</b>!</div>
+<div><a href="{{ '/logout' | app }}">Logout</a></div>
+</div>

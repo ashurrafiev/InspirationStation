@@ -1,0 +1,19 @@
+{%- include 'header.html' %}
+
+<div class="blk">
+{%- if logins %}
+    <p>Recent logins:</p>
+	<table><thead><tr>
+		<th>UTC time</th><th>User</th><th>IP</th><th>Agent</th>
+	</tr></thead><tbody>
+	{%- for row in logins %}
+        <tr>{% for v in row %}<td>{{ v|e }}</td>{% endfor %}</tr>
+    {%- endfor %}
+	</tbody></table>
+{%- else %}
+    <p>No recent logins.</p>
+{%- endif %}
+<p class="note">You will be automatically logged out at UTC {{ expires }}</p>
+</div>
+
+</body>

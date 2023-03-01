@@ -9,20 +9,9 @@ import cherrypy
 from cherrypy.lib import file_generator
 import qrcode
 
+from cfgutils import load_config, load_object_data, check_uid
 from storymod import StoryMod
 import storydb
-
-
-def load_config() -> dict:
-    with io.open('config.json') as f:
-        return json.load(f)
-
-def load_object_data() -> dict:
-    with io.open('object_data.json') as f:
-        return json.load(f)
-
-def check_uid(uid):
-    return re.match(r"^[A-Fa-f0-9\-]{8,40}$", uid)
 
 
 class InspirationStation(object):

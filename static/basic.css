@@ -10,8 +10,29 @@ div.blk {
 	padding: 10px 20px;
 	margin: 10px;
 	background-color: #fafafa;
+	border: 1px solid #ccc;
 	border-radius: 10px;
-	box-shadow: 0px 3px 6px #ddd;
+	box-shadow: 0px 2px 4px #ddd;
+}
+div.bar {
+	display: flex;
+	column-gap: 10px;
+}
+div.bar div {
+	padding-left: 10px;
+	border-left: 1px solid #ddd;
+}
+div.bar div:first-child {
+	padding-left: 0px;
+	border-left: none;
+}
+div.quote {
+	background-color: #fff;
+	color: #555;
+	padding: 10px 10px;
+	border: 1px solid #eee;
+	border-radius: 4px;
+	margin: 4px 0px;
 }
 a, a:visited {
 	color: #07d;
@@ -29,6 +50,14 @@ p.err {
 	color: #d50;
 	padding: 5px 10px;
 	border: 1px solid #d50;
+	border-radius: 4px;
+	margin-bottom: 8px;
+}
+p.note {
+	background-color: #eaffcf;
+	color: #590;
+	padding: 5px 10px;
+	border: 1px solid #590;
 	border-radius: 4px;
 	margin-bottom: 8px;
 }
@@ -55,4 +84,36 @@ input {
 input[type=button],
 input[type=submit] {
 	padding: 2px 16px;
+}
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font: inherit;
+	margin-bottom: 10px;
+}
+th {
+	font-weight: normal;
+	color: #aaa;
+	padding: 2px 10px;
+	border-bottom: 1px solid #000;
+	text-align: left;
+}
+tbody tr {
+	background-color: #fff;
+}
+td {
+	border: 1px solid #eee;
+	padding: 2px 10px;
+}
+.ins {
+	font-style: italic;
+	color: #000;
+	padding: 0px 6px;
+	margin: 0px 2px;
+	background-color: #f5f5f5;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+}
+span.err {
+	color: #d50;
 }

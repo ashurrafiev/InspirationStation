@@ -1,17 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="robots" content="noindex, nofollow" />
-<meta charset="UTF-8" />
-<title>Welcome</title>
-<link rel="stylesheet" href="/static/basic.css">
-</head>
-<body>
+{%- include 'header.html' %}
+
 <div class="blk">
-<p>Welcome, <b>{{ user }}</b>! <a href="{{ '/logout' | app }}">Logout</a></p>
+Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 </div>
+
+{%- for story in stories %}
 <div class="blk">
-<p>Your cookies:</p>
-<pre>{{ cookies }}</pre>
+<div class="bar">
+	<div style="flex-grow:1">{{ story[5].replace(microsecond=0) }}</div>
+	<div><a href="/qr/{{ story[0] }}" target="_blank">Get QR</a></div>
+	<div><a href="/story/{{ story[0] }}" target="_blank">View page</a></div>
 </div>
+<div class="quote">I found this
+	{%- if story[1] in obj_data %}
+	<b>{{ obj_data[story[1]]['name'] }}</b>
+	{%- else %}
+	<span class="err"><b>Deleted Object:</b> {{ story[1] }}</span>
+	{%- endif %}
+in the Great North Museum: Hancock. [...] It looks like <span class="ins">{{ story[2] | e }}</span>. I noticed that <span class="ins">{{ story[3] | e }}</span>. It made me think <span class="ins">{{ story[4] | e }}</span>?</div>
+<p>Status: <b>{{ story[6] }}</b></p>
+</div>
+{%- endfor %}
+
 </body>
