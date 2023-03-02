@@ -26,6 +26,13 @@ def template_env(path='template'):
 def check_uid(uid):
     return re.match(r"^[A-Fa-f0-9\-]{8,40}$", uid)
 
+def check_int(x, fb, check=None):
+    try:
+        x = int(x)
+        return x if check is None or check(x) else fb
+    except ValueError:
+        return fb
+
 def tail(f, n=1, buf_size=1024):
     lines = []
     i = -1

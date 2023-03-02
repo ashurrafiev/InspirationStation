@@ -6,7 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 import cherrypy
 import jwt
 
-from cfgutils import load_config, load_object_data, get_auth_cfg, tail
+from cfgutils import load_config, load_object_data, get_auth_cfg, tail, check_int
 import storydb
 
 def create_access_token(auth_cfg, user):
@@ -35,13 +35,13 @@ def check_password(auth_cfg, user, pwd):
 
 def check_access_token(auth_cfg, token, refresh=True):
     if not token:
-        return None
+        return None, None
     try:
         token_data = jwt.decode(token, auth_cfg['jwtKey'], algorithms="HS256",
             options={'require': ['exp', 'sub']})
         user = token_data['sub']
         if user not in auth_cfg['users']:
-            return None
+            return None, None
 
         exp = datetime.fromtimestamp(token_data['exp'], tz=timezone.utc)
         if refresh and 'refresh' in auth_cfg:
@@ -70,15 +70,32 @@ class StoryMod(object):
         self.tenv.filters['app'] = cherrypy.url
 
     @cherrypy.expose
-    def index(self):
+    def index(self, show=None, p=0, lim=20):
         cfg = load_config()
         user, _ = auth_user()
 
+        p = check_int(p, 0, lambda x: x>=0)
+        lim = check_int(lim, 20, lambda x: 5<=x<=100)
+
+        if show and type(show) is str:
+            show = [show]
+        if show:
+            show = [s for s in show if s in storydb.mod_options()]
+        if not show:
+            show = storydb.mod_options()
+
         obj_data = load_object_data()
-        stories = storydb.list_stories(cfg)
+        stories = storydb.list_stories(cfg, p, lim, sel=show)
 
         template = self.tenv.get_template("index.html")
-        return template.render(user=user, stories=stories, obj_data=obj_data)
+        return template.render(
+            user=user,
+            stories=stories,
+            obj_data=obj_data,
+            show=show,
+            page=p,
+            lim=lim
+        )
 
     @cherrypy.expose
     def recentlogins(self):

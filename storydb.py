@@ -49,16 +49,22 @@ def get_story(cfg, uid):
         cherrypy.log.error(f"Database error: {str(e)}")
         raise cherrypy.HTTPError(500)
 
-def list_stories(cfg, p=0, lim=100):
+def mod_options():
+    return ['new','ok','block','star']
+
+def list_stories(cfg, p=0, lim=100, sel=None):
     try:
+        if not sel:
+            sel = mod_options()
         with db_connect(cfg) as connection:
             with connection.cursor() as cursor:
                 cursor.execute("""
                     SELECT "uid", "obj", "q1", "q2", "q3", "time", "mod"
                     FROM "stories"
+                    WHERE "mod" IN %s
                     ORDER BY "time" DESC
                     LIMIT %s OFFSET %s
-                """, (lim, p*lim))
+                """, (tuple(sel), lim, p*lim))
                 rows = cursor.fetchall()
                 return rows
     except PostgresError as e:

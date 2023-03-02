@@ -1,7 +1,6 @@
 import io
 import json
 import os.path
-import re
 from urllib.parse import quote as urlencode
 
 from jinja2 import Environment, FileSystemLoader
