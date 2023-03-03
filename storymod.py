@@ -1,4 +1,5 @@
 import io
+import json
 from datetime import datetime, timedelta, timezone
 import secrets
 
@@ -6,7 +7,7 @@ from jinja2 import Environment, FileSystemLoader
 import cherrypy
 import jwt
 
-from cfgutils import load_config, load_object_data, get_auth_cfg, tail, check_int
+from cfgutils import load_config, load_object_data, get_auth_cfg, tail, check_int, delete_cookie
 import storydb
 
 def create_access_token(auth_cfg, user):
@@ -70,22 +71,36 @@ class StoryMod(object):
         self.tenv.filters['app'] = cherrypy.url
 
     @cherrypy.expose
-    def index(self, show=None, p=0, lim=20):
+    def index(self, show=None, p=0, lim=None):
         cfg = load_config()
-        user, _ = auth_user()
+        user, _ = auth_user(cfg)
 
+        # validating p
         p = check_int(p, 0, lambda x: x>=0)
-        lim = check_int(lim, 20, lambda x: 5<=x<=100)
 
+        # validating lim, set cookie
+        lim_fb = 20
+        if 'lim' in cherrypy.request.cookie:
+            lim_fb = check_int(cherrypy.request.cookie['lim'].value, lim_fb)
+        lim = check_int(lim, lim_fb, lambda x: 5<=x<=100)
+        cherrypy.response.cookie['lim'] = lim
+        cherrypy.response.cookie['lim']['SameSite'] = 'Strict'
+
+        # validating show, set cookie
         if show and type(show) is str:
             show = [show]
+        if not show and 'show' in cherrypy.request.cookie:
+            show = cherrypy.request.cookie['show'].value.split('+')
         if show:
             show = [s for s in show if s in storydb.mod_options()]
         if not show:
             show = storydb.mod_options()
+        cherrypy.response.cookie['show'] = '+'.join(show)
+        cherrypy.response.cookie['show']['SameSite'] = 'Strict'
 
         obj_data = load_object_data()
-        stories = storydb.list_stories(cfg, p, lim, sel=show)
+        total, stories = storydb.list_stories(cfg, sel=show, p=p, lim=lim)
+        total_pages = (total+lim-1) // lim
 
         template = self.tenv.get_template("index.html")
         return template.render(
@@ -93,7 +108,9 @@ class StoryMod(object):
             stories=stories,
             obj_data=obj_data,
             show=show,
+            total=total,
             page=p,
+            total_pages=total_pages,
             lim=lim
         )
 
@@ -121,7 +138,30 @@ class StoryMod(object):
 
     @cherrypy.expose
     def logout(self):
-        cherrypy.response.cookie['token'] = ''
-        cherrypy.response.cookie['token']['expires'] = 0
-        cherrypy.response.cookie['token']['max-age'] = 0
+        delete_cookie('token')
+        delete_cookie('lim')
+        delete_cookie('show')
         raise cherrypy.HTTPRedirect(cherrypy.url('/login'))
+
+    @cherrypy.expose
+    def setmod(self, sel='', status='', p=0, fetch=False):
+        cfg = load_config()
+        user, _ = auth_user(cfg)
+
+        if not sel or status not in storydb.mod_options():
+           raise cherrypy.HTTPError(400)
+        sel = sel.split('+')
+
+        if fetch:
+            story = storydb.set_mod(cfg, sel[:1], status)
+            obj_data = load_object_data()
+            template = self.tenv.get_template("storyblk.html")
+            return template.render(
+                story=story,
+                obj_data=obj_data
+            )
+        else:
+            # validating p
+            p = check_int(p, 0, lambda x: x >= 0)
+            storydb.set_mod(cfg, sel, status)
+            raise cherrypy.HTTPRedirect(cherrypy.url('/?p='+str(p)))

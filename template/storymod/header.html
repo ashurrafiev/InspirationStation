@@ -3,8 +3,75 @@
 <head>
 <meta name="robots" content="noindex, nofollow" />
 <meta charset="UTF-8" />
-<title>Welcome</title>
-<link rel="stylesheet" href="/static/basic.css">
+<title>Storymod: {{ title }}</title>
+<link rel="stylesheet" href="/static/storymod/basic.css">
+<script>
+
+function selectNone() {
+	const sel = document.getElementsByClassName('storysel');
+	for(let i=0; i<sel.length; i++) {
+		const e = sel.item(i);
+		e.checked = false;
+	}
+}
+
+function prepareSelected(id, conf) {
+	const sel = document.getElementsByClassName('storysel');
+	const list = Array();
+	for(let i=0; i<sel.length; i++) {
+		const e = sel.item(i);
+		if(e.id.startsWith('sel-') && e.checked) {
+			list.push(e.id.substring(4));
+		}
+	}
+	const len = list.length;
+	if(len<1) {
+		alert('Nothing selected.');
+		return false;
+	}
+	if(!confirm(conf(len)))
+		return false;
+	document.getElementById(id).value = list.join('+');
+	return true;
+}
+
+function confirmSetMod(len) {
+	const mod = document.querySelector('input[form="form-setmod-sel"][name="status"]:checked').value;
+	return `Are you sure to apply status "${mod}" to selected items?\n(${len} selected)`;
+}
+
+function requestSetMod(uid) {
+	const xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange  = function() {
+		if(this.readyState != 4)
+			return;
+		if(this.status == 200) {
+			document.getElementById('blk-'+uid).innerHTML = this.responseText;
+		}
+		else {
+			console.error(this.status);
+		}
+	}
+	const mod = document.querySelector(`input[name="status-${uid}"]:checked`).value;
+	xhttp.open('GET', `{{ '/setmod' | app }}?sel=${uid}&status=${mod}&fetch=1`);
+	xhttp.send();
+}
+
+function showBlocked(id) {
+	document.getElementById('quote-hide-'+id).style.display = 'none';
+	document.getElementById('quote-read-'+id).style.display = 'block';
+}
+
+function hideBlocked(id) {
+	document.getElementById('quote-hide-'+id).style.display = 'block';
+	document.getElementById('quote-read-'+id).style.display = 'none';
+}
+
+function navPage(p) {
+	document.location ='{{ '/' | app }}?p='+p;
+}
+
+</script>
 </head>
 <body>
 

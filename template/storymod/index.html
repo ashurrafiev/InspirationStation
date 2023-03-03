@@ -1,22 +1,5 @@
+{%- set title='Dashboard' %}
 {%- include 'header.html' %}
-
-<script>
-function selectNone() {
-	const list = document.getElementsByClassName('storysel');
-	for(let i=0; i<list.length; i++) {
-		const e = list.item(i);
-		e.checked = false;
-	}
-}
-function showBlocked(id) {
-	document.getElementById('quote-hide-'+id).style.display = 'none';
-	document.getElementById('quote-read-'+id).style.display = 'block';
-}
-function hideBlocked(id) {
-	document.getElementById('quote-hide-'+id).style.display = 'block';
-	document.getElementById('quote-read-'+id).style.display = 'none';
-}
-</script>
 
 <div class="blk">
 Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
@@ -38,59 +21,35 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 	<label><input type="radio" name="lim" value="50" {{ 'checked' if lim==50 }} />50</label>
 	<label><input type="radio" name="lim" value="100" {{ 'checked' if lim==100 }} />100</label>
 </div>
-<div><input type="submit" value="Update"></div>
+<div><input type="submit" value="Update" /></div>
 </div>
 </form>
 
+{%- include 'pages.html' %}
 {%- for story in stories %}
-{%- set id = story[0] %}
-<div class="blk tab">
-<div class="status-{{ story[6] }}" style="cursor:pointer" onclick="document.getElementById('sel-{{ id }}').click()">{{ story[6] }}</div><div>
-<div class="bar">
-	<div><input type="checkbox" id="sel-{{ id }}" class="storysel" /></div>
-	<div>{{ story[5].replace(microsecond=0) }}</div>
-	<div style="flex-grow:1;text-align:right"><span style="color:#ddd">ID:&nbsp;{{ id }}</span></div>
-	<div><a href="/qr/{{ id }}" target="_blank">Get QR</a></div>
-	<div><a href="/story/{{ id }}" target="_blank">View page</a></div>
+<div class="blk tab" id="blk-{{ story[0] }}">
+{%- include 'storyblk.html' %}
 </div>
-{%- if story[6]=='block' %}
-<div id="quote-hide-{{ id }}" class="quote"><span class="info">Blocked content... <a href="javascript:showBlocked('{{ id }}');">Read</a></span></div>
-<div id="quote-read-{{ id }}" class="quote" style="display:none">
-<span class="info">Blocked content... <a href="javascript:hideBlocked('{{ id }}');">Hide</a></span><br/>
-{%- else %}
-<div class="quote">
-{%- endif %}
-I found this
-	{%- if story[1] in obj_data %}
-	<b>{{ obj_data[story[1]]['name'] }}</b>
-	{%- else %}
-	<span class="err"><b>Deleted Object:</b> {{ story[1] }}</span>
-	{%- endif %}
-[...] It looks like <span class="ins">{{ story[2] | e }}</span>. I noticed that <span class="ins">{{ story[3] | e }}</span>. It made me think <span class="ins">{{ story[4] | e }}</span>?</div>
-<div class="bar">
-	<div><input type="button" value="Edit"></div>
-	<div style="flex-grow:1"><input type="button" value="Delete"></div>
-	<div><b>Status:</b>&ensp;
-		<label><input type="radio" name="status-{{ id }}" value="block" {{ 'checked' if 'block'==story[6] }} />block</label>
-		<label><input type="radio" name="status-{{ id }}" value="new" {{ 'checked' if 'new'==story[6] }} />new</label>
-		<label><input type="radio" name="status-{{ id }}" value="ok" {{ 'checked' if 'ok'==story[6] }} />ok</label>
-		<label><input type="radio" name="status-{{ id }}" value="star" {{ 'checked' if 'star'==story[6] }} />star</label>
-	</div>
-	<div><input type="button" value="Change"></div>
-</div>
-</div></div>
 {%- endfor %}
+{%- include 'pages.html' %}
 
 <div class="blk bar">
-	<div><input type="button" value="Select none" onclick="selectNone()"></div>
-	<div style="flex-grow:1"><input type="button" value="Delete selected"></div>
+	<div><input type="button" value="Select none" onclick="selectNone()" /></div>
+	<div><input type="button" value="Delete selected" disabled /></div>
+	<div style="flex-grow:1"><input type="button" value="Create new" disabled /></div>
 	<div><b>Apply to all selected items:</b>&ensp;
-		<label><input type="radio" name="status-selected" value="block" />block</label>
-		<label><input type="radio" name="status-selected" value="new" checked />new</label>
-		<label><input type="radio" name="status-selected" value="ok" />ok</label>
-		<label><input type="radio" name="status-selected" value="star" />star</label>
+		<label><input type="radio" form="form-setmod-sel" name="status" value="block" />block</label>
+		<label><input type="radio" form="form-setmod-sel" name="status" value="new" checked />new</label>
+		<label><input type="radio" form="form-setmod-sel" name="status" value="ok" />ok</label>
+		<label><input type="radio" form="form-setmod-sel" name="status" value="star" />star</label>
 	</div>
-	<div><input type="button" value="Change"></div>
+	<div>
+	<form id="form-setmod-sel" action="{{ '/setmod' | app }}" method="post" onsubmit="return prepareSelected('setmod-sel', confirmSetMod)" >
+		<input type="hidden" name="p" value="{{ page }}" />
+		<input type="hidden" id="setmod-sel" name="sel" value="" />
+		<input type="submit" value="Apply" />
+	</form>
+	</div>
 </div>
 
 </body>

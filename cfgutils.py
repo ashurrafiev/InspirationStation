@@ -30,7 +30,7 @@ def check_int(x, fb, check=None):
     try:
         x = int(x)
         return x if check is None or check(x) else fb
-    except ValueError:
+    except (ValueError, TypeError):
         return fb
 
 def tail(f, n=1, buf_size=1024):
@@ -46,3 +46,8 @@ def tail(f, n=1, buf_size=1024):
         lines = f.readlines()
         i -= 1
     return lines[-n:]
+
+def delete_cookie(name):
+    cherrypy.response.cookie[name] = ''
+    cherrypy.response.cookie[name]['expires'] = 0
+    cherrypy.response.cookie[name]['max-age'] = 0

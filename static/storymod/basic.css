@@ -107,13 +107,35 @@ label {
 	user-select: none;
 	white-space: nowrap;
 }
-input {
+input,
+button {
 	font: inherit;
 	color: #000;
 }
 input[type=button],
-input[type=submit] {
+input[type=submit],
+button {
 	padding: 2px 16px;
+	background-color: #eee;
+	border: 1px solid #aaa;
+	border-radius: 4px;
+}
+input[type=button]:hover,
+input[type=submit]:hover,
+button {
+	background-color: #ddd;
+}
+input:disabled,
+button:disabled {
+	background-color: #eee !important;
+	color: #aaa;
+}
+input[type=button].cur {
+	font-weight: bold;
+	color: #fff;
+	background-color: #07d;
+	border: 1px solid #07d;
+	border-radius: 4px;
 }
 table {
 	width: 100%;
