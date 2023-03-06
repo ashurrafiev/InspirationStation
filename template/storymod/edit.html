@@ -1,0 +1,83 @@
+{%- set id = story[0] %}
+{%- set title='Edit Story' if id else 'Create story' %}
+{%- include 'header.html' %}
+
+<h1>{{ title }}</h1>
+{%- if id %}
+<p>
+<span style="color:#ddd">ID:&nbsp;{{ id }}</span><br/>
+Submitted on {{ story[5].replace(microsecond=0) }}
+</p>
+{%- endif %}
+
+<script>
+function selectObject(id) {
+	const img = document.getElementById('objimg');
+	if(id) img.src = `/media/${id}.jpg`;
+	img.style.display = id ? 'block' : 'none';
+}
+function save(p) {
+	if(!checkInputs())
+		return;
+	document.getElementById('nextp').value = p;
+	document.getElementById('form').submit();
+}
+function checkInput(id, trim) {
+	const inp = document.getElementById(id);
+	if(trim) inp.value = inp.value.trim();
+	return inp.value!=false;
+}
+function checkInputs() {
+	let res = true;
+	res = checkInput('obj') && res;
+	res = checkInput('q1', true) && res;
+	res = checkInput('q2', true) && res;
+	res = checkInput('q3', true) && res;
+	if(!res)
+		document.getElementById('form-err').style.display = 'block';
+	return res;
+}
+</script>
+
+<form id="form" action="{{ '/poststory' | app }}" method="post">
+<input type="hidden" name="uid" value="{{ id or 'new' }}" />
+<input id="nextp" type="hidden" name="p" />
+<div class="blk form">
+<div style="width:250px;height:250px;border:1px solid #ccc"><img id="objimg" {%- if story[1] %} src="/media/{{ story[1] }}.jpg" {% endif %} style="width:250px;height:250px;object-fit:cover;display:{{ 'block' if story[1] in obj_data else 'none' }}"/></div>
+<div>
+<label class="req">Object:<br /><select id="obj" name="obj" onchange="selectObject(this.value)">
+<option value="" {{ 'selected' if story[1] not in obj_data }}></option>
+{%- for obj_id, obj in obj_data.items() %}
+	<option value="{{ obj_id }}" {{ 'selected' if story[1]==obj_id }}>{{ obj.name | e }}</option>
+{%- endfor %}
+</select></label></div>
+<div>
+<p id="q1-err" class="err" style="display:none">Please answer the question below.</p>
+<label class="req">Q1: What do you see?<br /><input id="q1" type="text" style="width:100%" name="q1" value="{{ story[2] | e }}" /></label></div>
+<div>
+<p id="q2-err" class="err" style="display:none">Please answer the question below.</p>
+<label class="req">Q2: What do you notice about it?<br /><input id="q2" type="text" style="width:100%" name="q2" value="{{ story[3] | e }}" /></label></div>
+<div>
+<p id="q3-err" class="err" style="display:none">Please answer the question below.</p>
+<label class="req">Q3: What does it make you think or wonder?<br /><input id="q3" type="text" style="width:100%" name="q3" value="{{ story[4] | e }}" /></label></div>
+<div><b>Status:</b>&ensp;
+	<label><input type="radio" name="status" value="block" {{ 'checked' if 'block'==story[6] }} />block</label>
+	<label><input type="radio" name="status" value="new" {{ 'checked' if 'new'==story[6] }} />new</label>
+	<label><input type="radio" name="status" value="ok" {{ 'checked' if 'ok'==story[6] }} />ok</label>
+	<label><input type="radio" name="status" value="star" {{ 'checked' if 'star'==story[6] }} />star</label>
+</div>
+<div><p id="form-err" class="err" style="display:none">Please fill in all required (*) fields.</p></div>
+<div class="bar submit">
+	<div><input type="button" value="Cancel" onclick="history.back();" /></div>
+	<div style="flex-grow:1;text-align:right"><a href="javascript:;">Preview page</a></div>
+	<div>
+		<input type="button" value="Save" onclick="save({{ next_page }})" />
+	{%- if not id %}
+		<input type="button" value="Save and create more" onclick="save('new')" />
+	{%- endif %}
+	</div>
+</div>
+</div>
+</form>
+
+</body>

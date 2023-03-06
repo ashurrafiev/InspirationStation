@@ -7,7 +7,7 @@ from jinja2 import Environment, FileSystemLoader
 import cherrypy
 import jwt
 
-from cfgutils import load_config, load_object_data, get_auth_cfg, tail, check_int, delete_cookie
+from cfgutils import load_config, load_object_data, get_auth_cfg, tail, check_int, delete_cookie, check_uid
 import storydb
 
 def create_access_token(auth_cfg, user):
@@ -115,6 +115,28 @@ class StoryMod(object):
         )
 
     @cherrypy.expose
+    def edit(self, uid='new', p=0):
+        cfg = load_config()
+        user, _ = auth_user(cfg)
+
+        new = uid == 'new'
+        if not new and not check_uid(uid):
+            raise cherrypy.HTTPError(400)
+        if not new:
+            story=storydb.get_story_raw(cfg, uid)
+        else:
+            story = [None, None, '', '', '', None, 'new']
+        obj_data = load_object_data()
+
+        template = self.tenv.get_template("edit.html")
+        return template.render(
+            user=user,
+            story=story,
+            obj_data=obj_data,
+            next_page=p
+        )
+
+    @cherrypy.expose
     def recentlogins(self):
         user, exp = auth_user()
 
@@ -142,6 +164,29 @@ class StoryMod(object):
         delete_cookie('lim')
         delete_cookie('show')
         raise cherrypy.HTTPRedirect(cherrypy.url('/login'))
+
+    @cherrypy.expose
+    def poststory(self, uid='new', p=0, obj='', q1='', q2='', q3='', status=''):
+        cfg = load_config()
+        user, _ = auth_user(cfg)
+
+        new = uid == 'new'
+        if not new and not check_uid(uid):
+            raise cherrypy.HTTPError(400)
+        if not obj or not q1 or not q2 or not q3:
+            raise cherrypy.HTTPError(400)
+        obj_data = load_object_data()
+        if obj not in obj_data:
+            raise cherrypy.HTTPError(400)
+        if status not in storydb.mod_options():
+           raise cherrypy.HTTPError(400)
+
+        if new:
+            storydb.post_story(cfg, data={'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3, 'mod': status})
+        else:
+            storydb.update_story(cfg, uid, data={'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3, 'mod': status})
+
+        raise cherrypy.HTTPRedirect(cherrypy.url('/edit?uid=new' if p=='new' else '/?p='+str(p)))
 
     @cherrypy.expose
     def setmod(self, sel='', status='', p=0, fetch=False):

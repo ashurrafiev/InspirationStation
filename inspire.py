@@ -53,7 +53,7 @@ class InspirationStation(object):
             raise cherrypy.HTTPError(400)
 
         cfg = load_config()
-        uid = storydb.post_story(cfg, data={ 'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3 })
+        uid = storydb.post_story(cfg, data={ 'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3, 'mod': 'new' })
         return {
             'uid': uid,
             'story': cfg['storyURL'] + uid,

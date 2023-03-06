@@ -16,8 +16,8 @@ def db_connect(cfg):
 
 def post_story(cfg, data):
     query = """
-        INSERT INTO "stories" ("uid", "obj", "q1", "q2", "q3", "time")
-        VALUES (gen_random_uuid(), %(obj)s, %(q1)s, %(q2)s, %(q3)s, now())
+        INSERT INTO "stories" ("uid", "obj", "q1", "q2", "q3", "mod", "time")
+        VALUES (gen_random_uuid(), %(obj)s, %(q1)s, %(q2)s, %(q3)s, %(mod)s, now())
         RETURNING "uid"
     """
     try:
@@ -27,6 +27,22 @@ def post_story(cfg, data):
                 row = cursor.fetchone()
                 connection.commit()
                 return row[0] if row else None
+    except PostgresError as e:
+        cherrypy.log.error(f"Database error: {str(e)}")
+        raise cherrypy.HTTPError(500)
+
+def update_story(cfg, uid, data):
+    query = """
+        UPDATE "stories"
+        SET "obj" = %(obj)s, "q1" = %(q1)s, "q2" = %(q2)s, "q3" = %(q3)s, "mod" = %(mod)s 
+        WHERE "uid" = %(uid)s
+    """
+    try:
+        data['uid'] = uid
+        with db_connect(cfg) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, data)
+                connection.commit()
     except PostgresError as e:
         cherrypy.log.error(f"Database error: {str(e)}")
         raise cherrypy.HTTPError(500)
@@ -47,6 +63,22 @@ def get_story(cfg, uid):
                     return dict(zip(['obj', 'q1', 'q2', 'q3', 'time'], row))
                 else:
                     return None
+    except PostgresError as e:
+        cherrypy.log.error(f"Database error: {str(e)}")
+        raise cherrypy.HTTPError(500)
+
+def get_story_raw(cfg, uid):
+    query = """
+        SELECT "uid", "obj", "q1", "q2", "q3", "time", "mod"
+        FROM "stories"
+        WHERE "uid"=%s
+    """
+    try:
+        with db_connect(cfg) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (uid,))
+                row = cursor.fetchone()
+                return row
     except PostgresError as e:
         cherrypy.log.error(f"Database error: {str(e)}")
         raise cherrypy.HTTPError(500)
@@ -83,7 +115,7 @@ def list_stories(cfg, sel, p=0, lim=100):
 def set_mod(cfg, sel, mod):
     query = """
         UPDATE "stories"
-        SET "mod" = %(mod)s
+        SET "mod"=%(mod)s
         WHERE "uid" IN %(sel)s
     """
     query_returning = """

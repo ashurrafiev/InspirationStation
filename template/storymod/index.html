@@ -36,7 +36,7 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 <div class="blk bar">
 	<div><input type="button" value="Select none" onclick="selectNone()" /></div>
 	<div><input type="button" value="Delete selected" disabled /></div>
-	<div style="flex-grow:1"><input type="button" value="Create new" disabled /></div>
+	<div style="flex-grow:1"><input type="button" value="Create new" onclick="location.href='{{ '/edit' | app }}?uid=new';" /></div>
 	<div><b>Apply to all selected items:</b>&ensp;
 		<label><input type="radio" form="form-setmod-sel" name="status" value="block" />block</label>
 		<label><input type="radio" form="form-setmod-sel" name="status" value="new" checked />new</label>

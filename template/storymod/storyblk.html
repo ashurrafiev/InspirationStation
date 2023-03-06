@@ -22,7 +22,7 @@ I found this
 	{%- endif %}
 [...] It looks like <span class="ins">{{ story[2] | e }}</span>. I noticed that <span class="ins">{{ story[3] | e }}</span>. It made me think <span class="ins">{{ story[4] | e }}</span>?</div>
 <div class="bar">
-	<div><input type="button" value="Edit" disabled /></div>
+	<div><input type="button" value="Edit" onclick="requestEdit('{{ id }}')" /></div>
 	<div style="flex-grow:1"><input type="button" value="Delete" disabled /></div>
 	<div><b>Status:</b>&ensp;
 		<label><input type="radio" name="status-{{ id }}" value="block" {{ 'checked' if 'block'==story[6] }} />block</label>

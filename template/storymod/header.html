@@ -40,6 +40,10 @@ function confirmSetMod(len) {
 	return `Are you sure to apply status "${mod}" to selected items?\n(${len} selected)`;
 }
 
+function requestEdit(id) {
+	location.href = `{{ '/edit' | app }}?p={{ page }}&uid=${id}`;
+}
+
 function requestSetMod(uid) {
 	const xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange  = function() {

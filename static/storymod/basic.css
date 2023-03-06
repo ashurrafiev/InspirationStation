@@ -55,6 +55,19 @@ div.bar div:first-child {
 	padding-left: 0px;
 	border-left: none;
 }
+div.form {
+	padding: 0px 20px;
+	overflow: hidden;
+}
+div.form > div {
+	margin: 12px 0px;
+}
+div.form > div.submit {
+	margin: 0 -20px;
+	padding: 15px 20px;
+	background-color: #fff;
+	border-top: 1px solid #ccc;
+}
 div.quote {
 	background-color: #fff;
 	color: #555;
@@ -107,10 +120,16 @@ label {
 	user-select: none;
 	white-space: nowrap;
 }
+label.req::before {
+	content: '* ';
+	color: #d00;
+}
 input,
+select,
 button {
 	font: inherit;
 	color: #000;
+	box-sizing: border-box;
 }
 input[type=button],
 input[type=submit],
