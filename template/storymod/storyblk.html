@@ -1,4 +1,4 @@
-{%- set id = story[0] %}
+{%- set id = story[0] -%}
 <div class="status-{{ story[6] }}" style="cursor:pointer" onclick="document.getElementById('sel-{{ id }}').click()">{{ story[6] }}</div><div>
 <div class="bar">
 	<div><input type="checkbox" id="sel-{{ id }}" class="storysel" /></div>
@@ -7,20 +7,24 @@
 	<div><a href="/qr/{{ id }}" target="_blank">Get QR</a></div>
 	<div><a href="/story/{{ id }}" target="_blank">View page</a></div>
 </div>
-{%- if story[6]=='block' %}
+{%- if story[6]=='block' -%}
 <div id="quote-hide-{{ id }}" class="quote"><span class="info">Blocked content... <a href="javascript:showBlocked('{{ id }}');">Read</a></span></div>
 <div id="quote-read-{{ id }}" class="quote" style="display:none">
 <span class="info">Blocked content... <a href="javascript:hideBlocked('{{ id }}');">Hide</a></span><br/>
-{%- else %}
+{%- else -%}
 <div class="quote">
 {%- endif %}
-I found this
-	{%- if story[1] in obj_data %}
-	<b>{{ obj_data[story[1]]['name'] }}</b>
-	{%- else %}
-	<span class="err"><b>Deleted Object:</b> {{ story[1] }}</span>
-	{%- endif %}
-[...] It looks like <span class="ins">{{ story[2] | e }}</span>. I noticed that <span class="ins">{{ story[3] | e }}</span>. It made me think <span class="ins">{{ story[4] | e }}</span>?</div>
+	{%- if story[1] in obj_data -%}{%- set name -%}
+		<b>{{ obj_data[story[1]]['name']|e }}</b>
+	{%- endset -%}{%- else -%}{%- set name -%}
+		<span class="err"><b>Deleted Object:</b> {{ story[1]|e }}</span>
+	{%- endset -%}{%- endif -%}
+	{%- set fact='[...]' -%}
+	{%- set q1 -%}<span class="ins">{{ story[2]|e }}</span>{%- endset -%}
+	{%- set q2 -%}<span class="ins">{{ story[3]|e }}</span>{%- endset -%}
+	{%- set q3 -%}<span class="ins">{{ story[4]|e }}</span>{%- endset -%}
+	{%- include story_template -%}
+</div>
 <div class="bar">
 	<div><input type="button" value="Edit" onclick="requestEdit('{{ id }}')" /></div>
 	<div style="flex-grow:1"><input type="button" value="Delete" disabled /></div>

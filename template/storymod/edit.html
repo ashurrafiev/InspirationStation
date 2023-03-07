@@ -1,5 +1,6 @@
 {%- set id = story[0] %}
 {%- set title='Edit Story' if id else 'Create story' %}
+{%- set onload='updatePreview' %}
 {%- include 'header.html' %}
 
 <h1>{{ title }}</h1>
@@ -11,22 +12,52 @@ Submitted on {{ story[5].replace(microsecond=0) }}
 {%- endif %}
 
 <script>
+
 function selectObject(id) {
 	const img = document.getElementById('objimg');
 	if(id) img.src = `/media/${id}.jpg`;
 	img.style.display = id ? 'block' : 'none';
+	updatePreview();
 }
+
+function sanitize(s) {
+    return s.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+}
+
+function updatePreview() {
+	let ref = '/story/?uid=preview';
+	const selObj = document.getElementById('obj');
+	document.getElementById('quote-obj').innerHTML = selObj.options[selObj.selectedIndex].text;
+	ref += '&obj=' + encodeURIComponent(selObj.value);
+	
+	function updateQ(index) {
+		const id = 'q'+index;
+		const v = document.getElementById(id).value;
+		document.getElementById('quote-'+id).innerHTML = sanitize(v);
+		return `&q${index}=${encodeURIComponent(v)}`;
+	}
+	
+	ref += updateQ(1);
+	ref += updateQ(2);
+	ref += updateQ(3);
+	if(!selObj.value)
+		ref = 'javascript:;';
+	document.getElementById('preview-link').href = ref;
+}
+
 function save(p) {
 	if(!checkInputs())
 		return;
 	document.getElementById('nextp').value = p;
 	document.getElementById('form').submit();
 }
+
 function checkInput(id, trim) {
 	const inp = document.getElementById(id);
 	if(trim) inp.value = inp.value.trim();
 	return inp.value!=false;
 }
+
 function checkInputs() {
 	let res = true;
 	res = checkInput('obj') && res;
@@ -37,12 +68,16 @@ function checkInputs() {
 		document.getElementById('form-err').style.display = 'block';
 	return res;
 }
+
 </script>
 
 <form id="form" action="{{ '/poststory' | app }}" method="post">
 <input type="hidden" name="uid" value="{{ id or 'new' }}" />
 <input id="nextp" type="hidden" name="p" />
 <div class="blk form">
+{%- if story[1] and story[1] not in obj_data %}
+<div><p class="err">Referencing unknown or deleted object: <b>{{ story[1] }}</b></p></div>
+{%- endif %}
 <div style="width:250px;height:250px;border:1px solid #ccc"><img id="objimg" {%- if story[1] %} src="/media/{{ story[1] }}.jpg" {% endif %} style="width:250px;height:250px;object-fit:cover;display:{{ 'block' if story[1] in obj_data else 'none' }}"/></div>
 <div>
 <label class="req">Object:<br /><select id="obj" name="obj" onchange="selectObject(this.value)">
@@ -52,14 +87,21 @@ function checkInputs() {
 {%- endfor %}
 </select></label></div>
 <div>
-<p id="q1-err" class="err" style="display:none">Please answer the question below.</p>
-<label class="req">Q1: What do you see?<br /><input id="q1" type="text" style="width:100%" name="q1" value="{{ story[2] | e }}" /></label></div>
+<label class="req">Q1: {{ story_cfg.q1 }}<br /><input id="q1" type="text" style="width:100%" name="q1" value="{{ story[2] | e }}" onchange="updatePreview()" /></label></div>
 <div>
-<p id="q2-err" class="err" style="display:none">Please answer the question below.</p>
-<label class="req">Q2: What do you notice about it?<br /><input id="q2" type="text" style="width:100%" name="q2" value="{{ story[3] | e }}" /></label></div>
+<label class="req">Q2: {{ story_cfg.q2 }}<br /><input id="q2" type="text" style="width:100%" name="q2" value="{{ story[3] | e }}" onchange="updatePreview()" /></label></div>
 <div>
-<p id="q3-err" class="err" style="display:none">Please answer the question below.</p>
-<label class="req">Q3: What does it make you think or wonder?<br /><input id="q3" type="text" style="width:100%" name="q3" value="{{ story[4] | e }}" /></label></div>
+<label class="req">Q3: {{ story_cfg.q3 }}<br /><input id="q3" type="text" style="width:100%" name="q3" value="{{ story[4] | e }}" onchange="updatePreview()" /></label></div>
+
+<div class="quote">
+	{%- set name -%}<b id="quote-obj"></b>{%- endset -%}
+	{%- set fact='[...]' -%}
+	{%- set q1 -%}<span id="quote-q1" class="ins"></span>{%- endset -%}
+	{%- set q2 -%}<span id="quote-q2" class="ins"></span>{%- endset -%}
+	{%- set q3 -%}<span id="quote-q3" class="ins"></span>{%- endset -%}
+	{%- include story_template -%}
+</div>
+
 <div><b>Status:</b>&ensp;
 	<label><input type="radio" name="status" value="block" {{ 'checked' if 'block'==story[6] }} />block</label>
 	<label><input type="radio" name="status" value="new" {{ 'checked' if 'new'==story[6] }} />new</label>
@@ -68,8 +110,8 @@ function checkInputs() {
 </div>
 <div><p id="form-err" class="err" style="display:none">Please fill in all required (*) fields.</p></div>
 <div class="bar submit">
-	<div><input type="button" value="Cancel" onclick="history.back();" /></div>
-	<div style="flex-grow:1;text-align:right"><a href="javascript:;">Preview page</a></div>
+	<div><input type="button" value="Cancel" onclick="navPage({{ next_page }})" /></div>
+	<div style="flex-grow:1;text-align:right"><a id="preview-link" href="javascript:;" target="_blank">Preview page</a></div>
 	<div>
 		<input type="button" value="Save" onclick="save({{ next_page }})" />
 	{%- if not id %}

@@ -1,19 +1,19 @@
 <div class="blk bar">
 <div><b>{{ total }}</b> {{ 'item' if total==1 else 'items' }} total</div>
-{%- if total_pages>1 %}
+{%- if total_pages>1 -%}
 <div>Pages:</div>
 <div><input type="button" value="Previous" {{ 'disabled' if page<=0 }} onclick="navPage({{ [page-1, total_pages-1] | min }})" /></div>
 <div>
 	<input type="button" value="1" {{ 'class="cur"' if page==0 }} onclick="navPage({{ 0 }})" />
-	{%- set pages_rstart = [page-3, 1] | max %}
-	{%- set pages_rend = [page+3, total_pages-1] | min %}
+	{%- set pages_rstart = [page-3, 1] | max -%}
+	{%- set pages_rend = [page+3, total_pages-1] | min -%}
 	{{ '&nbsp;...&nbsp;' if pages_rstart>1 }}
-	{%- for p in range(pages_rstart, pages_rend) %}
+	{%- for p in range(pages_rstart, pages_rend) -%}
 	<input type="button" value="{{ p+1 }}" {{ 'class="cur"' if page==p }} onclick="navPage({{ p }})" />
-	{%- endfor %}
+	{%- endfor -%}
 	{{ '&nbsp;...&nbsp;' if pages_rend<total_pages-1 }}
 	<input type="button" value="{{ total_pages }}" {{ 'class="cur"' if page==total_pages-1 }} onclick="navPage({{ total_pages-1 }})" />
 </div>
 <div><input type="button" value="Next" {{ 'disabled' if page>=total_pages-1 }} onclick="navPage({{ page+1 }})" /></div>
-{%- endif %}
+{%- endif -%}
 </div>

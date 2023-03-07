@@ -5,35 +5,18 @@
 <title>Story Inspiration Station</title>
 <link rel="stylesheet" href="/static/story.css">
 <link rel="stylesheet" href="/static/sharingbuttons.css" />
-<script>
-
-var story = {{ json }};
-
-function toImgSrc(s) {
-	return '/media/'+s+'.jpg';
-}
-
-function sanitize(s) {
-    return s.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-}
-
-function init() {
-    document.getElementById('p6name').innerHTML = story['name'];
-    document.getElementById('p6fact').innerHTML = story['fact'];
-	document.getElementById('page6img').src = toImgSrc(story['obj']);
-	document.getElementById('ins1').innerHTML = sanitize(story['q1']);
-	document.getElementById('ins2').innerHTML = sanitize(story['q2']);
-	document.getElementById('ins3').innerHTML = sanitize(story['q3']);
-}
-
-</script>
 </head>
-<body onload="init()">
+<body>
 <h1>Story Inspiration Station</h1>
-<div id="page6">
-    <div class="limg"><img id="page6img" /></div>
+<div>
+    <div class="limg"><img src="/media/{{ data.obj }}.jpg" /></div>
     <div class="rbox done"><div class="inner">
-        <p>I found this <span id="p6name" class="ins">Animal Name</span> in the Great North Museum: Hancock. <span id="p6fact">An interesting fact about this animal in a short sentence.</span> It looks like <span id="ins1" class="ins"></span>. I noticed that <span id="ins2" class="ins"></span>. It made me think <span id="ins3" class="ins"></span>?</p>
+		{%- set name -%}<span class="ins">{{ data.name|e }}</span>{%- endset -%}
+		{%- set fact=data.fact|e -%}
+		{%- set q1 -%}<span class="ins">{{ data.q1|e }}</span>{%- endset -%}
+		{%- set q2 -%}<span class="ins">{{ data.q2|e }}</span>{%- endset -%}
+		{%- set q3 -%}<span class="ins">{{ data.q3|e }}</span>{%- endset -%}
+        <p>{%- include story_template -%}</p>
 		<p style="text-align: right">&nbsp;</p>
     </div></div>
 

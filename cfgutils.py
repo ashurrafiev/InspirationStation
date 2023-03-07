@@ -18,6 +18,10 @@ def load_object_data() -> dict:
     with io.open('object_data.json') as f:
         return json.load(f)
 
+def load_story_template() -> dict:
+    with io.open('story_template.json') as f:
+        return json.load(f)
+
 def template_env(path='template'):
     env = Environment(loader=FileSystemLoader(path))
     env.filters['app'] = cherrypy.url

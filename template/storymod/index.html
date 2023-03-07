@@ -15,8 +15,9 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 	<label><input type="checkbox" name="show" value="ok" {{ 'checked' if 'ok' in show }} />ok</label>
 	<label><input type="checkbox" name="show" value="star" {{ 'checked' if 'star' in show }} />star</label>
 </div>
+<div>Newest first</div>
 <div><b>Items per page:</b>&ensp;
-	<label><input type="radio" name="lim" value="5" {{ 'checked' if lim==5 }} />5</label>
+	<label><input type="radio" name="lim" value="10" {{ 'checked' if lim==10 }} />10</label>
 	<label><input type="radio" name="lim" value="20" {{ 'checked' if lim==20 }} />20</label>
 	<label><input type="radio" name="lim" value="50" {{ 'checked' if lim==50 }} />50</label>
 	<label><input type="radio" name="lim" value="100" {{ 'checked' if lim==100 }} />100</label>

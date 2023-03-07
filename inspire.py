@@ -8,7 +8,7 @@ import cherrypy
 from cherrypy.lib import file_generator
 import qrcode
 
-from cfgutils import load_config, load_object_data, check_uid
+from cfgutils import load_config, load_object_data, load_story_template, check_uid
 from storymod import StoryMod
 import storydb
 
@@ -24,13 +24,23 @@ class InspirationStation(object):
         return ""
 
     @cherrypy.expose
-    def story(self, uid=''):
-        if not check_uid(uid):
+    def story(self, uid='', obj='', q1='', q2='', q3=''):
+        preview = uid == 'preview'
+        if not preview and not check_uid(uid):
             raise cherrypy.HTTPError(404)
         cfg = load_config()
-        data = storydb.get_story(cfg, uid)
-        if not data:
-            raise cherrypy.HTTPError(404)
+
+        story_cfg = load_story_template()
+        if preview:
+            data = {'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3}
+            message = ''
+            link = ''
+        else:
+            data = storydb.get_story(cfg, uid)
+            if not data:
+                raise cherrypy.HTTPError(404)
+            message = urlencode(story_cfg['message'])
+            link = f"{cfg['storyURL']}{uid}"
 
         obj = data['obj']
         obj_data = load_object_data()
@@ -39,9 +49,14 @@ class InspirationStation(object):
         data['name'] = obj_data[obj]['name']
         data['fact'] = obj_data[obj]['fact']
 
+        story_template = self.tenv.from_string(story_cfg['story'])
         template = self.tenv.get_template("story.html")
-        message = urlencode(cfg['socialMediaMessage'])
-        return template.render(json=json.dumps(data), message=message, link=f"{cfg['storyURL']}{uid}")
+        return template.render(
+            story_template=story_template,
+            data=data,
+            message=message,
+            link=link
+        )
 
     @cherrypy.expose
     @cherrypy.tools.json_out()

@@ -77,10 +77,15 @@ function navPage(p) {
 
 </script>
 </head>
+{%- if onload %}
+<body onload="{{ onload }}()">
+{%- else %}
 <body>
+{%- endif %}
 
 <div class="blk bar">
 <div><a href="{{ '/' | app }}">Dashboard</a></div>
+<div><a href="/static/station.html" target="_blank">Station Page</a></div>
 <div style="flex-grow:1; text-align:right">Welcome, <b>{{ user }}</b>!</div>
 <div><a href="{{ '/logout' | app }}">Logout</a></div>
 </div>
