@@ -1,15 +1,15 @@
-{%- set id = story[0] %}
-{%- set title='Edit Story' if id else 'Create story' %}
-{%- set onload='updatePreview' %}
-{%- include 'header.html' %}
+{%- set id = story[0] -%}
+{%- set title='Edit Story' if id else 'Create story' -%}
+{%- set onload='updatePreview' -%}
+{%- include 'header.html' -%}
 
 <h1>{{ title }}</h1>
-{%- if id %}
+{%- if id -%}
 <p>
 <span style="color:#ddd">ID:&nbsp;{{ id }}</span><br/>
 Submitted on {{ story[5].replace(microsecond=0) }}
 </p>
-{%- endif %}
+{%- endif -%}
 
 <script>
 
@@ -75,16 +75,16 @@ function checkInputs() {
 <input type="hidden" name="uid" value="{{ id or 'new' }}" />
 <input id="nextp" type="hidden" name="p" />
 <div class="blk form">
-{%- if story[1] and story[1] not in obj_data %}
+{%- if story[1] and story[1] not in obj_data -%}
 <div><p class="err">Referencing unknown or deleted object: <b>{{ story[1] }}</b></p></div>
-{%- endif %}
+{%- endif -%}
 <div style="width:250px;height:250px;border:1px solid #ccc"><img id="objimg" {%- if story[1] %} src="/media/{{ story[1] }}.jpg" {% endif %} style="width:250px;height:250px;object-fit:cover;display:{{ 'block' if story[1] in obj_data else 'none' }}"/></div>
 <div>
 <label class="req">Object:<br /><select id="obj" name="obj" onchange="selectObject(this.value)">
 <option value="" {{ 'selected' if story[1] not in obj_data }}></option>
-{%- for obj_id, obj in obj_data.items() %}
+{%- for obj_id, obj in obj_data.items() -%}
 	<option value="{{ obj_id }}" {{ 'selected' if story[1]==obj_id }}>{{ obj.name | e }}</option>
-{%- endfor %}
+{%- endfor -%}
 </select></label></div>
 <div>
 <label class="req">Q1: {{ story_cfg.q1 }}<br /><input id="q1" type="text" style="width:100%" name="q1" value="{{ story[2] | e }}" onchange="updatePreview()" /></label></div>
@@ -114,9 +114,9 @@ function checkInputs() {
 	<div style="flex-grow:1;text-align:right"><a id="preview-link" href="javascript:;" target="_blank">Preview page</a></div>
 	<div>
 		<input type="button" value="Save" onclick="save({{ next_page }})" />
-	{%- if not id %}
+	{%- if not id -%}
 		<input type="button" value="Save and create more" onclick="save('new')" />
-	{%- endif %}
+	{%- endif -%}
 	</div>
 </div>
 </div>

@@ -1,5 +1,5 @@
-{%- set title='Dashboard' %}
-{%- include 'header.html' %}
+{%- set title='Dashboard' -%}
+{%- include 'header.html' -%}
 
 <div class="blk">
 Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
@@ -26,13 +26,13 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 </div>
 </form>
 
-{%- include 'pages.html' %}
-{%- for story in stories %}
+{%- include 'pages.html' -%}
+{%- for story in stories -%}
 <div class="blk tab" id="blk-{{ story[0] }}">
-{%- include 'storyblk.html' %}
+{%- include 'storyblk.html' -%}
 </div>
-{%- endfor %}
-{%- include 'pages.html' %}
+{%- endfor -%}
+{%- include 'pages.html' -%}
 
 <div class="blk bar">
 	<div><input type="button" value="Select none" onclick="selectNone()" /></div>

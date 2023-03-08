@@ -19,6 +19,7 @@ var page = 1;
 var readyToSend = false;
 
 var keybonk;
+var wordFreqDB = null;
 var countdown, timeout, timeoutTimer;
 
 function switchKBTarget(e) {
@@ -254,6 +255,8 @@ function applyTemplate(t) {
 
 function init() {
 	keybonk = new Keybonk('keybonk');
+	fetch('words.json').then(resp => resp.json()).then(data => { wordFreqDB = data; });
+	
 	onhashchange()
 	document.addEventListener('selectionchange', updateKBSuggestions);
 	applyTemplate(storyTemplate);

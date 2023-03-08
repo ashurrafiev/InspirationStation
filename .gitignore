@@ -3,6 +3,7 @@ auth.json
 logins.txt
 object_data.json
 static/words.js
+static/words.json
 static/data.js
 media/
 

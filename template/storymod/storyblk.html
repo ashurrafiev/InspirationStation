@@ -13,7 +13,7 @@
 <span class="info">Blocked content... <a href="javascript:hideBlocked('{{ id }}');">Hide</a></span><br/>
 {%- else -%}
 <div class="quote">
-{%- endif %}
+{%- endif -%}
 	{%- if story[1] in obj_data -%}{%- set name -%}
 		<b>{{ obj_data[story[1]]['name']|e }}</b>
 	{%- endset -%}{%- else -%}{%- set name -%}
