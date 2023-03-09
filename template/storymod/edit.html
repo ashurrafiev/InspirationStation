@@ -6,8 +6,8 @@
 <h1>{{ title }}</h1>
 {%- if id -%}
 <p>
-<span style="color:#ddd">ID:&nbsp;{{ id }}</span><br/>
-Submitted on {{ story[5].replace(microsecond=0) }}
+<span class="ghost">ID:&nbsp;{{ id }}</span><br/>
+Submitted on {{ story[5].replace(microsecond=0) }} from IP:&nbsp;{{ story[7] }}
 </p>
 {%- endif -%}
 

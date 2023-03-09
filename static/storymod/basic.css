@@ -191,6 +191,9 @@ span.err {
 span.info {
 	color: #aaa;
 }
+span.ghost {
+	color: #ddd;
+}
 .status-new {
 	background-color: #999;
 	color: #fff;

@@ -1,13 +1,12 @@
 import io
-import json
 from datetime import datetime, timedelta, timezone
 import secrets
 
-from jinja2 import Environment, FileSystemLoader
 import cherrypy
 import jwt
 
-from cfgutils import load_config, load_object_data, load_story_template, get_auth_cfg, tail, check_int, delete_cookie, check_uid
+from cfgutils import load_config, load_object_data, load_story_template,\
+    get_auth_cfg, tail, check_int, delete_cookie, check_uid, template_env
 import storydb
 
 def create_access_token(auth_cfg, user):
@@ -65,10 +64,7 @@ def auth_user(cfg=None):
 
 class StoryMod(object):
     def __init__(self):
-        self.tenv = Environment(
-            loader=FileSystemLoader('template/storymod')
-        )
-        self.tenv.filters['app'] = cherrypy.url
+        self.tenv = template_env('template/storymod')
 
     @cherrypy.expose
     def index(self, show=None, p=0, lim=None):
@@ -99,8 +95,8 @@ class StoryMod(object):
         cherrypy.response.cookie['show']['SameSite'] = 'Strict'
 
         obj_data = load_object_data()
-        total, stories = storydb.list_stories(cfg, sel=show, p=p, lim=lim)
-        total_pages = (total+lim-1) // lim
+        counts, stories = storydb.list_stories(cfg, sel=show, p=p, lim=lim)
+        total_pages = (counts['sel']+lim-1) // lim
 
         story_template = self.tenv.from_string(load_story_template()['story'])
         template = self.tenv.get_template("index.html")
@@ -110,7 +106,7 @@ class StoryMod(object):
             stories=stories,
             obj_data=obj_data,
             show=show,
-            total=total,
+            counts=counts,
             page=p,
             total_pages=total_pages,
             lim=lim
@@ -187,10 +183,12 @@ class StoryMod(object):
         if status not in storydb.mod_options():
            raise cherrypy.HTTPError(400)
 
+        data = {'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3}
         if new:
-            storydb.post_story(cfg, data={'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3, 'mod': status})
+            data['mod'] = status
+            storydb.post_story(cfg, user, cherrypy.request.remote.ip, data)
         else:
-            storydb.update_story(cfg, uid, data={'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3, 'mod': status})
+            storydb.update_story(cfg, uid, user, data)
 
         raise cherrypy.HTTPRedirect(cherrypy.url('/edit?uid=new' if p=='new' else '/?p='+str(p)))
 
@@ -204,7 +202,7 @@ class StoryMod(object):
         sel = sel.split('+')
 
         if fetch:
-            story = storydb.set_mod(cfg, sel[:1], status)
+            story = storydb.set_mod(cfg, sel[:1], user, status)
             obj_data = load_object_data()
             story_template = self.tenv.from_string(load_story_template()['story'])
             template = self.tenv.get_template("storyblk.html")
@@ -216,5 +214,5 @@ class StoryMod(object):
         else:
             # validating p
             p = check_int(p, 0, lambda x: x >= 0)
-            storydb.set_mod(cfg, sel, status)
+            storydb.set_mod(cfg, sel, user, status)
             raise cherrypy.HTTPRedirect(cherrypy.url('/?p='+str(p)))

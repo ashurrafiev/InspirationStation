@@ -6,6 +6,10 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 </div>
 
 <h1>Submitted Stories</h1>
+{%- if counts.new>0 -%}
+<p class="note"><b>{{ counts.new }}</b> item{{ counts.new|pl }} awaiting review.
+<a href="?show=new">Show</a></p>
+{%- endif -%}
 
 <form>
 <div class="blk bar">

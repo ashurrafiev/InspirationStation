@@ -1,23 +1,19 @@
 import io
-import json
 import os.path
 from urllib.parse import quote as urlencode
 
-from jinja2 import Environment, FileSystemLoader
 import cherrypy
 from cherrypy.lib import file_generator
 import qrcode
 
-from cfgutils import load_config, load_object_data, load_story_template, check_uid
+from cfgutils import load_config, load_object_data, load_story_template, check_uid, template_env
 from storymod import StoryMod
 import storydb
 
 
 class InspirationStation(object):
     def __init__(self):
-        self.tenv = Environment(
-            loader=FileSystemLoader('template')
-        )
+        self.tenv = template_env()
 
     @cherrypy.expose
     def index(self):
@@ -68,7 +64,8 @@ class InspirationStation(object):
             raise cherrypy.HTTPError(400)
 
         cfg = load_config()
-        uid = storydb.post_story(cfg, data={ 'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3, 'mod': 'new' })
+        data = { 'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3 }
+        uid = storydb.post_story(cfg, user=None, ip=cherrypy.request.remote.ip, data=data)
         return {
             'uid': uid,
             'story': cfg['storyURL'] + uid,

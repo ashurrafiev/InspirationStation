@@ -14,12 +14,21 @@ def db_connect(cfg):
         database=db['name']
     )
 
-def post_story(cfg, data):
-    query = """
-        INSERT INTO "stories" ("uid", "obj", "q1", "q2", "q3", "mod", "time")
-        VALUES (gen_random_uuid(), %(obj)s, %(q1)s, %(q2)s, %(q3)s, %(mod)s, now())
-        RETURNING "uid"
-    """
+def post_story(cfg, user, ip, data):
+    data['ip'] = ip
+    if user:
+        data['user'] = user
+        query = """
+            INSERT INTO "stories" ("uid", "obj", "q1", "q2", "q3", "mod", "ip", "time", "editor", "upd_time")
+            VALUES (gen_random_uuid(), %(obj)s, %(q1)s, %(q2)s, %(q3)s, %(mod)s, %(ip)s, now(), %(user)s, now())
+            RETURNING "uid"
+        """
+    else:
+        query = """
+            INSERT INTO "stories" ("uid", "obj", "q1", "q2", "q3", "ip", "time")
+            VALUES (gen_random_uuid(), %(obj)s, %(q1)s, %(q2)s, %(q3)s, %(ip)s, now())
+            RETURNING "uid"
+        """
     try:
         with db_connect(cfg) as connection:
             with connection.cursor() as cursor:
@@ -31,14 +40,16 @@ def post_story(cfg, data):
         cherrypy.log.error(f"Database error: {str(e)}")
         raise cherrypy.HTTPError(500)
 
-def update_story(cfg, uid, data):
+def update_story(cfg, uid, user, data):
     query = """
         UPDATE "stories"
-        SET "obj" = %(obj)s, "q1" = %(q1)s, "q2" = %(q2)s, "q3" = %(q3)s, "mod" = %(mod)s 
+        SET "obj" = %(obj)s, "q1" = %(q1)s, "q2" = %(q2)s, "q3" = %(q3)s,
+            "mod" = %(mod)s, "editor" = %(user)s, "upd_time" = now()
         WHERE "uid" = %(uid)s
     """
     try:
         data['uid'] = uid
+        data['user'] = user
         with db_connect(cfg) as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, data)
@@ -69,9 +80,9 @@ def get_story(cfg, uid):
 
 def get_story_raw(cfg, uid):
     query = """
-        SELECT "uid", "obj", "q1", "q2", "q3", "time", "mod"
+        SELECT "uid", "obj", "q1", "q2", "q3", "time", "mod", "ip", "editor", "upd_time"
         FROM "stories"
-        WHERE "uid"=%s
+        WHERE "uid" = %s
     """
     try:
         with db_connect(cfg) as connection:
@@ -86,40 +97,45 @@ def get_story_raw(cfg, uid):
 def mod_options():
     return ['new','ok','block','star']
 
-def list_stories(cfg, sel, p=0, lim=100):
+def list_stories(cfg, sel, p=0, lim=100, count_only=False):
     query = """
-        SELECT "uid", "obj", "q1", "q2", "q3", "time", "mod"
+        SELECT "uid", "obj", "q1", "q2", "q3", "time", "mod", "ip", "editor", "upd_time"
         FROM "stories"
         WHERE "mod" IN %(sel)s
         ORDER BY "time" DESC
         LIMIT %(lim)s OFFSET %(offs)s
     """
     query_total = """
-        SELECT COUNT(*)
+        SELECT
+            SUM(CASE WHEN "mod" = 'new' THEN 1 ELSE 0 END) AS "new",
+            SUM(CASE WHEN "mod" IN %(sel)s THEN 1 ELSE 0 END) AS "sel",
+            COUNT(*) AS "total"
         FROM "stories"
-        WHERE "mod" IN %(sel)s
     """
     try:
         sel = tuple(sel)
         with db_connect(cfg) as connection:
             with connection.cursor() as cursor:
-                cursor.execute(query, {'sel':sel, 'lim':lim, 'offs':p*lim})
-                rows = cursor.fetchall()
+                if count_only:
+                    rows = []
+                else:
+                    cursor.execute(query, {'sel':sel, 'lim':lim, 'offs':p*lim})
+                    rows = cursor.fetchall()
                 cursor.execute(query_total, {'sel': sel})
-                total = cursor.fetchone()
-                return total[0], rows
+                counts = dict(zip(['new','sel','total'], cursor.fetchone()))
+                return counts, rows
     except PostgresError as e:
         cherrypy.log.error(f"Database error: {str(e)}")
         raise cherrypy.HTTPError(500)
 
-def set_mod(cfg, sel, mod):
+def set_mod(cfg, sel, user, mod):
     query = """
         UPDATE "stories"
-        SET "mod"=%(mod)s
+        SET "mod" = %(mod)s, "editor" = %(user)s, "upd_time" = now()
         WHERE "uid" IN %(sel)s
     """
     query_returning = """
-        RETURNING "uid", "obj", "q1", "q2", "q3", "time", "mod"
+        RETURNING "uid", "obj", "q1", "q2", "q3", "time", "mod", "ip", "editor", "upd_time"
     """
     try:
         fetch = False
@@ -129,7 +145,7 @@ def set_mod(cfg, sel, mod):
         sel = tuple(sel)
         with db_connect(cfg) as connection:
             with connection.cursor() as cursor:
-                cursor.execute(query, {'sel':sel, 'mod':mod})
+                cursor.execute(query, {'sel':sel, 'mod':mod, 'user':user})
                 row = cursor.fetchone() if fetch else None
                 connection.commit()
                 return row

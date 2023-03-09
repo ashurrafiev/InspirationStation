@@ -22,9 +22,15 @@ def load_story_template() -> dict:
     with io.open('story_template.json') as f:
         return json.load(f)
 
+
+def pluralize(count, plural='s', singular=''):
+    return singular if count == 1 else plural
+
 def template_env(path='template'):
     env = Environment(loader=FileSystemLoader(path))
     env.filters['app'] = cherrypy.url
+
+    env.filters['pl'] = pluralize
     return env
 
 def check_uid(uid):

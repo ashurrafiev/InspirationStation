@@ -3,7 +3,8 @@
 <div class="bar">
 	<div><input type="checkbox" id="sel-{{ id }}" class="storysel" /></div>
 	<div>{{ story[5].replace(microsecond=0) }}</div>
-	<div style="flex-grow:1;text-align:right"><span style="color:#ddd">ID:&nbsp;{{ id }}</span></div>
+	<div>IP:&nbsp;{{ story[7] }}</div>
+	<div style="flex-grow:1;text-align:right"><span class="ghost">ID:&nbsp;{{ id }}</span></div>
 	<div><a href="/qr/{{ id }}" target="_blank">Get QR</a></div>
 	<div><a href="/story/{{ id }}" target="_blank">View page</a></div>
 </div>
@@ -28,6 +29,9 @@
 <div class="bar">
 	<div><input type="button" value="Edit" onclick="requestEdit('{{ id }}')" /></div>
 	<div style="flex-grow:1"><input type="button" value="Delete" disabled /></div>
+{%- if story[8] and story[9] -%}
+	<div><span class="info">Reviewed by <b>{{ story[8] }}</b> on {{ story[9].replace(microsecond=0) }}</span></div>
+{%- endif -%}
 	<div><b>Status:</b>&ensp;
 		<label><input type="radio" name="status-{{ id }}" value="block" {{ 'checked' if 'block'==story[6] }} />block</label>
 		<label><input type="radio" name="status-{{ id }}" value="new" {{ 'checked' if 'new'==story[6] }} />new</label>
