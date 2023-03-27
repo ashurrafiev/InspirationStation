@@ -1,0 +1,59 @@
+div.keybonk {
+	font-family: 'Open Sans', sans-serif;
+	position: fixed;
+	width: 660px;
+	right: 30px;
+	bottom: 30px;
+	display: none;
+}
+.keybonk-key {
+	float: left;
+	box-sizing: border-box;
+	text-align: center;
+	cursor: pointer;
+
+	font-weight: bold;
+	
+	height: 60px;
+	line-height: 60px;
+	font-size: 30px;
+
+	color: #000;
+	background-color: #fff3cd;
+	border: 1px solid #856404;
+	
+	border: 1px solid #856404;
+	border-radius: 5px;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+	user-select: none;
+}
+.keybonk-key-active {
+	color: #fff;
+	background-color: #856404;
+	border: 1px solid #856404;
+}
+.keybonk-suggest {
+	height: 50px;
+	padding-bottom: 5px;
+	white-space: nowrap;
+}
+.keybonk-suggest-item {
+	display: inline-block;
+	box-sizing: border-box;
+	text-align: center;
+	cursor: pointer;
+	
+	height: 50px;
+	padding: 0px 20px;
+	line-height: 47px;
+	font-size: 25px;
+	margin: 2px;
+
+	color: #444;
+	background-color: #fff;
+	border: 1px solid #999;
+
+	border-radius: 5px;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+	user-select: none;
+}

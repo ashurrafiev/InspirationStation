@@ -15,11 +15,11 @@ def get_auth_cfg(cfg):
     return cfg['modAuth']
 
 def load_object_data() -> dict:
-    with io.open('object_data.json') as f:
+    with io.open('static/object_data.json') as f:
         return json.load(f)
 
 def load_story_template() -> dict:
-    with io.open('story_template.json') as f:
+    with io.open('static/story_template.json') as f:
         return json.load(f)
 
 

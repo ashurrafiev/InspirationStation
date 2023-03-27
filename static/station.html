@@ -2,339 +2,117 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Story Inspiration Station</title>
-<link rel="stylesheet" href="/static/station.css">
-<link rel="stylesheet" href="/static/keybonk_dark.css">
-<script src="/static/words.js"></script>
-<script src="/static/keybonk.js"></script>
-<script src="/static/data.js"></script>
-<script>
-
-var selectedOptions = [];
-var choice = null;
-var data = null;
-
-var page = 1;
-
-var readyToSend = false;
-
-var keybonk;
-var wordFreqDB = null;
-var countdown, timeout, timeoutTimer;
-
-function switchKBTarget(e) {
-	if(keybonk!==undefined)
-		keybonk.switchTarget(e);
-}
-
-function updateKBSuggestions() {
-	if(keybonk!==undefined)
-		keybonk.updateWordSuggestions();
-}
-
-function toImgSrc(s) {
-	return '/media/'+s+'.jpg';
-}
-
-function rerollOptions() {
-	oldOptions = selectedOptions;
-	selectedOptions = [];
-	for(i=0; i<3; i++) {
-		for(;;) {
-			let opt = allOptions[Math.floor(Math.random() * allOptions.length)];
-			if(!selectedOptions.includes(opt) && !oldOptions.includes(opt)) {
-				selectedOptions.push(opt);
-				document.getElementById('page1img'+i).src = toImgSrc(opt);
-				break;
-			}
-		}
-	}
-}
-
-function sanitize(s) {
-    return s.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-}
-
-function onPageEnter() {
-	console.log('onPageEnter: page='+page);
-	switch(page) {
-		case 1:
-			if(selectedOptions.length==0)
-				rerollOptions();
-            document.getElementById('q1').value = '';
-            document.getElementById('q2').value = '';
-            document.getElementById('q3').value = '';
-            document.getElementById('p3dot2').disabled = true;
-            document.getElementById('p3dot3').disabled = true;
-            document.getElementById('p4dot3').disabled = true;
-            document.getElementById('p3dotd').disabled = true;
-            document.getElementById('p4dotd').disabled = true;
-            document.getElementById('p5dotd').disabled = true;
-			document.getElementById('keybonk').style.display = 'none';
-			break;
-		case 2:
-			document.getElementById('page2img').src = toImgSrc(choice);
-			document.getElementById('keybonk').style.display = 'none';
-			break;
-        case 3:
-            document.getElementById('page3img').src = toImgSrc(choice);
-			document.getElementById('q1').focus();
-			document.getElementById('keybonk').style.display = 'block';
-            break;
-        case 4:
-            document.getElementById('page4img').src = toImgSrc(choice);
-            document.getElementById('p3dot2').disabled = false;
-			document.getElementById('q2').focus();
-			document.getElementById('keybonk').style.display = 'block';
-            break;
-        case 5:
-            document.getElementById('page5img').src = toImgSrc(choice);
-            document.getElementById('p3dot3').disabled = false;
-            document.getElementById('p4dot3').disabled = false;
-			document.getElementById('q3').focus();
-			document.getElementById('keybonk').style.display = 'block';
-            break;
-		case 6:
-			document.getElementById('page6img').src = toImgSrc(choice);
-            document.getElementById('p3dotd').disabled = false;
-            document.getElementById('p4dotd').disabled = false;
-            document.getElementById('p5dotd').disabled = false;
-            document.getElementById('ins1').innerHTML = sanitize(document.getElementById('q1').value.trim());
-            document.getElementById('ins2').innerHTML = sanitize(document.getElementById('q2').value.trim());
-            document.getElementById('ins3').innerHTML = sanitize(document.getElementById('q3').value.trim());
-			document.getElementById('keybonk').style.display = 'none';
-			document.getElementById('btnshare').disabled = !canPostStory();
-			break;
-		case 7:
-			if(!readyToSend)
-				locationHash = 6;
-			else {
-				postStory();
-				readyToSend = false;
-			}
-			break;
-		default:
-			console.warn('BAD PAGE');
-			document.getElementById('keybonk').style.display = 'none';
-			break;
-	}
-}
-
-function page1imgClick(x) {
-	choice = selectedOptions[x];
-    if(choice in allData)
-        data = allData[choice];
-    else {
-        console.warn('No data for '+choice);
-        data = {
-            'name': 'Animal name',
-            'fact': 'An interesting fact about this animal in a short sentence.'
-        };
-    }
-    document.getElementById('p2name').innerHTML = data['name'];
-    document.getElementById('p6name').innerHTML = data['name'];
-    document.getElementById('p2fact').innerHTML = data['fact'];
-    document.getElementById('p6fact').innerHTML = data['fact'];
-	location.hash = 2;
-}
-
-function startCountdown() {
-    window.onmousedown = resetTimer;  // catches touchscreen presses as well      
-    window.ontouchstart = resetTimer; // catches touchscreen swipes as well      
-    window.ontouchmove = resetTimer;  // required by some devices 
-    window.onclick = resetTimer;      // catches touchpad clicks as well
-    window.onkeydown = resetTimer;   
-	
-	function updateCountdown() {
-		if(countdown!=null && countdown!=undefined) {
-			if(timeout>0) {
-				timeout = timeout - 1;
-				if(timeout<=30)
-					countdown.innerHTML = timeout;
-				else
-					countdown.innerHTML = '';
-				continueTimer();
-			}
-			else {
-				location.hash = 1;
-			}
-		}
-	}
-	function continueTimer() {
-		timeoutTimer = setTimeout(updateCountdown, 1000);
-	}
-	function resetTimer() {
-		clearTimeout(timeoutTimer);
-		if(countdown!=null && countdown!=undefined) {
-			timeout = 45;
-			countdown.innerHTML = '';
-			continueTimer();
-		}
-	}
-	resetTimer();
-}
-
-function canPostStory() {
-	return choice && data &&
-		document.getElementById('q1').value.trim() &&
-		document.getElementById('q2').value.trim() &&
-		document.getElementById('q3').value.trim();
-}
-
-function postStory() {
-	if(!readyToSend)
-		return;
-
-	document.getElementById('sending').style.display = 'block';
-	document.getElementById('finish').style.display = 'none';
-	document.getElementById('send-err').style.display = 'none';
-	
-	const xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange  = function() {
-		if(this.readyState != 4)
-			return;
-		if(this.status == 200) {
-			const resp = JSON.parse(this.responseText);
-			document.getElementById('storylink').href = resp['story'];
-			document.getElementById('qrcode').src = resp['qr'];
-			document.getElementById('sending').style.display = 'none';
-			document.getElementById('finish').style.display = 'block';
-		}
-		else {
-			console.error(this.status);
-			document.getElementById('sending').style.display = 'none';
-			document.getElementById('send-err').style.display = 'block';
-		}
-	}
-	
-	const q1 = encodeURIComponent(document.getElementById('q1').value.trim());
-	const q2 = encodeURIComponent(document.getElementById('q2').value.trim());
-	const q3 = encodeURIComponent(document.getElementById('q3').value.trim());
-	
-	xhttp.open('GET', `/post?obj=${choice}&q1=${q1}&q2=${q2}&q3=${q3}`);
-	xhttp.send();
-}
-
-function clickShare() {
-	if(canPostStory()) {
-		readyToSend = true;
-		location.hash = 7;
-	}
-}
-
-window.onhashchange = function() {
-	document.getElementById('page'+page).style.display = 'none';
-	if(location.hash.length>0)
-		page = parseInt(location.hash.replace('#',''));
-	else
-		page = 1;
-	if(page>1 && (!choice || !data)) {
-		location.hash = 1;
-		page = 1;
-	}
-	if(page<1 || page>7) page = 1;
-	const pageDiv = document.getElementById('page'+page);
-	pageDiv.style.display = 'block';
-	onPageEnter();
-	countdown = document.getElementById('countdown'+page);
-	startCountdown();
-}
-
-function applyTemplate(t) {
-	document.getElementById('temp-q1').innerHTML = t['q1'];
-	document.getElementById('temp-q2').innerHTML = t['q2'];
-	document.getElementById('temp-q3').innerHTML = t['q3'];
-	let s = t['story'];
-	s = s.replace('{{name}}', '<span id="p6name" class="ins"></span>');
-	s = s.replace('{{fact}}', '<span id="p6fact"></span>');
-	s = s.replace('{{q1}}', '<span id="ins1" class="ins"></span>');
-	s = s.replace('{{q2}}', '<span id="ins2" class="ins"></span>');
-	s = s.replace('{{q3}}', '<span id="ins3" class="ins"></span>');
-	document.getElementById('temp-story').innerHTML = s;
-}
-
-function init() {
-	keybonk = new Keybonk('keybonk');
-	fetch('words.json').then(resp => resp.json()).then(data => { wordFreqDB = data; });
-	
-	onhashchange()
-	document.addEventListener('selectionchange', updateKBSuggestions);
-	applyTemplate(storyTemplate);
-}
-
-</script>
+<title>Inspiration Station</title>
+<link rel="stylesheet" href="station.css">
+<link rel="stylesheet" href="keybonk.css">
+<script src="yeet.js"></script>
+<script src="keybonk.js"></script>
+<!-- <script src="data.js"></script> -->
+<script src="station.js"></script>
 </head>
-<body onload="init()">
-<h1>Story Inspiration Station</h1>
-<div id="page1">
-    <p>Select an object to find out more</p>
-    <div><img id="page1img0" onclick="page1imgClick(0)" /><img id="page1img1" onclick="page1imgClick(1)" /><img id="page1img2" onclick="page1imgClick(2)" /></div>
-    <div style="margin-top:25px"><input type="button" onclick="rerollOptions()" value="Reroll" /></div>
+<body onload="init()"><div id="content">
+
+<img src="leverBase.png" style="position:absolute;user-select:none;top:0;left:1200px" draggable="false" />
+<div id="lever" class="yeet" style="width:996px;height:90px" data-yeet="{'x':810,'y':500,'a':-45}"><img src="leverCropped.png" style="position:absolute;top:0;right:0" /></div>
+<div id="lever-click" onclick="pullLever()"></div>
+
+<div id="cab0" class="yeet cab" data-yeet="{'x':0,'y':-1400}"></div>
+<div id="cab1" class="yeet cab" data-yeet="{'x':400,'y':-1400}"></div>
+<div id="cab2" class="yeet cab" data-yeet="{'x':800,'y':-1400}"></div>
+<div id="cab-labels">
+	<div class="gui gui-label" style="width:500px;top:750px;left:350px">Tap an object to find out more</div>
+	<div class="gui gui-label" style="width:400px;top:750px;left:1300px">Pull the lever for more objects</div>
 </div>
-<div id="page2" style="display:none">
-    <div class="limg"><img id="page2img" /></div>
-    <div class="rbox">
-        <p id="p2name" style="font-size:28px;font-weight:bold;color:#fff">Animal Name</p>
-        <p id="p2fact" style="font-style:italic;margin-bottom:50px">An interesting fact about this animal in a short sentence.</p>
-        <p><input type="button" onclick="location.hash=3" value="Start your story about this object" style="width:500px" /></p>
-    </div>
-    <div style="clear:both;padding-top:25px"><input class="back" type="button" onclick="location.hash=1" value="&#129128; Choose another" style="width:250px" />&nbsp;<label id="countdown2" class="countdown"></label></div>
+
+<div id="door0" class="door-box" style="left:35px">
+	<img id="door-obj0" class="door-obj" draggable="false" onclick="openObject(0)" />
+	<div id="door-img0" class="yeet door-img" data-yeet="{'x':0,'y':0}"></div>
 </div>
-<div id="page3" style="display:none">
-    <div class="limg"><img id="page3img" /></div>
-    <div class="rbox">
-        <p style="font-size:12pt">Answer three questions to inspire a story.</p>
-        <p><input id="p3dot1" class="dot now" type="button" onclick="" value="1" /><input id="p3dot2" class="dot" type="button" onclick="location.hash=4" value="2" disabled /><input id="p3dot3" class="dot" type="button" onclick="location.hash=5" value="3" disabled /><input id="p3dotd" type="button" onclick="location.hash=6" value="Done" disabled /></p>
-        <p id="temp-q1" style="font-style:italic"></p>
-        <textarea id="q1" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
-        <div style="float:right"><p><input class="back" type="button" onclick="location.hash=2" value="&#129128; Back" style="margin-right:25px"/><input type="button" onclick="location.hash=4" value="Next" /></p></div>
-    </div>
-    <div style="clear:both;padding-top:25px"><input class="back" type="button" onclick="location.hash=1" value="&#10006; Start over" style="width:250px" />&nbsp;<label id="countdown3" class="countdown"></label></div>
+<div id="door1" class="door-box" style="left:435px">
+	<img id="door-obj1" class="door-obj" draggable="false" onclick="openObject(1)" />
+	<div id="door-img1" class="yeet door-img" data-yeet="{'x':0,'y':0}"></div>
 </div>
-<div id="page4" style="display:none">
-    <div class="limg"><img id="page4img" /></div>
-    <div class="rbox">
-        <p style="font-size:12pt">Answer three questions to inspire a story.</p>
-        <p><input id="p4dot1" class="dot" type="button" onclick="location.hash=3" value="1" /><input id="p4dot2" class="dot now" type="button" onclick="" value="2" /><input id="p4dot3" class="dot" type="button" onclick="location.hash=5" value="3" disabled /><input id="p4dotd" type="button" onclick="location.hash=6" value="Done" disabled /></p>
-        <p id="temp-q2" style="font-style:italic"></p>
-        <textarea id="q2" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
-        <div style="float:right"><p><input class="back" type="button" onclick="location.hash=3" value="&#129128; Back" style="margin-right:25px"/><input type="button" onclick="location.hash=5" value="Next" /></p></div>
-    </div>
-    <div style="clear:both;padding-top:25px"><input class="back" type="button" onclick="location.hash=1" value="&#10006; Start over" style="width:250px" />&nbsp;<label id="countdown4" class="countdown"></label></div>
+<div id="door2" class="door-box" style="left:835px">
+	<img id="door-obj2" class="door-obj" draggable="false" onclick="openObject(2)" />
+	<div id="door-img2" class="yeet door-img" data-yeet="{'x':0,'y':0}"></div>
 </div>
-<div id="page5" style="display:none">
-    <div class="limg"><img id="page5img" /></div>
-    <div class="rbox">
-        <p style="font-size:12pt">Answer three questions to inspire a story.</p>
-        <p><input id="p5dot1" class="dot" type="button" onclick="location.hash=3" value="1" /><input id="p5dot2" class="dot" type="button" onclick="location.hash=4" value="2" /><input id="p5dot3" class="dot now" type="button" onclick="" value="3" /><input id="p5dotd" type="button" onclick="location.hash=6" value="Done" disabled /></p>
-        <p id="temp-q3" style="font-style:italic"></p>
-        <textarea id="q3" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
-        <div style="float:right"><p><input class="back" type="button" onclick="location.hash=4" value="&#129128; Back" style="margin-right:25px"/><input type="button" onclick="location.hash=6" value="Next" /></p></div>
-    </div>
-    <div style="clear:both;padding-top:25px"><input class="back" type="button" onclick="location.hash=1" value="&#10006; Start over" style="width:250px" />&nbsp;<label id="countdown5" class="countdown"></label></div>
+
+<div id="object-main">
+	<img id="wall-left" src="wall_left.jpg" class="yeet wall" data-yeet="{'x':0,'y':0}" draggable="false" />
+	<img id="wall-right" src="wall_right.jpg" class="yeet wall" data-yeet="{'x':1140,'y':0}" draggable="false" />
+	<img id="object-cover" class="yeet" data-yeet="{'x':60,'y':0}" draggable="false"/>
 </div>
-<div id="page6" style="display:none">
-    <div class="limg"><img id="page6img" /></div>
-    <div class="rbox done">
-        <p style="font-weight:bold;color:#000">Your story inspiration:</p>
-        <div id="temp-story" class="story"></div>
-        <p><input class="back" type="button" onclick="location.hash=5" value="&#129128; Change" style="width:180px;margin-right:25px"/><input id="btnshare" type="button" onclick="clickShare()" value="Share" /></p>
-    </div>
-    <div style="clear:both;padding-top:25px"><input class="back" type="button" onclick="location.hash=1" value="&#10006; Start over" style="width:250px" />&nbsp;<label id="countdown6" class="countdown"></label></div>
-</div>
-<div id="page7" style="display:none">
-	<div id="sending" class="finish">
-		<p>Connecting...</p>
+
+<video id="object-video" width="1080" height="1080" loop onloadeddata="videoLoaded()"></video>
+
+<div id="ui-page-open" class="page">
+	<div class="gui gui-pane">
+		<h1 id="open-name">Janus Headdress</h1>
+		<p id="open-fact">Performing rituals whilst wearing headdresses like this is believed to connect people with the spirits of their ancestors.</p>
+		<p class="b">Do you want to start your story with this object?</p>
+		<div class="control-bar"><input type="button" value="YES" onclick="flipPage('q1')" /><div style="flex-grow:1;text-align:right"><label id="countdown-open" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="NO" /></div></div>
 	</div>
-    <div id="finish" class="finish" style="display:none">
-		<p>Your story has been sent!<br/>Use QR code below to share it with everyone.</p>
-		<p><a id="storylink" href="#1"><img id="qrcode" /></a></p>
+</div>
+
+<div id="ui-page-q1" class="page">
+	<div class="gui gui-pane">
+		<p class="b">Answer three questions to inspire a story...</p>
+		<div class="page-list"><input type="button" class="pg cur" value="1" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
+		<p id="q1-prompt" class="q">What do you see?</p>
+		<textarea id="q1" autocomplete="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
+		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('open')" /><input id="btnnext-q1" type="button" value="NEXT" onclick="flipPage('q2')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q1" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
 	</div>
-	<div id="send-err" class="finish" style="display:none">
-		<p>Oops! Something went wrong :(</p>
-		<p><input class="back" type="button" onclick="location.hash=6" value="&#129128; Back" style="width:180px;margin-right:25px"/></p>
+</div>
+
+<div id="ui-page-q2" class="page">
+	<div class="gui gui-pane">
+		<p class="b">Answer three questions to inspire a story...</p>
+		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg cur" value="2" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
+		<p id="q2-prompt" class="q">What do you notice?</p>
+		<textarea id="q2" autocomplete="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
+		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q1')" /><input id="btnnext-q2" type="button" value="NEXT" onclick="flipPage('q3')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q2" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
 	</div>
-    <div style="clear:both;padding-top:25px"><input class="back" type="button" onclick="location.hash=1" value="&#10006; Start over" style="width:250px" />&nbsp;<label id="countdown7" class="countdown"></label></div>
+</div>
+
+<div id="ui-page-q3" class="page">
+	<div class="gui gui-pane">
+		<p class="b">Answer three questions to inspire a story...</p>
+		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg cur" value="3" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
+		<p id="q3-prompt" class="q">What does it make you think or wonder?</p>
+		<textarea id="q3" autocomplete="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
+		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q2')" /><input id="btnnext-q3" type="button" value="NEXT" onclick="flipPage('done')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q3" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
+	</div>
+</div>
+
+<div id="ui-page-done" class="page">
+	<div class="gui gui-pane">
+		<p class="b">Answer three questions to inspire a story...</p>
+		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="cur" value="DONE" /></div>
+		<p class="q">Here&rsquo;s the story you&rsquo;ve begun:</p>
+		<div class="story"><p id="story-text">
+			<span id="ins-fact"></span>
+			It looks like <span id="ins-q1" class="ins"></span>. 
+			I noticed that <span id="ins-q2" class="ins"></span>. 
+			It made me think &ldquo;<span id="ins-q3" class="ins"></span>?&rdquo;
+			What do you see, notice, or wonder?
+		</p></div>
+		<p id="share-prompt" class="b">Share it so that others might be inspired<br/>or go back and change it?</p>
+		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q3')" /><input id="btnshare" type="button" value="SHARE" onclick="flipPage('confirm-share')" /><div style="flex-grow:1;text-align:right"><label id="countdown-done" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
+	</div>
+</div>
+
+<div id="ui-page-confirm-share" class="page">
+	<div class="gui gui-pane">
+		<p>Sharing creates a webpage with your story for you to share online and allows us to display
+		your story in the museum for other visitors. Your answers could also help people to discover other
+		objects like the one in your story.</p>
+		<p class="b">Do you still want share your story?</p>
+		<div class="control-bar"><input type="button" value="SHARE" onclick="flipPage('send')" /><div style="flex-grow:1;text-align:right"><label id="countdown-confirm-share" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="flipPage('done')" value="CANCEL" /></div></div>
+	</div>
+</div>
+
 </div>
 <div id="keybonk" class="keybonk"></div>
+<div id="click-block"></div>
 </body>
+</html>

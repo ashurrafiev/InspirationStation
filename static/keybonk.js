@@ -15,15 +15,22 @@ class Keybonk {
 		const word = this.target.value.slice(0, start).split(/\s+/).pop();
 		if(word.length>0) {
 			const kb = this;
-			const suggestions = wordFreqDB[word.toLowerCase()];
+			const lword = word.toLowerCase();
+			const key = lword.substring(0, 6); // use MAX_KEY from proc_words.py
+			const suggestions = wordFreqDB[key];
 			if(suggestions!==undefined) {
 				for(let i=0; i<suggestions.length; i++) {
 					let key = document.createElement('div');
 					key.classList.add('keybonk-suggest-item');
-					key.innerHTML = word+suggestions[i].slice(word.length);
+					const sug = suggestions[i];
+					if(!sug.toLowerCase().startsWith(lword))
+						continue;
+						
+					const sugEnd = sug.slice(word.length);
+					key.innerHTML = word+sugEnd;
 					
 					key.addEventListener('click', function() {
-						kb.typeCharacter(suggestions[i].slice(word.length)+' ');
+						kb.typeCharacter(sugEnd+' ');
 					});
 					
 					this.suggest.appendChild(key);
@@ -37,6 +44,8 @@ class Keybonk {
 			this.target.classList.remove('keybonk-target');
 		this.target = e;
 		this.target.classList.add('keybonk-target');
+		if(this.target.value=='')
+			if(this.onEmpty) this.onEmpty();
 		this.updateWordSuggestions();
 	}
 
@@ -49,6 +58,14 @@ class Keybonk {
 		}
 	}
 	
+	onEmpty() {
+		this.changeMode('shift');
+	}
+	
+	onEnter() {
+		kb.typeCharacter('\n');
+	}
+
 	trimSpace() {
 		if(this.target==undefined || this.target==null)
 			return;
@@ -108,7 +125,7 @@ class Keybonk {
 		else
 			key.classList.remove('keybonk-key-active');
 	}
-
+	
 	constructor(parentDiv, target, keyWidth=50, keyMargin=2) {
 		if(parentDiv==undefined)
 			parentDiv = 'keybonk';
@@ -170,7 +187,7 @@ class Keybonk {
 					key.addEventListener('click', function() {
 						kb.typeBackspace(target);
 						if(kb.target.value=='')
-							kb.changeMode('shift');
+							if(kb.onEmpty) kb.onEmpty();
 					});
 				}
 				
@@ -202,7 +219,7 @@ class Keybonk {
 					key.innerHTML = '&#x21B2;';
 					key.style.width = (keyWidth+keyWidth/2)+'px';
 					key.addEventListener('click', function() {
-						kb.typeCharacter('\n');
+						if(kb.onEnter) kb.onEnter();
 					});
 				}
 				
@@ -257,7 +274,7 @@ class Keybonk {
 			br.style.clear = 'both';
 			parentDiv.appendChild(br);
 		}
-		kb.changeMode('shift');
+		kb.changeMode('default');
 	}
 	
 }
