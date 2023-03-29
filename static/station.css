@@ -240,6 +240,9 @@ p.q {
 	font-size: 30px;
 	margin-bottom: 5px;
 }
+p.c {
+	text-align: center;
+}
 div.story {
 	font-family: 'Lora', serif;
 	font-size: 30px;
@@ -285,4 +288,12 @@ label.countdown {
 	background-color: #dfecf0;
 	border-radius: 5px;
 	animation: flash-countdown 1s linear infinite;
+}
+p.connect {
+	text-align: center;
+	margin: 50px 0px !important;
+}
+img#qrcode {
+	width: 400px;
+	height: 400px;
 }

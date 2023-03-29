@@ -31,10 +31,12 @@ class InspirationStation(object):
             data = {'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3}
             message = ''
             link = ''
+            blocked = False
         else:
             data = storydb.get_story(cfg, uid)
             if not data:
                 raise cherrypy.HTTPError(404)
+            blocked = (data['mod']=='block')
             message = urlencode(story_cfg['message'])
             link = f"{cfg['storyURL']}{uid}"
 
@@ -50,6 +52,7 @@ class InspirationStation(object):
         return template.render(
             story_template=story_template,
             data=data,
+            blocked=blocked,
             message=message,
             link=link
         )

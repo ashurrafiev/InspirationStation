@@ -59,7 +59,7 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg cur" value="1" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
 		<p id="q1-prompt" class="q">What do you see?</p>
-		<textarea id="q1" autocomplete="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
+		<textarea id="q1" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
 		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('open')" /><input id="btnnext-q1" type="button" value="NEXT" onclick="flipPage('q2')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q1" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
 	</div>
 </div>
@@ -69,7 +69,7 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg cur" value="2" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
 		<p id="q2-prompt" class="q">What do you notice?</p>
-		<textarea id="q2" autocomplete="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
+		<textarea id="q2" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
 		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q1')" /><input id="btnnext-q2" type="button" value="NEXT" onclick="flipPage('q3')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q2" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
 	</div>
 </div>
@@ -79,7 +79,7 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg cur" value="3" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
 		<p id="q3-prompt" class="q">What does it make you think or wonder?</p>
-		<textarea id="q3" autocomplete="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
+		<textarea id="q3" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
 		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q2')" /><input id="btnnext-q3" type="button" value="NEXT" onclick="flipPage('done')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q3" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
 	</div>
 </div>
@@ -108,6 +108,27 @@
 		objects like the one in your story.</p>
 		<p class="b">Do you still want share your story?</p>
 		<div class="control-bar"><input type="button" value="SHARE" onclick="flipPage('send')" /><div style="flex-grow:1;text-align:right"><label id="countdown-confirm-share" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="flipPage('done')" value="CANCEL" /></div></div>
+	</div>
+</div>
+
+<div id="ui-page-send" class="page">
+	<div class="gui gui-pane">
+		<p class="connect">Connecting...</p>
+	</div>
+</div>
+
+<div id="ui-page-send-err" class="page">
+	<div class="gui gui-pane">
+		<p class="connect">Oops! That didn't work.</p>
+		<div class="control-bar"><div style="flex-grow:1;text-align:right"><label id="countdown-send-err" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="flipPage('done')" value="CANCEL" /></div></div>
+	</div>
+</div>
+
+<div id="ui-page-qr" class="page">
+	<div class="gui gui-pane">
+		<p class="b">Point your phone camera at this code to open and share your story:</p>
+		<p class="connect"><a id="storylink" href="javascript:;"><img id="qrcode" /></a></p>
+		<div class="control-bar"><div style="flex-grow:1;text-align:right"><label id="countdown-qr" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="DONE" /></div></div>
 	</div>
 </div>
 

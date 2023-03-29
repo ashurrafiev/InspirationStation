@@ -1,130 +1,92 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i');
-body {
-	font-family: 'Open Sans', Verdana, Geneva, sans-serif;
-	background-color: #222;
-	color: #ddd;
-	font-size: 15pt;
-	padding: 0px;
-	margin: 80px;
-    margin-top: 0px;
-}
-h1 {
-    font-size: 22pt;
-    font-weight: normal;
-    color: #aaa;
-    margin: 0px -80px 50px -80px;
-    padding: 10px 80px;
-    background-color: #fff;
-    border-bottom: 2px solid #000;
-    box-shadow: 0px 0px 40px #aaa;
-    text-shadow: 2px 2px 5px #ddd;
-}
-img {
-	width: 300px;
-	height: 300px;
-	object-fit: cover;
-	margin-right: 25px;
-	border-radius: 25px;
-	border: 2px solid #fff;
-}
-div.limg {
-    float: left;
-}
-div.limg img {
-	width: 500px;
-	height: 500px;
-}
-div.rbox {
-    height: 500px;
-    width: 500px;
-    margin-left: 25px;
-    float: left;
-    position: relative;
-}
-div.rbox p {
-	user-select: none;
-}
-div.done {
-    color: #777;
-    width: 500px;
-    height: 500px;
-    background-color: #fff;
-	border-radius: 25px;
-	border: none;
-	
-	display:flex;
-	justify-content:center;
-	align-items:center;
-}
-div.done p {
-	user-select: text;
-}
-div.done div.inner {
-	width: 400px;
-	font-style: italic;
-    text-align: justify;
-}
-input[type=button] {
-	font: inherit;
+@font-face {
+	font-family: 'Open Sans';
+	src: url('OpenSans-Bold.ttf');
 	font-weight: bold;
-	width: 120px;
-    height: 50px;
-	color: #fff;
-	background-color: #f90;
-	border: 2px solid #f90;
-	border-radius: 25px;
-	cursor: pointer;
+	font-display: block;
 }
-input[type=button].back {
-    background-color: #aaa;
-	border: 2px solid #aaa;
+@font-face {
+	font-family: 'Open Sans';
+	src: url('OpenSans-Regular.ttf');
+	font-weight: normal;
+	font-display: block;
 }
-input[type=button].dot {
-    width: 50px;
-    margin-right: 10px;
+@font-face {
+	font-family: 'Lora';
+	src: url('Lora-Bold.ttf');
+	font-weight: bold;
+	font-display: block;
 }
-input[type=button].now {
-    color: #000;
-    background-color: #fff;
-	border: 2px solid #fff;
-}
-input[type=button]:disabled {
-    background-color: #222;
-	cursor: default;
-}
-div.story {
-    height: 300px;
-    font-style: italic;
-    text-align: justify;
-}
-span.ins {
-    color: #f90;
-}
-textarea {
-    font: inherit;
-    color: #fff;
-    width: 490px;
-    height: 120px;
-    padding: 10px 20px;
-    background-color: #000;
-    border: 2px solid #ddd;
-    border-radius: 25px;
-    resize: none;
-    outline: none;
-    box-shadow: none;
-}
-textarea:focus {
-    border: 2px solid #f90;
-}
-label.countdown {
-	margin-left: 20px;
-	color: #fff;
-}
-div#page1 {
-	position:relative;
-	width:1000px;
-	left:50%;
-	margin-left:-500px;
-	text-align:center;
+@font-face {
+	font-family: 'Lora';
+	src: url('Lora-Regular.ttf');
+	font-weight: normal;
+	font-display: block;
 }
 
+body {
+	font-family: 'Open Sans', sans-serif;
+	color: #444;
+	font-size: 18px;
+	background-color: #bbd0d5;
+	margin: 0;
+}
+div.title {
+	display: flex;
+	align-items: center;
+	background-color: #fff;
+}
+h1 {
+	flex-grow: 1;
+	font-size: 36px;
+	font-weight: normal;
+	color: #000;
+	margin: 0;
+	padding: 20px;
+}
+img#logo {
+	height: 100px;
+	width: auto;
+	margin: 5px 10px;
+}
+div.story-wrap {
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	flex-wrap: wrap;
+	padding: 20px;
+	gap: 20px;
+}
+img#obj {
+	background-color: #000;
+	border-radius: 10px;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+	
+    width: 600px;
+	height: auto;
+	box-sizing: border-box;
+	overflow: hidden;
+	object-fit: cover;
+}
+div.story {
+	font-family: 'Lora', serif;
+	font-size: 30px;
+	font-weight: normal;
+	color: #000;
+	background-color: #dfecf0;
+    padding: 20px 30px;
+	border-radius: 10px;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+	
+    width: 600px;
+	box-sizing: border-box;
+	
+	/*display: flex;
+	align-items: center;*/
+	overflow: hidden;
+}
+div.story > p {
+	margin: 0;
+}
+div.story span.ins {
+	font-weight: bold;
+}

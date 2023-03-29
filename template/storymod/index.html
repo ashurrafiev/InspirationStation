@@ -14,10 +14,10 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 <form>
 <div class="blk bar">
 <div><b>Filter by status:</b>&ensp;
-	<label><input type="checkbox" name="show" value="block" {{ 'checked' if 'block' in show }} />block</label>
-	<label><input type="checkbox" name="show" value="new" {{ 'checked' if 'new' in show }} />new</label>
-	<label><input type="checkbox" name="show" value="ok" {{ 'checked' if 'ok' in show }} />ok</label>
-	<label><input type="checkbox" name="show" value="star" {{ 'checked' if 'star' in show }} />star</label>
+{%- for mod in mod_options %}
+	<label><input id="show-{{ mod }}" type="checkbox" onclick="checkShowAll()" name="show" value="{{ mod }}" {{ 'checked' if mod in show }} />{{ mod }}</label>
+{%- endfor %}
+	<label><input id="show-all" type="checkbox" onclick="setShowAll()" {{ 'checked' if show|length==mod_options|length }} />all</label>
 </div>
 <div>Newest first</div>
 <div><b>Items per page:</b>&ensp;
@@ -43,10 +43,9 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 	<div><input type="button" value="Delete selected" disabled /></div>
 	<div style="flex-grow:1"><input type="button" value="Create new" onclick="location.href='{{ '/edit' | app }}?uid=new';" /></div>
 	<div><b>Apply to all selected items:</b>&ensp;
-		<label><input type="radio" form="form-setmod-sel" name="status" value="block" />block</label>
-		<label><input type="radio" form="form-setmod-sel" name="status" value="new" checked />new</label>
-		<label><input type="radio" form="form-setmod-sel" name="status" value="ok" />ok</label>
-		<label><input type="radio" form="form-setmod-sel" name="status" value="star" />star</label>
+	{%- for mod in mod_options %}
+		<label><input type="radio" form="form-setmod-sel" name="status" value="{{ mod }}" {{ 'checked' if mod=='new' }} />{{ mod }}</label>
+	{%- endfor %}
 	</div>
 	<div>
 	<form id="form-setmod-sel" action="{{ '/setmod' | app }}" method="post" onsubmit="return prepareSelected('setmod-sel', confirmSetMod)" >

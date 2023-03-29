@@ -27,7 +27,9 @@ function sanitize(s) {
 function updatePreview() {
 	let ref = '/story/?uid=preview';
 	const selObj = document.getElementById('obj');
-	document.getElementById('quote-obj').innerHTML = selObj.options[selObj.selectedIndex].text;
+	const quoteObj = document.getElementById('quote-obj');
+	if(quoteObj)
+		quoteObj.innerHTML = selObj.options[selObj.selectedIndex].text;
 	ref += '&obj=' + encodeURIComponent(selObj.value);
 	
 	function updateQ(index) {

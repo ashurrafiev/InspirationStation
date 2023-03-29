@@ -18,12 +18,13 @@
 	{%- if story[1] in obj_data -%}{%- set name -%}
 		<b>{{ obj_data[story[1]]['name']|e }}</b>
 	{%- endset -%}{%- else -%}{%- set name -%}
-		<span class="err"><b>Deleted Object:</b> {{ story[1]|e }}</span>
+		<span class="err"><b>{{ story[1]|e }}</b></span>
 	{%- endset -%}{%- endif -%}
 	{%- set fact='[...]' -%}
 	{%- set q1 -%}<span class="ins">{{ story[2]|e }}</span>{%- endset -%}
 	{%- set q2 -%}<span class="ins">{{ story[3]|e }}</span>{%- endset -%}
 	{%- set q3 -%}<span class="ins">{{ story[4]|e }}</span>{%- endset -%}
+	{{ name }}<br/>
 	{%- include story_template -%}
 </div>
 <div class="bar">
@@ -33,11 +34,10 @@
 	<div><span class="info">Reviewed by <b>{{ story[8] }}</b> on {{ story[9].replace(microsecond=0) }}</span></div>
 {%- endif -%}
 	<div><b>Status:</b>&ensp;
-		<label><input type="radio" name="status-{{ id }}" value="block" {{ 'checked' if 'block'==story[6] }} />block</label>
-		<label><input type="radio" name="status-{{ id }}" value="new" {{ 'checked' if 'new'==story[6] }} />new</label>
-		<label><input type="radio" name="status-{{ id }}" value="ok" {{ 'checked' if 'ok'==story[6] }} />ok</label>
-		<label><input type="radio" name="status-{{ id }}" value="star" {{ 'checked' if 'star'==story[6] }} />star</label>
+	{%- for mod in mod_options %}
+		<label><input type="radio" name="status-{{ id }}" value="{{ mod }}" {{ 'checked' if mod==story[6] }} />{{ mod }}</label>
+	{%- endfor %}
 	</div>
-	<div><input type="button" value="Apply" onclick="requestSetMod('{{ id }}')" ></div>
+	<div><input id="apply-{{ id }}" type="button" value="Apply" onclick="requestSetMod('{{ id }}')" ></div>
 </div>
 </div>

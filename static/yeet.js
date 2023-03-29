@@ -3,6 +3,7 @@ class Yeet {
 	static #startTime;
 	static #prevTime;
 	static #animReq;
+	static #list;
 	
 	static initElement(e, data) {
 		const yeet = {};
@@ -29,11 +30,12 @@ class Yeet {
 		Yeet.apply(e);
 	}
 	
-	static initElements() {
-		const list = document.getElementsByClassName('yeet');
-		for(let i=0; i<list.length; i++) {
-			const e = list.item(i);
-			Yeet.initElement(e, e.dataset.yeet);
+	static initElements(force=false) {
+		Yeet.#list = document.getElementsByClassName('yeet');
+		for(let i=0; i<Yeet.#list.length; i++) {
+			const e = Yeet.#list.item(i);
+			if(force || !e.hasOwnProperty('yeet'))
+				Yeet.initElement(e, e.dataset.yeet);
 		}
 	}
 	
@@ -59,9 +61,8 @@ class Yeet {
 		const dt = (time-Yeet.#prevTime)/1000;
 		Yeet.#prevTime = time;
 		
-		const list = document.getElementsByClassName('yeet');
-		for(let i=0; i<list.length; i++) {
-			const e = list.item(i);
+		for(let i=0; i<Yeet.#list.length; i++) {
+			const e = Yeet.#list.item(i);
 			if(e.yeet.func instanceof Function)
 				e.yeet.func(e, dt, t);
 			else

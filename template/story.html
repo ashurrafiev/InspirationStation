@@ -2,24 +2,32 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Story Inspiration Station</title>
+<title>Inspiration Station</title>
 <link rel="stylesheet" href="/static/story.css">
 <link rel="stylesheet" href="/static/sharingbuttons.css" />
 </head>
 <body>
-<h1>Story Inspiration Station</h1>
-<div>
-    <div class="limg"><img src="/media/{{ data.obj }}.jpg" /></div>
-    <div class="rbox done"><div class="inner">
-		{%- set name -%}<span class="ins">{{ data.name|e }}</span>{%- endset -%}
-		{%- set fact=data.fact|e -%}
-		{%- set q1 -%}<span class="ins">{{ data.q1|e }}</span>{%- endset -%}
-		{%- set q2 -%}<span class="ins">{{ data.q2|e }}</span>{%- endset -%}
-		{%- set q3 -%}<span class="ins">{{ data.q3|e }}</span>{%- endset -%}
-        <p>{%- include story_template -%}</p>
-		<p style="text-align: right">&nbsp;</p>
-    </div></div>
+<div class="title">
+<img id="logo" src="/static/museum_logo.jpg" />
+<h1>{{ data.name|e }} inspired me...</h1>
+</div>
+<div class="story-wrap">
+<img id="obj" src="/media/{{ data.obj }}.jpg" />
+<div class="story">
+{%- if blocked -%}
+	This story has been blocked by a moderator.
+{%- else -%}
+	{%- set name -%}<span class="ins">{{ data.name|e }}</span>{%- endset -%}
+	{%- set fact=data.fact|e -%}
+	{%- set q1 -%}<span class="ins">{{ data.q1|e }}</span>{%- endset -%}
+	{%- set q2 -%}<span class="ins">{{ data.q2|e }}</span>{%- endset -%}
+	{%- set q3 -%}<span class="ins">{{ data.q3|e }}</span>{%- endset -%}
+	<p>{%- include story_template -%}</p>
+{%- endif -%}
+</div>
+</div>
 
+{%- if not blocked -%}
 <div class="share-container">
 Your <b>AdBlock</b> blocks social media sharing buttons.
 <div id="sharing-buttons">
@@ -142,5 +150,5 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 </div>
 </div>
 
-</div>
+{%- endif -%}
 </body>

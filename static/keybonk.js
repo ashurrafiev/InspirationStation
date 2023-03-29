@@ -182,7 +182,7 @@ class Keybonk {
 				}
 				
 				else if(row==2 && i==layout[row].length-1) { // backspace
-					key.innerHTML = '&#129044;';
+					key.innerHTML = '&larr;';
 					key.style.width = (keyWidth+keyWidth/2)+'px';
 					key.addEventListener('click', function() {
 						kb.typeBackspace(target);

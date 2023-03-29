@@ -7,6 +7,21 @@
 <link rel="stylesheet" href="/static/storymod/basic.css">
 <script>
 
+const statusOptions = ['{{ mod_options|join('\', \'') }}'];
+
+function checkShowAll() {
+	let all = true;
+	for(let i=0; i<statusOptions.length; i++)
+		all = all && document.getElementById('show-'+statusOptions[i]).checked;
+	document.getElementById('show-all').checked = all;
+}
+
+function setShowAll() {
+	for(let i=0; i<statusOptions.length; i++)
+		document.getElementById('show-'+statusOptions[i]).checked = true;
+	checkShowAll();
+}
+
 function selectNone() {
 	const sel = document.getElementsByClassName('storysel');
 	for(let i=0; i<sel.length; i++) {
@@ -59,6 +74,7 @@ function requestSetMod(uid) {
 	const mod = document.querySelector(`input[name="status-${uid}"]:checked`).value;
 	xhttp.open('GET', `{{ '/setmod' | app }}?sel=${uid}&status=${mod}&fetch=1`);
 	xhttp.send();
+	document.getElementById('apply-'+uid).disabled = true;
 }
 
 function showBlocked(id) {

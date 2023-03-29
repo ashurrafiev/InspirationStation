@@ -60,7 +60,7 @@ def update_story(cfg, uid, user, data):
 
 def get_story(cfg, uid):
     query = """
-        SELECT "obj", "q1", "q2", "q3",
+        SELECT "obj", "q1", "q2", "q3", "mod",
             extract(epoch from "time")::integer
         FROM "stories"
         WHERE "uid"=%s
@@ -71,7 +71,7 @@ def get_story(cfg, uid):
                 cursor.execute(query, (uid,))
                 row = cursor.fetchone()
                 if row:
-                    return dict(zip(['obj', 'q1', 'q2', 'q3', 'time'], row))
+                    return dict(zip(['obj', 'q1', 'q2', 'q3', 'mod', 'time'], row))
                 else:
                     return None
     except PostgresError as e:
@@ -107,8 +107,8 @@ def list_stories(cfg, sel, p=0, lim=100, count_only=False):
     """
     query_total = """
         SELECT
-            SUM(CASE WHEN "mod" = 'new' THEN 1 ELSE 0 END) AS "new",
-            SUM(CASE WHEN "mod" IN %(sel)s THEN 1 ELSE 0 END) AS "sel",
+            COALESCE(SUM(CASE WHEN "mod" = 'new' THEN 1 ELSE 0 END), 0) AS "new",
+            COALESCE(SUM(CASE WHEN "mod" IN %(sel)s THEN 1 ELSE 0 END), 0) AS "sel",
             COUNT(*) AS "total"
         FROM "stories"
     """

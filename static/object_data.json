@@ -1,34 +1,40 @@
 {
     "2-ntomo-mask": {
         "name": "N’tomo Mask",
-        "fact": "Alpacas are kept in herds that graze on the level heights of the Andes at an altitude of 3,500 to 5,000 metres above sea level."
+        "fact": "This mask represents an ancient ancestor of the Bamana people of West Africa. It is a symbol of protection.",
+		"collectionNumber": "NEWHG : 1984.0002"
     },
     "7-naga-hat": {
         "name": "Naga Hat",
-        "fact": "It is well adapted to living in cold environments, and is best known for its thick, warm fur that is also used as camouflage."
+        "fact": "Hats like this one were worn by the Naga peoples of north east India and north west Myanmar. They often symbolised power and authority.",
+		"collectionNumber": "NEWHM : D193"
     },
     "9-naga-axe": {
         "name": "Naga Axe",
-        "fact": "It is the most widely distributed species of owl in the world and one of the most widespread of all species of birds."
+        "fact": "Special axes were used by the Naga peoples of north east India and north west Myanmar. The red and black brush at the end of the axe is made of dyed goat’s hair.",
+		"collectionNumber": "NEWHM : D640"
     },
     "11-devil-fish-bag": {
         "name": "Devilfish Bag / Octopus shot",
-        "fact": "Its range has increased alongside human expansion, having been introduced to Australia, where it is considered harmful to native mammals and bird populations"
+        "fact": "Pouches like these were known as “Octopus bags” to indigenous peoples of the Pacific North West. The octopus featured in many of their local myths and were also known as “Devilfish”.",
+		"collectionNumber": "NEWHM : G025"
     },
     "17-spirit-mask": {
         "name": "NW America Mask",
-        "fact": "Huskies have continued to be used in sled-dog racing and as a means of essential transportation in rural communities."
+        "fact": "The indigenous people of the Pacific North West use masks like this to make the supernatural world visible."
     },
     "artemis-statue": {
         "name": "Artemis Statue",
-        "fact": "Like all lemurs, it is native to Madagascar. It occurs only in the rainforests of Masoala, in the northeast of the island."
+        "fact": "Artermis was revered as a fertility diety in the Greek city of Ephesus instead of the goddess of hunting."
     },
     "janus-headdress": {
         "name": "Janus Headdress",
-        "fact": "Performing rituals whilst wearing headdresses like this is believed to connect people with the spirits of their ancestors."
+        "fact": "Performing rituals whilst wearing headdresses like this is believed to connect people with the spirits of their ancestors.",
+		"collectionNumber": "NEWHM : A0680"
     },
     "leopard-1080": {
         "name": "Leopard Head",
-        "fact": "Due to their adaptability, racoons have extended their range to urban areas, where some homeowners consider them to be pests."
+        "fact": "",
+		"collectionNumber": "M0645"
     }
 }

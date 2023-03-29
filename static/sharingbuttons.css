@@ -1,11 +1,12 @@
 .share-container {
   clear: both;
   top: 25px;
-  font-size: 10pt;
+  font-size: 20px;
   text-align: center;
   position: relative;
   padding-bottom:80px;
-  background-color: #222;
+  background-color: #bbd0d5;
+  color: #000;
 }
 #sharing-buttons {
   position: absolute;
@@ -16,7 +17,7 @@
 }
 .share-wrap {
   display: inline-block;
-  color: #aaa;
+  color: #000;
   text-align: center;
   width: 5.5em;
   overflow: visible;

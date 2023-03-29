@@ -83,20 +83,21 @@ class StoryMod(object):
         cherrypy.response.cookie['lim']['SameSite'] = 'Strict'
 
         # validating show, set cookie
+        mod_options = storydb.mod_options()
         if show and type(show) is str:
             show = [show]
         if not show and 'show' in cherrypy.request.cookie:
             show = cherrypy.request.cookie['show'].value.split('+')
         if show:
-            show = [s for s in show if s in storydb.mod_options()]
+            show = [s for s in show if s in mod_options]
         if not show:
-            show = storydb.mod_options()
+            show = mod_options
         cherrypy.response.cookie['show'] = '+'.join(show)
         cherrypy.response.cookie['show']['SameSite'] = 'Strict'
 
         obj_data = load_object_data()
         counts, stories = storydb.list_stories(cfg, sel=show, p=p, lim=lim)
-        total_pages = (counts['sel']+lim-1) // lim
+        total_pages = (int(counts['sel'])+lim-1) // lim
 
         story_template = self.tenv.from_string(load_story_template()['story'])
         template = self.tenv.get_template("index.html")
@@ -106,6 +107,7 @@ class StoryMod(object):
             stories=stories,
             obj_data=obj_data,
             show=show,
+            mod_options=mod_options,
             counts=counts,
             page=p,
             total_pages=total_pages,
@@ -135,6 +137,7 @@ class StoryMod(object):
             story_template=story_template,
             story=story,
             obj_data=obj_data,
+            mod_options=storydb.mod_options(),
             next_page=p
         )
 
@@ -183,9 +186,8 @@ class StoryMod(object):
         if status not in storydb.mod_options():
            raise cherrypy.HTTPError(400)
 
-        data = {'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3}
+        data = {'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3, 'mod': status}
         if new:
-            data['mod'] = status
             storydb.post_story(cfg, user, cherrypy.request.remote.ip, data)
         else:
             storydb.update_story(cfg, uid, user, data)
@@ -209,7 +211,8 @@ class StoryMod(object):
             return template.render(
                 story_template=story_template,
                 story=story,
-                obj_data=obj_data
+                obj_data=obj_data,
+                mod_options=storydb.mod_options()
             )
         else:
             # validating p

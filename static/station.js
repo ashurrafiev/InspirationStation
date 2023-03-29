@@ -9,6 +9,7 @@ const timeoutLimit = 45;
 var objectIds = [];
 
 var selectedSlot;
+var selectedData;
 var uiPage = null;
 var pageId;
 var objectUIReady = false;
@@ -43,6 +44,11 @@ function rerollOptions() {
 }
 
 function pullLever() {
+	if(window.loadedData) {
+		window.allData = window.loadedData;
+		window.allOptions = Object.keys(window.allData);
+		window.loadedData = undefined;
+	}
 	document.getElementById('click-block').style.display = 'block';
 	document.getElementById('cab-labels').style.display = 'none';
 	
@@ -118,7 +124,12 @@ function videoLoaded() {
 }
 
 function openObject(slot) {
+	const objectId = objectIds[slot];
+	if(!(objectId in allData))
+		return;
 	selectedSlot = slot;
+	selectedData = allData[objectId];
+	
 	document.getElementById('object-main').style.display = 'block';
 	document.getElementById('lever-click').style.display = 'none';
 	document.getElementById('cab-labels').style.display = 'none';
@@ -139,7 +150,6 @@ function openObject(slot) {
 	wallRight.yeet.y = 370;
 	Yeet.tween(wallRight, {'x':1140,'y':0,'sx':1,'sy':1}, {'duration':0.4, 'easing':Yeet.easeIn, 'p':5});
 	
-	const objectId = objectIds[slot];
 	const video = document.getElementById('object-video');
 	video.style.display = 'none';
 	objectUIReady = false;
@@ -161,8 +171,8 @@ function openObject(slot) {
 		
 		uiPage = document.getElementById('ui-page-open');
 		uiPage.style.display = 'block';
-		document.getElementById('open-name').innerHTML = allData[objectId]['name'];
-		document.getElementById('open-fact').innerHTML = allData[objectId]['fact'];
+		document.getElementById('open-name').innerHTML = selectedData['name'];
+		document.getElementById('open-fact').innerHTML = selectedData['fact'];
 		
 		Yeet.stop();
 		countdown = document.getElementById('countdown-open');
@@ -253,11 +263,10 @@ function flipPage(id) {
 		document.getElementById('keybonk').style.display = 'none';
 		
 	if(id=='done') {
-		const data = allData[objectIds[selectedSlot]];
 		const insName = document.getElementById('ins-name');
-		if(insName) insName.innerHTML = data['name'];
+		if(insName) insName.innerHTML = selectedData['name'];
 		const insFact = document.getElementById('ins-fact');
-		if(insFact) insFact.innerHTML = data['fact'];
+		if(insFact) insFact.innerHTML = selectedData['fact'];
 		
 		let sharePrompt = 'Share it so that others might be inspired<br/>or go back and change it?';
 		let canSend = insertAnswer('q1') & insertAnswer('q2') & insertAnswer('q3');
@@ -272,9 +281,30 @@ function flipPage(id) {
 		document.getElementById('btnshare').disabled = !canSend;
 		document.getElementById('share-prompt').innerHTML = sharePrompt;
 	}
+	else if(id=='send') {
+		postStory();
+	}
 	
 	countdown = document.getElementById('countdown-'+id);
 	startCountdown();
+}
+
+function postStory() {
+	const objectId = objectIds[selectedSlot];
+	const q1 = encodeURIComponent(document.getElementById('q1').value.trim());
+	const q2 = encodeURIComponent(document.getElementById('q2').value.trim());
+	const q3 = encodeURIComponent(document.getElementById('q3').value.trim());
+	
+	const abortc = new AbortController();
+	setTimeout(() => abortc.abort(), 3000)
+	const url = `/post?obj=${objectId}&q1=${q1}&q2=${q2}&q3=${q3}`;
+	fetch(url, { signal: abortc.signal }).then(resp => resp.json()).then(d => {
+		document.getElementById('storylink').href = d['story'];
+		document.getElementById('qrcode').src = d['qr'];
+		flipPage('qr');
+	}).catch(e => {
+		flipPage('send-err');
+	});
 }
 
 function startCountdown() {
@@ -333,13 +363,13 @@ function loadData() {
 	fetch('story_template.json').then(resp => resp.json()).then(d => {
 		applyTemplate(d);
 		fetch('object_data.json').then(resp => resp.json()).then(d => {
-			window.allData = d;
-			window.allOptions = Object.keys(allData);
+			window.loadedData = d;
 			const content = document.getElementById('content');
 			if(content.style.display!='block') {
 				content.style.display = 'block';
 				pullLever();
 			}
+			setTimeout(loadData, 3600000);
 		});
 	});
 }
