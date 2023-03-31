@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="station.css">
 <link rel="stylesheet" href="keybonk.css">
 <script src="yeet.js"></script>
+<script src="drag.js"></script>
 <script src="keybonk.js"></script>
 <!-- <script src="data.js"></script> -->
 <script src="station.js"></script>
@@ -14,7 +15,8 @@
 
 <img src="leverBase.png" style="position:absolute;user-select:none;top:0;left:1200px" draggable="false" />
 <div id="lever" class="yeet" style="width:996px;height:90px" data-yeet="{'x':810,'y':500,'a':-45}"><img src="leverCropped.png" style="position:absolute;top:0;right:0" /></div>
-<div id="lever-click" onclick="pullLever()"></div>
+<div id="lever-click"></div>
+<div id="lever-turn-parent"><div id="lever-turn"></div></div>
 
 <div id="cab0" class="yeet cab" data-yeet="{'x':0,'y':-1400}"></div>
 <div id="cab1" class="yeet cab" data-yeet="{'x':400,'y':-1400}"></div>
@@ -54,13 +56,23 @@
 	</div>
 </div>
 
+<div id="ui-page-confirm-close" class="page">
+	<div class="gui gui-pane">
+		<p class="b">Are you sure you want to abandon your story?<br/>Other people might be inspired by it...</p>
+		<p>Press NO to keep editing.</p>
+		<p>Press YES to exit to the object selection.</p>
+		<div class="control-bar"><input type="button" value="NO" onclick="modalReturn()" /><div style="flex-grow:1;text-align:right"><label id="countdown-confirm-close" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="YES" /></div></div>
+	</div>
+</div>
+
 <div id="ui-page-q1" class="page">
 	<div class="gui gui-pane">
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg cur" value="1" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
 		<p id="q1-prompt" class="q">What do you see?</p>
-		<textarea id="q1" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
-		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('open')" /><input id="btnnext-q1" type="button" value="NEXT" onclick="flipPage('q2')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q1" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
+		<textarea id="q1" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="onUserInput()"></textarea>
+		<p id="char-count-q1" class="char-count"></p>
+		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('open')" /><input id="btnnext-q1" type="button" value="NEXT" onclick="flipPage('q2')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q1" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="confirmCloseObject()" value="CANCEL" /></div></div>
 	</div>
 </div>
 
@@ -69,8 +81,9 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg cur" value="2" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
 		<p id="q2-prompt" class="q">What do you notice?</p>
-		<textarea id="q2" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
-		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q1')" /><input id="btnnext-q2" type="button" value="NEXT" onclick="flipPage('q3')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q2" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
+		<textarea id="q2" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="onUserInput()"></textarea>
+		<p id="char-count-q2" class="char-count"></p>
+		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q1')" /><input id="btnnext-q2" type="button" value="NEXT" onclick="flipPage('q3')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q2" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="confirmCloseObject()" value="CANCEL" /></div></div>
 	</div>
 </div>
 
@@ -79,8 +92,9 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg cur" value="3" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
 		<p id="q3-prompt" class="q">What does it make you think or wonder?</p>
-		<textarea id="q3" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="updateKBSuggestions()"></textarea>
-		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q2')" /><input id="btnnext-q3" type="button" value="NEXT" onclick="flipPage('done')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q3" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
+		<textarea id="q3" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="onUserInput()"></textarea>
+		<p id="char-count-q3" class="char-count"></p>
+		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q2')" /><input id="btnnext-q3" type="button" value="NEXT" onclick="flipPage('done')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q3" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="confirmCloseObject()" value="CANCEL" /></div></div>
 	</div>
 </div>
 
@@ -89,15 +103,12 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="cur" value="DONE" /></div>
 		<p class="q">Here&rsquo;s the story you&rsquo;ve begun:</p>
-		<div class="story"><p id="story-text">
-			<span id="ins-fact"></span>
-			It looks like <span id="ins-q1" class="ins"></span>. 
-			I noticed that <span id="ins-q2" class="ins"></span>. 
-			It made me think &ldquo;<span id="ins-q3" class="ins"></span>?&rdquo;
-			What do you see, notice, or wonder?
-		</p></div>
+		<div class="story">
+			<p id="story-text"></p>
+			<p class="b">What do you see, notice, or wonder?</p>
+		</div>
 		<p id="share-prompt" class="b">Share it so that others might be inspired<br/>or go back and change it?</p>
-		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q3')" /><input id="btnshare" type="button" value="SHARE" onclick="flipPage('confirm-share')" /><div style="flex-grow:1;text-align:right"><label id="countdown-done" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="closeObject()" value="CANCEL" /></div></div>
+		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q3')" /><input id="btnshare" type="button" value="SHARE" onclick="flipPage('confirm-share')" /><div style="flex-grow:1;text-align:right"><label id="countdown-done" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="confirmCloseObject()" value="CANCEL" /></div></div>
 	</div>
 </div>
 
@@ -106,7 +117,7 @@
 		<p>Sharing creates a webpage with your story for you to share online and allows us to display
 		your story in the museum for other visitors. Your answers could also help people to discover other
 		objects like the one in your story.</p>
-		<p class="b">Do you still want share your story?</p>
+		<p class="b">Continue to share your story?</p>
 		<div class="control-bar"><input type="button" value="SHARE" onclick="flipPage('send')" /><div style="flex-grow:1;text-align:right"><label id="countdown-confirm-share" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="flipPage('done')" value="CANCEL" /></div></div>
 	</div>
 </div>
@@ -120,7 +131,7 @@
 <div id="ui-page-send-err" class="page">
 	<div class="gui gui-pane">
 		<p class="connect">Oops! That didn't work.</p>
-		<div class="control-bar"><div style="flex-grow:1;text-align:right"><label id="countdown-send-err" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="flipPage('done')" value="CANCEL" /></div></div>
+		<div class="control-bar"><div style="flex-grow:1;text-align:right"><label id="countdown-send-err" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="flipPage('done')" value="BACK" /></div></div>
 	</div>
 </div>
 

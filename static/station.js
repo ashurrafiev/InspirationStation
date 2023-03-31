@@ -11,6 +11,7 @@ var objectIds = [];
 var selectedSlot;
 var selectedData;
 var uiPage = null;
+var uiReturnPage = null;
 var pageId;
 var objectUIReady = false;
 var objectVideoReady = false;
@@ -24,9 +25,17 @@ function switchKBTarget(e) {
 		keybonk.switchTarget(e);
 }
 
-function updateKBSuggestions() {
-	if(keybonk!==undefined)
+function onUserInput() {
+	if(keybonk!==undefined) {
+		const len = keybonk.target.value.length;
+		document.getElementById('char-count-'+keybonk.target.id).innerHTML = `${len}&nbsp;/&nbsp;100`;
 		keybonk.updateWordSuggestions();
+	}
+}
+
+function turnLever(e, dt, t) {
+	const turn = document.getElementById('lever-turn');
+	e.yeet.a = turn.drag.angle;
 }
 
 function rerollOptions() {
@@ -62,7 +71,7 @@ function pullLever() {
 	
 	let ready = 0;
 	const lever = document.getElementById('lever');
-	Yeet.tween(lever, {'a':45}, {'duration': 0.4, 'easing':Yeet.easeOut, 'p':3, 'onfinish': function() {
+	Yeet.tween(lever, {'a':45}, {'duration': 0.4, 'easing':Yeet.easeOut, 'p':2, 'onfinish': function() {
 		rerollOptions();
 		for(let i=0; i<3; i++) {
 			const doorObj = document.getElementById('door-obj'+i);
@@ -101,7 +110,9 @@ function pullLever() {
 			});
 		}
 		setTimeout(function() {
-			Yeet.tween(lever, {'a':-45}, {'duration': 1, 'easing':Yeet.easeOut, 'p':1.5});
+			Yeet.tween(lever, {'a':-45}, {'duration': 1, 'easing':Yeet.easeOut, 'p':1.5, 'onfinish': function() {
+				lever.yeet.func = turnLever;
+			}});
 		}, 250);
 	}});
 	
@@ -252,7 +263,10 @@ function flipPage(id) {
 	if(uiPage)
 		uiPage.style.display = 'none';
 	pageId = id;
-	uiPage = document.getElementById('ui-page-'+id);
+	if(typeof id === 'string' || id instanceof String)
+		uiPage = document.getElementById('ui-page-'+id);
+	else
+		uiPage = id;
 	uiPage.style.display = 'block';
 	
 	if(id=='q1' || id=='q2' || id=='q3') {
@@ -287,6 +301,24 @@ function flipPage(id) {
 	
 	countdown = document.getElementById('countdown-'+id);
 	startCountdown();
+}
+
+function modalPage(id) {
+	uiReturnPage = uiPage;
+	flipPage(id);
+}
+
+function modalReturn() {
+	if(uiReturnPage) {
+		flipPage(uiReturnPage);
+		uiReturnPage = null;
+	}
+	else
+		closeObject();
+}
+
+function confirmCloseObject() {
+	modalPage('confirm-close');
 }
 
 function postStory() {
@@ -360,9 +392,9 @@ function applyTemplate(t) {
 }
 
 function loadData() {
-	fetch('story_template.json').then(resp => resp.json()).then(d => {
+	fetch('story_template.json', {cache: "no-store"}).then(resp => resp.json()).then(d => {
 		applyTemplate(d);
-		fetch('object_data.json').then(resp => resp.json()).then(d => {
+		fetch('object_data.json', {cache: "no-store"}).then(resp => resp.json()).then(d => {
 			window.loadedData = d;
 			const content = document.getElementById('content');
 			if(content.style.display!='block') {
@@ -391,7 +423,7 @@ function init() {
 		}
 	};
 	fetch('words.json').then(resp => resp.json()).then(data => { wordFreqDB = data; });
-	document.addEventListener('selectionchange', updateKBSuggestions);
+	document.addEventListener('selectionchange', onUserInput);
 
 	Yeet.initElements();
 	
@@ -401,6 +433,38 @@ function init() {
 	else {
 		applyTemplate(storyTemplate);
 		document.getElementById('content').style.display = 'block';
+		pullLever();
+	}
+	
+	const parentR = 540;
+	const handleR = 550;
+	const R = 460;
+	const a0 = -Math.PI/4; // -45
+	const a1 = a0 + Math.PI/6; // -45+30
+	const turn = document.getElementById('lever-turn');
+	function resetLeverTurn() {
+		turn.style.left = Math.round(R*Math.cos(a0) + (parentR-handleR))+'px';
+		turn.style.top = Math.round(R*Math.sin(a0) + (parentR-handleR))+'px';
+	}
+	resetLeverTurn();
+	
+	new Drag(turn, turn, function(drag, pos) {
+		const dx = pos.x - (parentR-handleR);
+		const dy = pos.y - (parentR-handleR);
+		let a = Math.atan2(dy, dx);
+		if(a<a0) a = a0;
+		let stop = false;
+		if(a>a1) {
+			a = a0;
+			stop = true;
+		}
+		drag.angle = a*180/Math.PI;
+		pos.x = R*Math.cos(a) + (parentR-handleR);
+		pos.y = R*Math.sin(a) + (parentR-handleR);
+		if(stop) drag.stop();
+	}).onStopDrag = function() {
+		turn.drag.angle = -45;
+		resetLeverTurn();
 		pullLever();
 	}
 }

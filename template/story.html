@@ -2,20 +2,20 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Inspiration Station</title>
+<title>Story Inspiration</title>
 <link rel="stylesheet" href="/static/story.css">
 <link rel="stylesheet" href="/static/sharingbuttons.css" />
 </head>
 <body>
 <div class="title">
 <img id="logo" src="/static/museum_logo.jpg" />
-<h1>{{ data.name|e }} inspired me...</h1>
+<h1>{{ data.name|e }} inspired&nbsp;me...</h1>
 </div>
 <div class="story-wrap">
 <img id="obj" src="/media/{{ data.obj }}.jpg" />
 <div class="story">
 {%- if blocked -%}
-	This story has been blocked by a moderator.
+	<p>This story has been blocked by a moderator.<p>
 {%- else -%}
 	{%- set name -%}<span class="ins">{{ data.name|e }}</span>{%- endset -%}
 	{%- set fact=data.fact|e -%}
@@ -23,6 +23,7 @@
 	{%- set q2 -%}<span class="ins">{{ data.q2|e }}</span>{%- endset -%}
 	{%- set q3 -%}<span class="ins">{{ data.q3|e }}</span>{%- endset -%}
 	<p>{%- include story_template -%}</p>
+	<p class="b">What do you see, notice, or wonder?</p>
 {%- endif -%}
 </div>
 </div>

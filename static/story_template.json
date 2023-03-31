@@ -2,6 +2,6 @@
 	"q1": "What do you see?",
 	"q2": "What do you notice about it?",
 	"q3": "What does it make you think or wonder?",
-	"story": "{{fact}} It looks like {{q1}}. I noticed that {{q2}}. It made me think &ldquo;{{q3}}?&rdquo; What do you see, notice, or wonder?",
+	"story": "{{fact}} It looks like {{q1}}. I noticed that {{q2}}. It made me think &ldquo;{{q3}}?&rdquo;",
 	"message": "This museum object inspired me!..."
 }

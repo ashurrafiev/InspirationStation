@@ -68,6 +68,18 @@ div#lever-click {
 	width: calc(100% - 1200px);
 	height: 100%;
 }
+div#lever-turn-parent {
+	position: absolute;
+	right: 65px;
+	top: 0px;
+	width: 1080px;
+	height: 1080px;
+}
+div#lever-turn {
+	position: absolute;
+	width: 1100px;
+	height: 1100px;
+}
 
 div.door-box {
 	position: absolute;
@@ -243,6 +255,10 @@ p.q {
 p.c {
 	text-align: center;
 }
+p.char-count {
+	font-size: 20px;
+	color: #888;
+}
 div.story {
 	font-family: 'Lora', serif;
 	font-size: 30px;
@@ -258,12 +274,14 @@ div.story {
 	box-sizing: border-box;
 	margin-bottom: 20px;
 	
-	/*display: flex;
-	align-items: center;*/
+	display: flex;
+	flex-direction: column;
+	justify-content:center;
 	overflow: hidden;
 }
 div.story > p {
 	margin: 0;
+	margin-bottom: 20px;
 }
 div.story span.ins {
 	font-weight: bold;
