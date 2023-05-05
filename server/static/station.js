@@ -85,12 +85,12 @@ function pullLever() {
 			let nextIndex = 0;
 			let nexty = cab.yeet.y;
 			while(Math.abs(nexty - cab.yeet.y)<=700) {
-				nextIndex = Math.floor(Math.random()*9)
+				nextIndex = Math.floor(Math.random()*6); // 9
 				nexty = -350 * nextIndex;
 			}
 			
 			Yeet.tween(cab, {'y':nexty}, {
-				'duration': 0.7+Math.random()*0.8,
+				'duration': 1.0+Math.random()*1.2,
 				'easing': Yeet.easeInOut, 'p':3,
 				'onfinish': function() {
 					ready++;
@@ -102,8 +102,8 @@ function pullLever() {
 						}, 300);*/
 					}
 					
-					const bgy = -30-((nextIndex+1)%4)*350;
-					doorImg.style.backgroundPosition = `-35px ${bgy}px`;
+					const bgy = -30-((nextIndex+1)%3)*350;
+					doorImg.style.backgroundPosition = `-30px ${bgy}px`;
 					doorBox.style.display = 'block';
 					Yeet.tween(doorImg, {'sy':0}, {'duration':0.25, 'easing':Yeet.easeOut, 'p':3});
 				}
@@ -174,7 +174,7 @@ function openObject(slot) {
 	Yeet.tween(cover, {'x':60,'y':0,'sx':1,'sy':1}, {'duration':0.4, 'easing':Yeet.easeIn, 'p':5, 'onfinish': function() {
 		objectUIReady = true;
 		
-		video.src = `${mediaPath}/${objectId}.mp4`;
+		video.src = `${mediaPath}/${objectId}.webm`;
 		video.poster = `${mediaPath}/${objectId}.jpg`;
 		objectVideoReady = false;
 		video.style.display = 'block';

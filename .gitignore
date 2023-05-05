@@ -1,11 +1,12 @@
 config.json
 auth.json
 logins.txt
-static/words.js
-static/words.json
+words.js
+words.json
 data.js
 media/
 cache/
+*.ttf
 
 .idea/
 .gitattributes

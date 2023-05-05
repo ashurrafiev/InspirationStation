@@ -1,0 +1,35 @@
+# Docker setup for cherrypy server
+#
+# pip-volume is used for persistent python environment. Removing will make a
+# stateless container, which will download and install python packages on every
+# restart.
+
+version: '3.3'
+
+services:
+    init:
+        image: python:3.10
+        volumes:
+            - pip-volume:/usr/local/lib/python3.10/site-packages
+            - ./server:/server
+        working_dir: /server
+        command: pip install -r requirements.txt
+
+    cherrypy:
+        image: python:3.10
+        restart: always
+        ports:
+            - '8080:8080'
+        # TODO: traefik setup
+        # TODO: postgres connection?
+        volumes:
+            - pip-volume:/usr/local/lib/python3.10/site-packages
+            - ./server:/server
+        working_dir: /server
+        command: python3 inspire.py
+        depends_on:
+            init:
+                condition: service_completed_successfully
+
+volumes:
+    pip-volume:

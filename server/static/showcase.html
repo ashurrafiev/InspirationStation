@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Showcase</title>
+<link rel="stylesheet" href="showcase.css">
+<script src="yeet.js"></script>
+<script src="data.js"></script>
+<script src="presetstories.js"></script>
+<script src="showcase.js"></script>
+</head>
+<body onload="init()"><div id="content">
+	<div id="door-layer"></div>
+
+	<img id="object-frame" class="yeet" data-yeet="{'x':490,'y':490}" draggable="false" src="videoframe.jpg" />
+	<img id="object-cover" class="yeet" data-yeet="{'x':540,'y':540}" draggable="false" src="../media/2-ntomo-mask.jpg" />
+
+	<video id="object-video" width="1080" height="1080" loop onloadeddata="videoLoaded()"></video>
+	
+	<div id="story-box" class="yeet" data-yeet="{'x':540,'y':1740}">
+	<div id="story-box-content" class="story">
+		<p id="story-title"></p>
+		<p id="story-fact"></p>
+		<p id="story-text">It looks like <span id="ins-q1" class="ins"></span>. I noticed that <span id="ins-q2" class="ins"></span>. It made me think “<span id="ins-q3" class="ins"></span>”</p>
+	</div>
+	</div>
+</div>
+</body>
+</html>
