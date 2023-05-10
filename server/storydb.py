@@ -97,12 +97,13 @@ def get_story_raw(cfg, uid):
 def mod_options():
     return ['new','ok','block','star']
 
-def list_stories(cfg, sel, p=0, lim=100, count_only=False):
-    query = """
+def list_stories(cfg, sel, p=0, lim=100, count_only=False, random_order=False):
+    order_by = 'random()' if random_order else '"time"'
+    query = f"""
         SELECT "uid", "obj", "q1", "q2", "q3", "time", "mod", "ip", "editor", "upd_time"
         FROM "stories"
         WHERE "mod" IN %(sel)s
-        ORDER BY "time" DESC
+        ORDER BY {order_by} DESC
         LIMIT %(lim)s OFFSET %(offs)s
     """
     query_total = """

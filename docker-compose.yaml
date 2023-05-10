@@ -6,6 +6,9 @@
 
 version: '3.3'
 
+networks:
+  traefik:
+
 services:
     init:
         image: python:3.10
@@ -15,13 +18,28 @@ services:
         working_dir: /server
         command: pip install -r requirements.txt
 
+    traefik:
+        image: traefik:v2.2
+        restart: unless-stopped
+        container_name: traefik
+        networks:
+            - traefik
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - "./traefik.toml:/traefik.toml"
+            - "./acme.json:/acme.json"
+            - "./usersfile:/usersfile"
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        labels:
+            - "traefik.http.middlewares.csrfHeader.headers.customrequestheaders.X-Forwarded-Proto=https"
+            - "traefik.http.middlewares.csrfHeader.headers.customrequestheaders.X-Forwarded-Port=443"
+            - "traefik.http.middlewares.csrfHeader.headers.customrequestheaders.X-Forwarded-Ssl=on"
+
     cherrypy:
         image: python:3.10
         restart: always
-        ports:
-            - '8080:8080'
-        # TODO: traefik setup
-        # TODO: postgres connection?
         volumes:
             - pip-volume:/usr/local/lib/python3.10/site-packages
             - ./server:/server
@@ -30,6 +48,15 @@ services:
         depends_on:
             init:
                 condition: service_completed_successfully
+        networks:
+            - traefik
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.cherrypy.rule=Host(`inspire.openlab.dev`)"
+            - "traefik.http.routers.cherrypy.entrypoints=websecure"
+            - "traefik.http.routers.cherrypy.tls=true"
+            - "traefik.http.routers.cherrypy.tls.certresolver=leresolver"
+            - "traefik.http.services.cherrypy.loadbalancer.server.port=8080"
 
 volumes:
     pip-volume:

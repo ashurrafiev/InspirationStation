@@ -99,7 +99,7 @@ div.story {
 	background-color: #fff;
     padding: 36px 54px;
     border: 2px solid #000;
-    border-radius: 10px;
+    border-radius: 11px;
 	box-shadow: 0px 0px 18px rgba(0, 0, 0, 0.4);
 	
     width: 1080px;
@@ -126,7 +126,7 @@ p#story-title {
 p#story-text {
 	font-size: 50.4px;
 	position: relative;
-	margin: 24px 18px;
+	margin: 27px 18px;
 }
 p#story-text::before {
 	display: block;

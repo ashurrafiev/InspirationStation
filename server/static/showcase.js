@@ -1,21 +1,40 @@
 
-// const mediaPath = 'https://storyweb.ams3.digitaloceanspaces.com';
-// const mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
-const mediaPath = '../media';
-// const mediaPath = 'http://localhost:8088/media';
+const mediaProxyPath = 'http://localhost:8088/media';
+var mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
 
-const displayScale = 0.5;
+var displayScale = 1;
 const numDoors = 7;
 const doorX = [45, 575, 1100, 1630];
-const storyTimeout = 5000;
+const storyTimeout = 15000;
 
-var allStories = presetStories; // TODO load stories, merge preset
-//  Make sure the number of distinct objects in allStories >= numDoors
+var allStories = presetStories;
 
 var storyQueue = [];
 var doors;
 var selectedStories;
 var activeStory = -1;
+
+function checkLoadedStories(stories) {
+	let distinctObjects = stories.length;
+	if(distinctObjects>=numDoors) {
+		const objects = new Set();
+		distinctObjects = 0;
+		for(let i=0; distinctObjects<numDoors && i<stories.length; i++) {
+			const obj = stories[i].obj;
+			if(!objects.has(obj)) {
+				objects.add(obj);
+				distinctObjects++;
+			}
+		}
+	}
+	console.log(`Loaded ${stories.length} stories`);
+	if(distinctObjects<numDoors) {
+		console.warn(`${distinctObjects} distinct objects. Merging with preset stories.`);
+		return stories.concat(presetStories);
+	}
+	else
+		return stories;
+}
 
 function popStoryQueue() {
 	if(storyQueue.length==0) {
@@ -63,6 +82,17 @@ function placeDoor(door, pos) {
 }
 
 function openDoors() {
+	if(window.loadedData) {
+		window.allData = window.loadedData;
+		window.allOptions = Object.keys(window.allData);
+		window.loadedData = undefined;
+	}
+	if(window.loadedStories) {
+		window.allStories = checkLoadedStories(window.loadedStories);
+		window.loadedStories = undefined;
+		storyQueue = [];
+	}
+	
 	selectStories();
 	var shuffle = [];
 	for(let i=0; i<numDoors; i++)
@@ -187,7 +217,61 @@ function makeDoor(layer, index) {
 	return door;
 }
 
+function dataReady() {
+	if(window.waitData)
+		window.waitData--;
+	if(window.waitData)
+		return;
+	
+	const content = document.getElementById('content');
+	if(content.style.display!='block') {
+		content.style.display = 'block';
+		openDoors();
+		Yeet.start();
+	}
+}
+
+function loadData() {
+	fetch('object_data.json', {cache: "no-store"}).then(resp => resp.json()).then(d => {
+		window.loadedData = d;
+		dataReady();
+		setTimeout(loadData, 3600000); // 1 hour
+	});
+}
+
+function loadStories() {
+	fetch('/showcase', {cache: "no-store"}).then(resp => resp.json()).then(d => {
+		window.loadedStories = d;
+		dataReady();
+		setTimeout(loadStories, 300000); // 5 min
+	});
+}
+
+function parseHashParams() {
+	let hash = location.hash;
+	if(hash.length==0)
+		return;
+	hash = hash.replace('#','');
+	const params = hash.split(',');
+	for(let i=0; i<params.length; i++) {
+		const param = params[i];
+		if(param=='mproxy') {
+			mediaPath = mediaProxyPath;
+			console.log('Using media proxy at '+mediaProxyPath);
+		}
+		else if(param.startsWith('s=')) {
+			displayScale = parseFloat(param.substring(2));
+			console.log('Using display scale of '+displayScale);
+		}
+		else {
+			console.warn('Unknown hash parameter '+param);
+		}
+	}
+}
+
 function init() {
+	parseHashParams();
+	
 	const pix = window.devicePixelRatio;
 	if(pix!=1 || displayScale!=1) {
 		document.body.style.transform = `scale(${displayScale/pix})`;
@@ -202,8 +286,15 @@ function init() {
 	}
 
 	Yeet.initElements();
-	document.getElementById('content').style.display = 'block';
 	
-	openDoors();
-	Yeet.start();
+	if(typeof staticData==='undefined' || !staticData) {
+		window.waitData = 2;
+		loadData();
+		loadStories();
+	}
+	else {
+		document.getElementById('content').style.display = 'block';
+		openDoors();
+		Yeet.start();
+	}
 }

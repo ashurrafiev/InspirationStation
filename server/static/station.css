@@ -58,8 +58,9 @@ div#click-block {
 
 div.cab {
 	width: 400px;
-	height: 4200px;
+	height: 3150px;
 	background-image: url("cabinet.jpg");
+	pointer-events: auto;
 }
 div#lever-click {
 	position: absolute;
@@ -260,28 +261,62 @@ p.char-count {
 	color: #888;
 }
 div.story {
+	display: flex;
+	
 	font-family: 'Lora', serif;
-	font-size: 30px;
+	font-size: 25px;
 	font-weight: normal;
 	color: #000;
 	background-color: #fff;
     padding: 20px 30px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 1px solid #000;
+    border-radius: 6px;
 	
     width: 600px;
 	height: 600px;
 	box-sizing: border-box;
+	
 	margin-bottom: 20px;
 	
-	display: flex;
 	flex-direction: column;
 	justify-content:center;
 	overflow: hidden;
 }
-div.story > p {
+div.story p {
 	margin: 0;
 	margin-bottom: 20px;
+}
+p#story-title {
+	font-weight: bold;
+	font-size: 32px;
+	margin-bottom: 10px;
+}
+p#story-prompt {
+	font-weight: bold;
+	margin-bottom: 0px;
+}
+p#story-text {
+	font-size: 28px;
+	position: relative;
+	margin: 15px 10px;
+}
+p#story-text::before {
+	display: block;
+	position: absolute;
+	left: -30px;
+	top: -20px;
+	font-size: 75px;
+	color: #ccc;
+	content: "“";
+}
+p#story-text::after {
+	display: block;
+	position: absolute;
+	right: -30px;
+	bottom: -55px;
+	font-size: 75px;
+	color: #ccc;
+	content: "”";
 }
 div.story span.ins {
 	font-weight: bold;

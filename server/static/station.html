@@ -103,9 +103,12 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="cur" value="DONE" /></div>
 		<p class="q">Here&rsquo;s the story you&rsquo;ve begun:</p>
-		<div class="story">
-			<p id="story-text"></p>
-			<p class="b">What do you see, notice, or wonder?</p>
+		<div id="story-box" class="story">
+		<div id="story-content-wrap">
+			<p id="story-title"></p>
+			<p id="story-fact"></p>
+			<p id="story-text">It looks like <span id="ins-q1" class="ins"></span>. I noticed that <span id="ins-q2" class="ins"></span>. It made me think “<span id="ins-q3" class="ins"></span>”</p>
+		</div>
 		</div>
 		<p id="share-prompt" class="b">Share it so that others might be inspired<br/>or go back and change it?</p>
 		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q3')" /><input id="btnshare" type="button" value="SHARE" onclick="flipPage('confirm-share')" /><div style="flex-grow:1;text-align:right"><label id="countdown-done" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="confirmCloseObject()" value="CANCEL" /></div></div>

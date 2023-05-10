@@ -5,7 +5,7 @@ import secrets
 import cherrypy
 import jwt
 
-from cfgutils import load_config, load_object_data, load_story_template,\
+from cfgutils import load_config, load_object_data,\
     get_auth_cfg, tail, check_int, delete_cookie, check_uid, template_env
 import storydb
 
@@ -99,11 +99,9 @@ class StoryMod(object):
         counts, stories = storydb.list_stories(cfg, sel=show, p=p, lim=lim)
         total_pages = (int(counts['sel'])+lim-1) // lim
 
-        story_template = self.tenv.from_string(load_story_template()['story'])
         template = self.tenv.get_template("index.html")
         return template.render(
             user=user,
-            story_template=story_template,
             stories=stories,
             obj_data=obj_data,
             show=show,
@@ -128,13 +126,9 @@ class StoryMod(object):
             story = [None, None, '', '', '', None, 'new']
         obj_data = load_object_data()
 
-        story_cfg = load_story_template()
-        story_template = self.tenv.from_string(story_cfg['story'])
         template = self.tenv.get_template("edit.html")
         return template.render(
             user=user,
-            story_cfg=story_cfg,
-            story_template=story_template,
             story=story,
             obj_data=obj_data,
             mod_options=storydb.mod_options(),
@@ -206,10 +200,8 @@ class StoryMod(object):
         if fetch:
             story = storydb.set_mod(cfg, sel[:1], user, status)
             obj_data = load_object_data()
-            story_template = self.tenv.from_string(load_story_template()['story'])
             template = self.tenv.get_template("storyblk.html")
             return template.render(
-                story_template=story_template,
                 story=story,
                 obj_data=obj_data,
                 mod_options=storydb.mod_options()

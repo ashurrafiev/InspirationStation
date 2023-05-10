@@ -11,17 +11,20 @@ def load_config() -> dict:
     with io.open('config.json') as f:
         return json.load(f)
 
+def load_blocked_words() -> dict:
+    with io.open('blocked_words.txt') as f:
+        words = set()
+        for line in f:
+            w = line.rstrip()
+            if w: words.add(w)
+        return words
+
 def get_auth_cfg(cfg):
     return cfg['modAuth']
 
 def load_object_data() -> dict:
     with io.open('static/object_data.json') as f:
         return json.load(f)
-
-def load_story_template() -> dict:
-    with io.open('static/story_template.json') as f:
-        return json.load(f)
-
 
 def pluralize(count, plural='s', singular=''):
     return singular if count == 1 else plural

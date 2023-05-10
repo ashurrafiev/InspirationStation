@@ -73,11 +73,13 @@ class Yeet {
 	}
 	
 	static start() {
-		Yeet.#animReq = requestAnimationFrame(Yeet.#onAnimate);
+		if(!Yeet.#animReq)
+			Yeet.#animReq = requestAnimationFrame(Yeet.#onAnimate);
 	}
 	
 	static stop() {
 		cancelAnimationFrame(Yeet.#animReq);
+		Yeet.#animReq = 0;
 	}
 	
 	static lerp(x0, x1, s) {

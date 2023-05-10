@@ -13,9 +13,11 @@ Submitted on {{ story[5].replace(microsecond=0) }} from IP:&nbsp;{{ story[7] }}
 
 <script>
 
+const mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
+
 function selectObject(id) {
 	const img = document.getElementById('objimg');
-	if(id) img.src = `/media/${id}.jpg`;
+	if(id) img.src = `${mediaPath}/${id}.jpg`;
 	img.style.display = id ? 'block' : 'none';
 	updatePreview();
 }
@@ -80,28 +82,25 @@ function checkInputs() {
 {%- if story[1] and story[1] not in obj_data -%}
 <div><p class="err">Referencing unknown or deleted object: <b>{{ story[1] }}</b></p></div>
 {%- endif -%}
-<div style="width:250px;height:250px;border:1px solid #ccc"><img id="objimg" {%- if story[1] %} src="/media/{{ story[1] }}.jpg" {% endif %} style="width:250px;height:250px;object-fit:cover;display:{{ 'block' if story[1] in obj_data else 'none' }}"/></div>
+<div style="width:250px;height:250px;border:1px solid #ccc"><img id="objimg" style="width:250px;height:250px;object-fit:cover;display:{{ 'block' if story[1] in obj_data else 'none' }}"/></div>
 <div>
-<label class="req">Object:<br /><select id="obj" name="obj" onchange="selectObject(this.value)">
+<label class="req">Object:<br />
+<script>selectObject('{{ story[1]|d('', true) }}');</script>
+<select id="obj" name="obj" onchange="selectObject(this.value)">
 <option value="" {{ 'selected' if story[1] not in obj_data }}></option>
 {%- for obj_id, obj in obj_data.items() -%}
 	<option value="{{ obj_id }}" {{ 'selected' if story[1]==obj_id }}>{{ obj.name | e }}</option>
 {%- endfor -%}
 </select></label></div>
 <div>
-<label class="req">Q1: {{ story_cfg.q1 }}<br /><input id="q1" type="text" style="width:100%" name="q1" value="{{ story[2] | e }}" onchange="updatePreview()" /></label></div>
+<label class="req">Q1: What do you see?<br /><input id="q1" type="text" style="width:100%" maxlength="100" name="q1" value="{{ story[2] | e }}" onchange="updatePreview()" /></label></div>
 <div>
-<label class="req">Q2: {{ story_cfg.q2 }}<br /><input id="q2" type="text" style="width:100%" name="q2" value="{{ story[3] | e }}" onchange="updatePreview()" /></label></div>
+<label class="req">Q2: What do you notice?<br /><input id="q2" type="text" style="width:100%" maxlength="100" name="q2" value="{{ story[3] | e }}" onchange="updatePreview()" /></label></div>
 <div>
-<label class="req">Q3: {{ story_cfg.q3 }}<br /><input id="q3" type="text" style="width:100%" name="q3" value="{{ story[4] | e }}" onchange="updatePreview()" /></label></div>
+<label class="req">Q3: What does it make you think or wonder?<br /><input id="q3" type="text" style="width:100%" maxlength="100" name="q3" value="{{ story[4] | e }}" onchange="updatePreview()" /></label></div>
 
 <div class="quote">
-	{%- set name -%}<b id="quote-obj"></b>{%- endset -%}
-	{%- set fact='[...]' -%}
-	{%- set q1 -%}<span id="quote-q1" class="ins"></span>{%- endset -%}
-	{%- set q2 -%}<span id="quote-q2" class="ins"></span>{%- endset -%}
-	{%- set q3 -%}<span id="quote-q3" class="ins"></span>{%- endset -%}
-	{%- include story_template -%}
+	It looks like <span id="quote-q1" class="ins"></span>. I noticed that <span id="quote-q2" class="ins"></span>. It made me think “<span id="quote-q3" class="ins"></span>”
 </div>
 
 <div><b>Status:</b>&ensp;
@@ -117,7 +116,7 @@ function checkInputs() {
 	<div>
 		<input type="button" value="Save" onclick="save({{ next_page }})" />
 	{%- if not id -%}
-		<input type="button" value="Save and create more" onclick="save('new')" />
+		&nbsp;<input type="button" value="Save and create more" onclick="save('new')" />
 	{%- endif -%}
 	</div>
 </div>

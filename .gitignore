@@ -1,4 +1,5 @@
 config.json
+config.server.json
 auth.json
 logins.txt
 words.js

@@ -2,28 +2,45 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Story Inspiration</title>
+{%- set page_title -%}Story Inspiration{%- endset -%}
+{%- set page_desc -%}{{ data.name|e }} inspired&nbsp;me...{%- endset -%}
+{%- set img_src -%}https://storyweb.ams3.cdn.digitaloceanspaces.com/{{ data.obj }}.jpg{%- endset -%}
+<title>{{ page_title }}</title>
+
+<meta name="title" content="{{ page_title }}">
+<meta name="description" content="{{ page_desc }}">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ link }}">
+<meta property="og:title" content="{{ page_title }}">
+<meta property="og:description" content="{{ page_desc }}">
+<meta property="og:image" content="{{ img_src }}">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="{{ link }}">
+<meta property="twitter:title" content="{{ page_title }}">
+<meta property="twitter:description" content="{{ page_desc }}">
+<meta property="twitter:image" content="{{ img_src }}">
+
 <link rel="stylesheet" href="/static/story.css">
 <link rel="stylesheet" href="/static/sharingbuttons.css" />
 </head>
 <body>
 <div class="title">
 <img id="logo" src="/static/museum_logo.jpg" />
-<h1>{{ data.name|e }} inspired&nbsp;me...</h1>
+<h1>{{ page_desc }}</h1>
 </div>
 <div class="story-wrap">
-<img id="obj" src="/media/{{ data.obj }}.jpg" />
+<img id="obj" src="{{ img_src }}" title="{{ data.name|e }}" />
 <div class="story">
 {%- if blocked -%}
 	<p>This story has been blocked by a moderator.<p>
 {%- else -%}
-	{%- set name -%}<span class="ins">{{ data.name|e }}</span>{%- endset -%}
-	{%- set fact=data.fact|e -%}
-	{%- set q1 -%}<span class="ins">{{ data.q1|e }}</span>{%- endset -%}
-	{%- set q2 -%}<span class="ins">{{ data.q2|e }}</span>{%- endset -%}
-	{%- set q3 -%}<span class="ins">{{ data.q3|e }}</span>{%- endset -%}
-	<p>{%- include story_template -%}</p>
-	<p class="b">What do you see, notice, or wonder?</p>
+	<p id="story-fact">{{ data.fact|e }}</p>
+	<p id="story-text">It looks like <span id="ins-q1" class="ins">{{ data.q1|e }}</span>. I noticed that <span id="ins-q2" class="ins">{{ data.q2|e }}</span>. It made me think “<span id="ins-q3" class="ins">{{ data.q3|e }}</span>”</p>
+	<p id="story-prompt">What do you see, notice, or wonder?</p>
 {%- endif -%}
 </div>
 </div>
@@ -153,3 +170,4 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 
 {%- endif -%}
 </body>
+</html>

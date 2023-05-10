@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Story Inspiration Station</title>
+<link rel="stylesheet" href="/static/story.css">
+<script>
+
+const mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
+
+function init() {
+	fetch('/showcase', {cache: "no-store"}).then(resp => resp.json()).then(d => {
+		const parentDiv = document.getElementById('story-list');
+		for(let i=0; i<d.length; i++) {
+			const story = d[i];
+			const storyDiv = document.createElement('div');
+			storyDiv.classList.add('story-link');
+			storyDiv.innerHTML = `<a href="/story/${story['uid']}"><img id="story${i}" src="${mediaPath}/${story['obj']}.jpg" /></a>`;
+			parentDiv.appendChild(storyDiv);
+		}
+	});
+}
+
+</script>
+</head>
+<body onload="init()">
+<div class="title">
+<img id="logo" src="/static/museum_logo.jpg" />
+<h1>Story Inspiration Station</h1>
+</div>
+<div id="story-list">
+</div>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import io
+import re
 import os.path
 from urllib.parse import quote as urlencode
 
@@ -6,7 +7,7 @@ import cherrypy
 from cherrypy.lib import file_generator
 import qrcode
 
-from cfgutils import load_config, load_object_data, load_story_template, check_uid, template_env
+from cfgutils import load_config, load_blocked_words, load_object_data, check_uid, template_env
 from storymod import StoryMod
 import storydb
 
@@ -14,10 +15,20 @@ import storydb
 class InspirationStation(object):
     def __init__(self):
         self.tenv = template_env()
+        self.blocked_words = load_blocked_words()
+
+    def contains_profanity(self, text):
+        if not self.blocked_words:
+            return False
+        for w in re.split(r"\s+", text):
+            if w and w in self.blocked_words:
+                return True
+        return False
 
     @cherrypy.expose
     def index(self):
-        return ""
+        with open('static/index.html', 'rt') as f:
+            return f.read()
 
     @cherrypy.expose
     def story(self, uid='', obj='', q1='', q2='', q3=''):
@@ -26,7 +37,6 @@ class InspirationStation(object):
             raise cherrypy.HTTPError(404)
         cfg = load_config()
 
-        story_cfg = load_story_template()
         if preview:
             data = {'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3}
             message = ''
@@ -37,7 +47,7 @@ class InspirationStation(object):
             if not data:
                 raise cherrypy.HTTPError(404)
             blocked = (data['mod']=='block')
-            message = urlencode(story_cfg['message'])
+            message = urlencode(cfg['sharingMessage'])
             link = f"{cfg['storyURL']}{uid}"
 
         obj = data['obj']
@@ -47,10 +57,8 @@ class InspirationStation(object):
         data['name'] = obj_data[obj]['name']
         data['fact'] = obj_data[obj]['fact']
 
-        story_template = self.tenv.from_string(story_cfg['story'])
         template = self.tenv.get_template("story.html")
         return template.render(
-            story_template=story_template,
             data=data,
             blocked=blocked,
             message=message,
@@ -62,8 +70,12 @@ class InspirationStation(object):
     def post(self, obj='', q1='', q2='', q3=''):
         if not obj or not q1 or not q2 or not q3:
             raise cherrypy.HTTPError(400)
+        if len(q1)>100 or len(q2)>100 or len(q3)>100:
+            raise cherrypy.HTTPError(400)
         obj_data = load_object_data()
         if obj not in obj_data:
+            raise cherrypy.HTTPError(400)
+        if self.contains_profanity(q1) or self.contains_profanity(q2) or self.contains_profanity(q3):
             raise cherrypy.HTTPError(400)
 
         cfg = load_config()
@@ -74,6 +86,14 @@ class InspirationStation(object):
             'story': cfg['storyURL'] + uid,
             'qr': '/qr/' + uid
         }
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def showcase(self, rand=''):
+        cfg = load_config()
+        _, rows = storydb.list_stories(cfg, ['star'], random_order=(rand=='1'))
+        stories = [{'uid': r[0], 'obj': r[1], 'q1': r[2], 'q2': r[3], 'q3': r[4]} for r in rows]
+        return stories
 
     @cherrypy.expose
     def qr(self, uid=''):
@@ -98,13 +118,13 @@ if __name__ == '__main__':
             'tools.staticdir.dir': './static',
             'tools.expires.on' : True,
             'tools.expires.secs' : 3600
-        },
-        '/media': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': './media',
-            'tools.expires.on' : True,
-            'tools.expires.secs' : 86400
         }
+#        '/media': {
+#            'tools.staticdir.on': True,
+#            'tools.staticdir.dir': './media',
+#            'tools.expires.on' : True,
+#            'tools.expires.secs' : 86400
+#        }
     }
     mod_conf = {
         '/': {
@@ -114,7 +134,13 @@ if __name__ == '__main__':
     cherrypy.config.update({
         'server.socket_host': '0.0.0.0',
         'server.socket_port': 8080,
-        'request.show_tracebacks': True # False
+        
+        'engine.autoreload.on': False,
+        'checker.on': False,
+        'tools.log_headers.on': False,
+        'request.show_tracebacks': False,
+        'request.show_mismatched_params': False,
+        'log.screen': False
     })
     cherrypy.tree.mount(InspirationStation(), '/', conf)
     cherrypy.tree.mount(StoryMod(), '/storymod', mod_conf)

@@ -15,21 +15,15 @@
 {%- else -%}
 <div class="quote">
 {%- endif -%}
-	{%- if story[1] in obj_data -%}{%- set name -%}
-		<b>{{ obj_data[story[1]]['name']|e }}</b>
-	{%- endset -%}{%- else -%}{%- set name -%}
-		<span class="err"><b>{{ story[1]|e }}</b></span>
-	{%- endset -%}{%- endif -%}
-	{%- set fact='[...]' -%}
-	{%- set q1 -%}<span class="ins">{{ story[2]|e }}</span>{%- endset -%}
-	{%- set q2 -%}<span class="ins">{{ story[3]|e }}</span>{%- endset -%}
-	{%- set q3 -%}<span class="ins">{{ story[4]|e }}</span>{%- endset -%}
-	{{ name }}<br/>
-	{%- include story_template -%}
+	{%- if story[1] in obj_data -%}
+		<b>{{ obj_data[story[1]]['name']|e }}:</b>
+	{%- else -%}
+		<span class="err"><b>{{ story[1]|e }}:</b></span>
+	{%- endif %}
+	It looks like <span class="ins">{{ story[2]|e }}</span>. I noticed that <span class="ins">{{ story[3]|e }}</span>. It made me think “<span class="ins">{{ story[4]|e }}</span>”
 </div>
 <div class="bar">
-	<div><input type="button" value="Edit" onclick="requestEdit('{{ id }}')" /></div>
-	<div style="flex-grow:1"><input type="button" value="Delete" disabled /></div>
+	<div style="flex-grow:1"><input type="button" value="Edit" onclick="requestEdit('{{ id }}')" /></div>
 {%- if story[8] and story[9] -%}
 	<div><span class="info">Reviewed by <b>{{ story[8] }}</b> on {{ story[9].replace(microsecond=0) }}</span></div>
 {%- endif -%}

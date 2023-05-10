@@ -1,10 +1,8 @@
 
-// const mediaPath = 'https://storyweb.ams3.digitaloceanspaces.com';
-// const mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
-const mediaPath = '../media';
-// const mediaPath = 'http://localhost:8088/media';
+const mediaProxyPath = 'http://localhost:8088/media';
+var mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
 
-const timeoutLimit = 45;
+const timeoutLimit = 60;
 
 var objectIds = [];
 
@@ -102,7 +100,7 @@ function pullLever() {
 						}, 300);*/
 					}
 					
-					const bgy = -30-((nextIndex+1)%3)*350;
+					const bgy = -30-((nextIndex+1)%9)*350;
 					doorImg.style.backgroundPosition = `-30px ${bgy}px`;
 					doorBox.style.display = 'block';
 					Yeet.tween(doorImg, {'sy':0}, {'duration':0.25, 'easing':Yeet.easeOut, 'p':3});
@@ -277,17 +275,17 @@ function flipPage(id) {
 		document.getElementById('keybonk').style.display = 'none';
 		
 	if(id=='done') {
-		const insName = document.getElementById('ins-name');
+		const insName = document.getElementById('story-title');
 		if(insName) insName.innerHTML = selectedData['name'];
-		const insFact = document.getElementById('ins-fact');
+		const insFact = document.getElementById('story-fact');
 		if(insFact) insFact.innerHTML = selectedData['fact'];
 		
 		let sharePrompt = 'Share it so that others might be inspired<br/>or go back and change it?';
 		let canSend = insertAnswer('q1') & insertAnswer('q2') & insertAnswer('q3');
 		if(!canSend)
 			sharePrompt = 'Please answer all questions to continue.';
-		const storyText = document.getElementById('story-text');
-		if(storyText.scrollWidth > 540 || storyText.scrollHeight > 540) {
+		const storyText = document.getElementById('story-content-wrap');
+		if(storyText.scrollWidth > 558 || storyText.scrollHeight > 540) {
 			canSend = false;
 			console.log(`storyText size: ${storyText.scrollWidth} x ${storyText.scrollHeight}`);
 			sharePrompt = 'Oops! Your story is too long.<br/>Please shorten it a bit.';
@@ -377,36 +375,39 @@ function startCountdown() {
 	resetTimer();
 }
 
-function applyTemplate(t) {
-	document.getElementById('q1-prompt').innerHTML = t['q1'];
-	document.getElementById('q2-prompt').innerHTML = t['q2'];
-	document.getElementById('q3-prompt').innerHTML = t['q3'];
-	
-	let s = t['story'];
-	s = s.replace('{{name}}', '<span id="ins-name"></span>');
-	s = s.replace('{{fact}}', '<span id="ins-fact"></span>');
-	s = s.replace('{{q1}}', '<span id="ins-q1" class="ins"></span>');
-	s = s.replace('{{q2}}', '<span id="ins-q2" class="ins"></span>');
-	s = s.replace('{{q3}}', '<span id="ins-q3" class="ins"></span>');
-	document.getElementById('story-text').innerHTML = s;
-}
-
 function loadData() {
-	fetch('story_template.json', {cache: "no-store"}).then(resp => resp.json()).then(d => {
-		applyTemplate(d);
-		fetch('object_data.json', {cache: "no-store"}).then(resp => resp.json()).then(d => {
-			window.loadedData = d;
-			const content = document.getElementById('content');
-			if(content.style.display!='block') {
-				content.style.display = 'block';
-				pullLever();
-			}
-			setTimeout(loadData, 3600000);
-		});
+	fetch('object_data.json', {cache: "no-store"}).then(resp => resp.json()).then(d => {
+		window.loadedData = d;
+		const content = document.getElementById('content');
+		if(content.style.display!='block') {
+			content.style.display = 'block';
+			pullLever();
+		}
+		setTimeout(loadData, 3600000); // 1 hour
 	});
 }
 
+function parseHashParams() {
+	let hash = location.hash;
+	if(hash.length==0)
+		return;
+	hash = hash.replace('#','');
+	const params = hash.split(',');
+	for(let i=0; i<params.length; i++) {
+		const param = params[i];
+		if(param=='mproxy') {
+			mediaPath = mediaProxyPath;
+			console.log('Using media proxy at '+mediaProxyPath);
+		}
+		else {
+			console.warn('Unknown hash parameter '+param);
+		}
+	}
+}
+
 function init() {
+	parseHashParams();
+	
 	const pix = window.devicePixelRatio;
 	if(pix!=1) {
 		document.body.style.transform = `scale(${1/pix})`;
@@ -431,7 +432,6 @@ function init() {
 		loadData();
 	}
 	else {
-		applyTemplate(storyTemplate);
 		document.getElementById('content').style.display = 'block';
 		pullLever();
 	}
