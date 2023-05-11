@@ -1,0 +1,24 @@
+{%- set title='List of Objects' -%}
+{%- include 'header.html' -%}
+{%- set media_path='https://storyweb.ams3.cdn.digitaloceanspaces.com' -%}
+
+<h1>List of Objects</h1>
+
+<div class="blk">Note: object data cannot be edited from here.</div>
+
+{%- for obj_id,obj in obj_data.items() -%}
+<div class="blk tab">
+<div class="status-ok"></div><div>
+<div class="quote"><b>{{ obj.name }}</b><br/>{{ obj.fact }}</div>
+<div class="bar">
+	<div style="flex-grow:1"><span class="info">{{ obj.collectionNumber }}<span></div>
+	<div><span class="info">{{ obj_id }}</span></div>
+	<div><a href="{{ media_path }}/{{ obj_id }}.jpg" target="_blank">Image</a></div>
+	<div><a href="{{ media_path }}/{{ obj_id }}.webm" target="_blank">Video</a></div>
+</div>
+</div>
+</div>
+{%- endfor -%}
+
+
+</body>

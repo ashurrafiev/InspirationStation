@@ -140,7 +140,8 @@ if __name__ == '__main__':
         'tools.log_headers.on': False,
         'request.show_tracebacks': False,
         'request.show_mismatched_params': False,
-        'log.screen': False
+        'log.screen': False,
+        'tools.proxy.on': True
     })
     cherrypy.tree.mount(InspirationStation(), '/', conf)
     cherrypy.tree.mount(StoryMod(), '/storymod', mod_conf)

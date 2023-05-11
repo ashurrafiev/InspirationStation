@@ -31,7 +31,7 @@ def pluralize(count, plural='s', singular=''):
 
 def template_env(path='template'):
     env = Environment(loader=FileSystemLoader(path))
-    env.filters['app'] = cherrypy.url
+    env.filters['app'] = lambda s : cherrypy.url(s, relative='server')
 
     env.filters['pl'] = pluralize
     return env

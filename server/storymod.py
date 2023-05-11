@@ -113,6 +113,18 @@ class StoryMod(object):
         )
 
     @cherrypy.expose
+    def objects(self):
+        cfg = load_config()
+        user, _ = auth_user(cfg)
+
+        obj_data = load_object_data()
+        template = self.tenv.get_template("objects.html")
+        return template.render(
+            user=user,
+            obj_data=obj_data
+        )
+
+    @cherrypy.expose
     def edit(self, uid='new', p=0):
         cfg = load_config()
         user, _ = auth_user(cfg)

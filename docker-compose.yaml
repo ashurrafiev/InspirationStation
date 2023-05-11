@@ -3,6 +3,11 @@
 # pip-volume is used for persistent python environment. Removing will make a
 # stateless container, which will download and install python packages on every
 # restart.
+#
+# Before starting for the first time:
+# touch acme.json
+# chmod 600 acme.json
+#
 
 version: '3.3'
 
