@@ -52,7 +52,7 @@ services:
             - traefik
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.cherrypy.rule=Host(`inspire.openlab.dev`)"
+            - "traefik.http.routers.cherrypy.rule=Host(`inspire.storyweb.info`)"
             - "traefik.http.routers.cherrypy.entrypoints=websecure"
             - "traefik.http.routers.cherrypy.tls=true"
             - "traefik.http.routers.cherrypy.tls.certresolver=leresolver"

@@ -2,6 +2,7 @@ config.json
 config.server.json
 auth.json
 logins.txt
+path_info.txt
 words.js
 words.json
 data.js
