@@ -1,24 +1,24 @@
 @font-face {
 	font-family: 'Open Sans';
-	src: url('OpenSans-Bold.ttf');
+	src: url('/static/OpenSans-Bold.ttf');
 	font-weight: bold;
 	font-display: block;
 }
 @font-face {
 	font-family: 'Open Sans';
-	src: url('OpenSans-Regular.ttf');
+	src: url('/static/OpenSans-Regular.ttf');
 	font-weight: normal;
 	font-display: block;
 }
 @font-face {
 	font-family: 'Lora';
-	src: url('Lora-Bold.ttf');
+	src: url('/static/Lora-Bold.ttf');
 	font-weight: bold;
 	font-display: block;
 }
 @font-face {
 	font-family: 'Lora';
-	src: url('Lora-Regular.ttf');
+	src: url('/static/Lora-Regular.ttf');
 	font-weight: normal;
 	font-display: block;
 }
@@ -26,7 +26,7 @@
 body {
 	font-family: 'Open Sans', sans-serif;
 	color: #444;
-	font-size: 18px;
+	font-size: 0.9rem;
 	background-color: #bbd0d5;
 	margin: 0;
 }
@@ -38,16 +38,16 @@ div.title {
 }
 h1 {
 	flex-grow: 1;
-	font-size: 36px;
+	font-size: 1.8rem;
 	font-weight: normal;
 	color: #000;
 	margin: 0;
-	padding: 20px;
+	padding: 1rem;
 }
 img#logo {
-	height: 100px;
+	height: 5rem;
 	width: auto;
-	margin: 5px 10px;
+	margin: 0.25px 0.5rem;
 	user-select: none;
 	user-drag: none;
 }
@@ -56,15 +56,15 @@ div.story-wrap {
 	align-items: stretch;
 	justify-content: center;
 	flex-wrap: wrap;
-	padding: 20px;
-	gap: 20px;
+	padding: 1rem;
+	gap: 1rem;
 }
 img#obj {
 	background-color: #000;
 	border-radius: 6px;
-	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+	box-shadow: 2px 2px 0.4rem rgba(0, 0, 0, 0.4);
 	
-    width: 600px;
+    width: 30rem;
 	height: auto;
 	box-sizing: border-box;
 	overflow: hidden;
@@ -74,15 +74,15 @@ div.story {
 	display: flex;
 	
 	font-family: 'Lora', serif;
-	font-size: 25px;
+	font-size: 1.25rem;
 	font-weight: normal;
 	color: #000;
 	background-color: #fff;
-    padding: 20px 30px;
+    padding: 1rem 1.5rem;
     border: 1px solid #000;
-    border-radius: 6px;
+    border-radius: 0.3rem;
 	
-    width: 600px;
+    width: 30rem;
 	box-sizing: border-box;
 	
 	flex-direction: column;
@@ -91,37 +91,37 @@ div.story {
 }
 div.story p {
 	margin: 0;
-	margin-bottom: 20px;
+	margin-bottom: 1rem;
 }
 p#story-title {
 	font-weight: bold;
-	font-size: 32px;
-	margin-bottom: 10px;
+	font-size: 1.6rem;
+	margin-bottom: 0.5rem;
 }
 p#story-prompt {
-	margin-top: 20px;
+	margin-top: 1rem;
 	margin-bottom: 0px;
 }
 p#story-text {
-	font-size: 28px;
+	font-size: 1.4rem;
 	position: relative;
-	margin: 15px 10px;
+	margin: 0.75rem 1rem;
 }
 p#story-text::before {
 	display: block;
 	position: absolute;
-	left: -30px;
-	top: -20px;
-	font-size: 75px;
+	left: -1.5rem;
+	top: -1rem;
+	font-size: 3.25rem;
 	color: #ccc;
 	content: "“";
 }
 p#story-text::after {
 	display: block;
 	position: absolute;
-	right: -30px;
-	bottom: -55px;
-	font-size: 75px;
+	right: -1.5rem;
+	bottom: -2.75rem;
+	font-size: 3.25rem;
 	color: #ccc;
 	content: "”";
 }
@@ -134,20 +134,20 @@ div#story-list {
 	flex-flow: row wrap;
 	justify-content: center;
 	align-content: flex-start;
-	gap: 10px;
-	margin: 20px;
+	gap: 0.5rem;
+	margin: 1rem;
 }
 div.story-link {
-	width: 300px;
-	height: 300px;
+	width: 15rem;
+	height: 15rem;
 	padding: 0;
 	margin: 0;
 }
 div.story-link img {
 	background-color: #000;
-	border-radius: 6px;
+	border-radius: 0.3rem;
 	
-    width: 300px;
+    width: 15rem;
 	height: auto;
 	box-sizing: border-box;
 	overflow: hidden;

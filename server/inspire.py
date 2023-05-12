@@ -109,6 +109,23 @@ class InspirationStation(object):
 
 
 if __name__ == '__main__':
+    cfg = load_config()
+    global_conf = {
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': 8080,
+    } if cfg.get('devMode', False) else {
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': 8080,
+        'engine.autoreload.on': False,
+        'checker.on': False,
+        'tools.log_headers.on': False,
+        'request.show_tracebacks': False,
+        'request.show_mismatched_params': False,
+        'log.screen': False,
+        'tools.proxy.on': True
+    }
+    cherrypy.config.update(global_conf)
+    
     conf = {
         '/': {
             'tools.staticdir.root': os.path.abspath(os.getcwd())
@@ -119,31 +136,21 @@ if __name__ == '__main__':
             'tools.expires.on' : True,
             'tools.expires.secs' : 3600
         }
-#        '/media': {
-#            'tools.staticdir.on': True,
-#            'tools.staticdir.dir': './media',
-#            'tools.expires.on' : True,
-#            'tools.expires.secs' : 86400
-#        }
     }
-    mod_conf = {
+    if cfg.get('hostMedia', False):
+        conf['/media'] = {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': cfg['hostMedia'],
+            'tools.expires.on' : True,
+            'tools.expires.secs' : 86400
+        }
+    cherrypy.tree.mount(InspirationStation(), '/', conf)
+
+    cherrypy.tree.mount(StoryMod(), '/storymod', {
         '/': {
             'tools.staticdir.root': os.path.abspath(os.getcwd())
         }
-    }
-    cherrypy.config.update({
-        'server.socket_host': '0.0.0.0',
-        'server.socket_port': 8080,
-        
-        'engine.autoreload.on': False,
-        'checker.on': False,
-        'tools.log_headers.on': False,
-        'request.show_tracebacks': False,
-        'request.show_mismatched_params': False,
-        'log.screen': False,
-        'tools.proxy.on': True
     })
-    cherrypy.tree.mount(InspirationStation(), '/', conf)
-    cherrypy.tree.mount(StoryMod(), '/storymod', mod_conf)
+    
     cherrypy.engine.start()
     cherrypy.engine.block()

@@ -329,7 +329,7 @@ function postStory() {
 	setTimeout(() => abortc.abort(), 3000)
 	const url = `/post?obj=${objectId}&q1=${q1}&q2=${q2}&q3=${q3}`;
 	fetch(url, { signal: abortc.signal }).then(resp => resp.json()).then(d => {
-		document.getElementById('storylink').href = d['story'];
+		// document.getElementById('storylink').href = d['story'];
 		document.getElementById('qrcode').src = d['qr'];
 		flipPage('qr');
 	}).catch(e => {
