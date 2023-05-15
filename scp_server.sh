@@ -1,6 +1,6 @@
 #!/bin/bash
 
-show_help()
+show_usage()
 {
   echo "Usage:"
   echo "./scp_server.sh [options] host fullpath"

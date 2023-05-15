@@ -108,7 +108,7 @@ class InspirationStation(object):
         return file_generator(buffer)
 
 
-if __name__ == '__main__':
+def start_server():
     cfg = load_config()
     global_conf = {
         'server.socket_host': '0.0.0.0',
@@ -126,15 +126,20 @@ if __name__ == '__main__':
     }
     cherrypy.config.update(global_conf)
     
+    root_path = os.path.abspath(os.getcwd())
     conf = {
         '/': {
-            'tools.staticdir.root': os.path.abspath(os.getcwd())
+            'tools.staticdir.root': root_path
         },
         '/static': {
             'tools.staticdir.on': True,
             'tools.staticdir.dir': './static',
             'tools.expires.on' : True,
             'tools.expires.secs' : 3600
+        },
+        '/favicon.ico': {        
+            'tools.staticfile.on': True,        
+            'tools.staticfile.filename': root_path+'/static/favicon.ico',
         }
     }
     if cfg.get('hostMedia', False):
@@ -148,9 +153,12 @@ if __name__ == '__main__':
 
     cherrypy.tree.mount(StoryMod(), '/storymod', {
         '/': {
-            'tools.staticdir.root': os.path.abspath(os.getcwd())
+            'tools.staticdir.root': root_path
         }
     })
     
     cherrypy.engine.start()
     cherrypy.engine.block()
+
+if __name__ == '__main__':
+    start_server()

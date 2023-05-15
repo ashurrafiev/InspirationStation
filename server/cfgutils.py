@@ -37,7 +37,7 @@ def template_env(path='template'):
     return env
 
 def check_uid(uid):
-    return re.match(r"^[A-Fa-f0-9\-]{8,40}$", uid)
+    return re.match(r"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$", uid)
 
 def check_int(x, fb, check=None):
     try:

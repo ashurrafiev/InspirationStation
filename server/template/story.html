@@ -35,7 +35,8 @@
 </div>
 <div class="story-wrap">
 <img id="obj" src="{{ img_src }}" title="{{ data.name|e }}" />
-<div class="story">
+<div style="position:relative">
+<div class="story" style="height:100%">
 {%- if blocked -%}
 	<p>This story has been blocked by a moderator.<p>
 {%- else -%}
@@ -43,7 +44,10 @@
 	<p id="story-text">It looks like <span id="ins-q1" class="ins">{{ data.q1|e }}</span>. I noticed that <span id="ins-q2" class="ins">{{ data.q2|e }}</span>. It made me think “<span id="ins-q3" class="ins">{{ data.q3|e }}</span>”</p>
 	<p id="story-prompt">What do you see, notice, or wonder?</p>
 {%- endif -%}
-</div>
+{%- if data.mod=='star' -%}
+	<img class="star" src="/static/star.png" />
+{%- endif -%}
+</div></div>
 </div>
 
 {%- if not blocked -%}
@@ -75,7 +79,7 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 <p>Twitter</p>
 </div>
 
-<!-- Sharingbutton Tumblr -->
+<!-- Sharingbutton Tumblr
 <div class="share-wrap">
 <a class="share-link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&title={{ message }}&caption={{ message }}&content={{ link }}&canonicalUrl={{ link }}&shareSource=tumblr_share_button" target="_blank" rel="noopener" aria-label="">
   <div class="share-button share-tumblr"><div aria-hidden="true" class="share-icon">
@@ -85,6 +89,7 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 </a>
 <p>Tumblr</p>
 </div>
+-->
 
 <!-- Sharingbutton Pinterest -->
 <div class="share-wrap">
@@ -98,7 +103,7 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 </div>
 
 
-<!-- Sharingbutton LinkedIn -->
+<!-- Sharingbutton LinkedIn
 <div class="share-wrap">
 <a class="share-link" href="https://www.linkedin.com/shareArticle?mini=true&url={{ link }}&title={{ message }}&summary={{ message }}&source={{ link }}" target="_blank" rel="noopener" aria-label="">
   <div class="share-button share-linkedin"><div aria-hidden="true" class="share-icon">
@@ -108,9 +113,9 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 </a>
 <p>LinkedIn</p>
 </div>
+-->
 
-
-<!-- Sharingbutton Reddit -->
+<!-- Sharingbutton Reddit
 <div class="share-wrap">
 <a class="share-link" href="https://reddit.com/submit/?url={{ link }}&resubmit=true&title={{ message }}" target="_blank" rel="noopener" aria-label="">
   <div class="share-button share-reddit"><div aria-hidden="true" class="share-icon">
@@ -120,6 +125,7 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 </a>
 <p>Reddit</p>
 </div>
+-->
 
 <!-- Sharingbutton WhatsApp -->
 <div class="share-wrap">
@@ -132,7 +138,7 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 <p>WhatsApp</p>
 </div>
 
-<!-- Sharingbutton XING -->
+<!-- Sharingbutton XING
 <div class="share-wrap">
 <a class="share-link" href="https://www.xing.com/app/user?op=share;url={{ link }};title={{ message }}" target="_blank" rel="noopener" aria-label="">
   <div class="share-button share-xing"><div aria-hidden="true" class="share-icon">
@@ -142,9 +148,9 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 </a>
 <p>XING</p>
 </div>
+-->
 
-
-<!-- Sharingbutton Telegram -->
+<!-- Sharingbutton Telegram
 <div class="share-wrap">
 <a class="share-link" href="https://telegram.me/share/url?text={{ message }}&url={{ link }}" target="_blank" rel="noopener" aria-label="">
   <div class="share-button share-telegram"><div aria-hidden="true" class="share-icon">
@@ -154,6 +160,7 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 </a>
 <p>Telegram</p>
 </div>
+-->
 
 <!-- Sharingbutton E-Mail -->
 <div class="share-wrap">
