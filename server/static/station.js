@@ -140,8 +140,8 @@ function openObject(slot) {
 	selectedData = allData[objectId];
 	
 	document.getElementById('object-main').style.display = 'block';
-	document.getElementById('lever-click').style.display = 'none';
 	document.getElementById('cab-labels').style.display = 'none';
+	document.getElementById('click-block').style.display = 'block';
 
 	const wallLeft = document.getElementById('wall-left');
 	wallLeft.style.display = 'block';
@@ -232,8 +232,8 @@ function closeObject() {
 			wallLeft.style.display = 'none';
 			wallRight.style.display = 'none';
 			document.getElementById('object-main').style.display = 'none';
-			document.getElementById('lever-click').style.display = 'block';
 			document.getElementById('cab-labels').style.display = 'block';
+			document.getElementById('click-block').style.display = 'none';
 			
 			Yeet.stop();
 		}});
@@ -328,12 +328,21 @@ function postStory() {
 	const abortc = new AbortController();
 	setTimeout(() => abortc.abort(), 3000)
 	const url = `/post?obj=${objectId}&q1=${q1}&q2=${q2}&q3=${q3}`;
-	fetch(url, { signal: abortc.signal }).then(resp => resp.json()).then(d => {
+	fetch(url, { signal: abortc.signal }).then(resp => {
+		console.log(resp.status);
+		if(resp.ok)
+			return resp.json();
+		else
+			throw resp.status;
+	}).then(d => {
 		// document.getElementById('storylink').href = d['story'];
 		document.getElementById('qrcode').src = d['qr'];
 		flipPage('qr');
 	}).catch(e => {
-		flipPage('send-err');
+		if(e==400)
+			flipPage('send-rejected');
+		else
+			flipPage('send-err');
 	});
 }
 

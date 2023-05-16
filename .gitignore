@@ -8,6 +8,7 @@ words.json
 data.js
 media/
 cache/
+setup/
 *.ttf
 
 .idea/

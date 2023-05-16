@@ -160,5 +160,13 @@ img.star {
 	top: -3rem;
 	right: 1rem;
 	width: 15rem;
-	height: 6rem
+	height: 6rem;
+	user-select: none;
+	user-drag: none;
+}
+
+@media (max-width: 32rem) {
+	div.story {
+		width: 100%;
+	}
 }

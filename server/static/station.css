@@ -32,6 +32,7 @@ body {
 	overflow: hidden;
 	background-color: #bbd0d5;
 	user-select: none;
+	touch-action: none;
 }
 .yeet {
 	position: absolute;
@@ -54,6 +55,7 @@ div#click-block {
 	width: 100%;
 	height: 100%;
 	display: none;
+	pointer-events: auto;
 }
 
 div.cab {

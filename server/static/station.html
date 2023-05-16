@@ -39,6 +39,8 @@
 	<div id="door-img2" class="yeet door-img" data-yeet="{'x':0,'y':0}"></div>
 </div>
 
+<div id="click-block"></div>
+
 <div id="object-main">
 	<img id="wall-left" src="wall_left.jpg" class="yeet wall" data-yeet="{'x':0,'y':0}" draggable="false" />
 	<img id="wall-right" src="wall_right.jpg" class="yeet wall" data-yeet="{'x':1140,'y':0}" draggable="false" />
@@ -131,6 +133,13 @@
 	</div>
 </div>
 
+<div id="ui-page-send-rejected" class="page">
+	<div class="gui gui-pane">
+		<p class="connect">Oops! We can't accept your story.<br />Did you use bad words?</p>
+		<div class="control-bar"><div style="flex-grow:1;text-align:right"><label id="countdown-send-rejected" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="flipPage('done')" value="BACK" /></div></div>
+	</div>
+</div>
+
 <div id="ui-page-send-err" class="page">
 	<div class="gui gui-pane">
 		<p class="connect">Oops! That didn't work.</p>
@@ -148,6 +157,5 @@
 
 </div>
 <div id="keybonk" class="keybonk"></div>
-<div id="click-block"></div>
 </body>
 </html>
