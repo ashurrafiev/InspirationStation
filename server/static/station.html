@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="robots" content="noindex" />
 <meta charset="UTF-8" />
 <title>Inspiration Station</title>
 <link rel="stylesheet" href="station.css">
@@ -72,7 +73,7 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg cur" value="1" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
 		<p id="q1-prompt" class="q">What do you see?</p>
-		<textarea id="q1" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="onUserInput()"></textarea>
+		<textarea id="q1" autocomplete="off" spellcheck="false" maxlength="100" onfocus="switchKBTarget(this)" oninput="onUserInput()"></textarea>
 		<p id="char-count-q1" class="char-count"></p>
 		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('open')" /><input id="btnnext-q1" type="button" value="NEXT" onclick="flipPage('q2')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q1" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="confirmCloseObject()" value="CANCEL" /></div></div>
 	</div>
@@ -83,7 +84,7 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg cur" value="2" /><input type="button" class="pg done" value="3" onclick="flipPage('q3')" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
 		<p id="q2-prompt" class="q">What do you notice?</p>
-		<textarea id="q2" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="onUserInput()"></textarea>
+		<textarea id="q2" autocomplete="off" spellcheck="false" maxlength="100" onfocus="switchKBTarget(this)" oninput="onUserInput()"></textarea>
 		<p id="char-count-q2" class="char-count"></p>
 		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q1')" /><input id="btnnext-q2" type="button" value="NEXT" onclick="flipPage('q3')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q2" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="confirmCloseObject()" value="CANCEL" /></div></div>
 	</div>
@@ -94,7 +95,7 @@
 		<p class="b">Answer three questions to inspire a story...</p>
 		<div class="page-list"><input type="button" class="pg done" value="1" onclick="flipPage('q1')" /><input type="button" class="pg done" value="2" onclick="flipPage('q2')" /><input type="button" class="pg cur" value="3" /><input type="button" class="done" value="DONE" onclick="flipPage('done')" /></div>
 		<p id="q3-prompt" class="q">What does it make you think or wonder?</p>
-		<textarea id="q3" autocomplete="off" spellcheck="off" maxlength="100" onfocus="switchKBTarget(this)" oninput="onUserInput()"></textarea>
+		<textarea id="q3" autocomplete="off" spellcheck="false" maxlength="100" onfocus="switchKBTarget(this)" oninput="onUserInput()"></textarea>
 		<p id="char-count-q3" class="char-count"></p>
 		<div class="control-bar"><input type="button" value="BACK" onclick="flipPage('q2')" /><input id="btnnext-q3" type="button" value="NEXT" onclick="flipPage('done')" /><div style="flex-grow:1;text-align:right"><label id="countdown-q3" class="countdown">&nbsp;</label>&nbsp;<input type="button" class="cancel" onclick="confirmCloseObject()" value="CANCEL" /></div></div>
 	</div>
