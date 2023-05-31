@@ -30,11 +30,13 @@
 </head>
 <body>
 <div class="title">
-<img id="logo" src="/static/museum_logo.jpg" />
+{%- if data.mod!='new' -%}
+<a href="/"><img id="logo" src="/static/museum_logo.jpg" /></a>
+{%- endif -%}
 <h1>{{ page_desc }}</h1>
 </div>
 <div class="story-wrap">
-<img id="obj" src="{{ img_src }}" title="{{ data.name|e }}" />
+<img id="obj" src="{{ img_src }}" alt="{{ data.name|e }}" title="{{ data.name|e }}" />
 <div style="position:relative">
 <div class="story" style="height:100%">
 {%- if blocked -%}
@@ -45,12 +47,21 @@
 	<p id="story-prompt">What do you see, notice, or wonder?</p>
 {%- endif -%}
 {%- if data.mod=='star' -%}
-	<img class="star" src="/static/star.png" />
+	<img class="star" alt="Featured in the museum" src="/static/star.png" />
 {%- endif -%}
 </div></div>
 </div>
 
+{%- if data.mod=='new' -%}
+<div class="story-wrap"><div id="disclaimer">
+This recently posted story has not been reviewed by a moderator yet.
+</div></div>
+{%- endif -%}
+
 {%- if not blocked -%}
+{%- set message -%}
+This museum object inspired me!...
+{%- endset -%}
 <div class="share-container">
 Your <b>AdBlock</b> blocks social media sharing buttons.
 <div id="sharing-buttons">
@@ -79,18 +90,6 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 <p>Twitter</p>
 </div>
 
-<!-- Sharingbutton Tumblr
-<div class="share-wrap">
-<a class="share-link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&title={{ message }}&caption={{ message }}&content={{ link }}&canonicalUrl={{ link }}&shareSource=tumblr_share_button" target="_blank" rel="noopener" aria-label="">
-  <div class="share-button share-tumblr"><div aria-hidden="true" class="share-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.5.5v5h5v4h-5V15c0 5 3.5 4.4 6 2.8v4.4c-6.7 3.2-12 0-12-4.2V9.5h-3V6.7c1-.3 2.2-.7 3-1.3.5-.5 1-1.2 1.4-2 .3-.7.6-1.7.7-3h3.8z"/></svg>
-    </div>
-  </div>
-</a>
-<p>Tumblr</p>
-</div>
--->
-
 <!-- Sharingbutton Pinterest -->
 <div class="share-wrap">
 <a class="share-link" href="https://pinterest.com/pin/create/button/?url={{ link }}&media={{ link }}&description={{ message }}" target="_blank" rel="noopener" aria-label="">
@@ -102,31 +101,6 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 <p>Pinterest</p>
 </div>
 
-
-<!-- Sharingbutton LinkedIn
-<div class="share-wrap">
-<a class="share-link" href="https://www.linkedin.com/shareArticle?mini=true&url={{ link }}&title={{ message }}&summary={{ message }}&source={{ link }}" target="_blank" rel="noopener" aria-label="">
-  <div class="share-button share-linkedin"><div aria-hidden="true" class="share-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g transform="translate(1, -0.5)"><path d="M6.5 21.5h-5v-13h5v13zM4 6.5C2.5 6.5 1.5 5.3 1.5 4s1-2.4 2.5-2.4c1.6 0 2.5 1 2.6 2.5 0 1.4-1 2.5-2.6 2.5zm11.5 6c-1 0-2 1-2 2v7h-5v-13h5V10s1.6-1.5 4-1.5c3 0 5 2.2 5 6.3v6.7h-5v-7c0-1-1-2-2-2z"/></g></svg>
-    </div>
-  </div>
-</a>
-<p>LinkedIn</p>
-</div>
--->
-
-<!-- Sharingbutton Reddit
-<div class="share-wrap">
-<a class="share-link" href="https://reddit.com/submit/?url={{ link }}&resubmit=true&title={{ message }}" target="_blank" rel="noopener" aria-label="">
-  <div class="share-button share-reddit"><div aria-hidden="true" class="share-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 11.5c0-1.65-1.35-3-3-3-.96 0-1.86.48-2.42 1.24-1.64-1-3.75-1.64-6.07-1.72.08-1.1.4-3.05 1.52-3.7.72-.4 1.73-.24 3 .5C17.2 6.3 18.46 7.5 20 7.5c1.65 0 3-1.35 3-3s-1.35-3-3-3c-1.38 0-2.54.94-2.88 2.22-1.43-.72-2.64-.8-3.6-.25-1.64.94-1.95 3.47-2 4.55-2.33.08-4.45.7-6.1 1.72C4.86 8.98 3.96 8.5 3 8.5c-1.65 0-3 1.35-3 3 0 1.32.84 2.44 2.05 2.84-.03.22-.05.44-.05.66 0 3.86 4.5 7 10 7s10-3.14 10-7c0-.22-.02-.44-.05-.66 1.2-.4 2.05-1.54 2.05-2.84zM2.3 13.37C1.5 13.07 1 12.35 1 11.5c0-1.1.9-2 2-2 .64 0 1.22.32 1.6.82-1.1.85-1.92 1.9-2.3 3.05zm3.7.13c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9.8 4.8c-1.08.63-2.42.96-3.8.96-1.4 0-2.74-.34-3.8-.95-.24-.13-.32-.44-.2-.68.15-.24.46-.32.7-.18 1.83 1.06 4.76 1.06 6.6 0 .23-.13.53-.05.67.2.14.23.06.54-.18.67zm.2-2.8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm5.7-2.13c-.38-1.16-1.2-2.2-2.3-3.05.38-.5.97-.82 1.6-.82 1.1 0 2 .9 2 2 0 .84-.53 1.57-1.3 1.87z"/></svg>
-    </div>
-  </div>
-</a>
-<p>Reddit</p>
-</div>
--->
-
 <!-- Sharingbutton WhatsApp -->
 <div class="share-wrap">
 <a class="share-link" href="whatsapp://send?text={{ message }}%20{{ link }}" target="_blank" rel="noopener" aria-label="">
@@ -137,30 +111,6 @@ Your <b>AdBlock</b> blocks social media sharing buttons.
 </a>
 <p>WhatsApp</p>
 </div>
-
-<!-- Sharingbutton XING
-<div class="share-wrap">
-<a class="share-link" href="https://www.xing.com/app/user?op=share;url={{ link }};title={{ message }}" target="_blank" rel="noopener" aria-label="">
-  <div class="share-button share-xing"><div aria-hidden="true" class="share-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g transform="translate(-0.5, 0)"><path d="M10.2 9.7l-3-5.4C7.2 4 7 4 6.8 4h-5c-.3 0-.4 0-.5.2v.5L4 10 .4 16v.5c0 .2.2.3.4.3h5c.3 0 .4 0 .5-.2l4-6.6v-.5zM24 .2l-.5-.2H18s-.2 0-.3.3l-8 14v.4l5.2 9c0 .2 0 .3.3.3h5.4s.3 0 .4-.2c.2-.2.2-.4 0-.5l-5-8.8L24 .7V.2z"/></g></svg>
-    </div>
-  </div>
-</a>
-<p>XING</p>
-</div>
--->
-
-<!-- Sharingbutton Telegram
-<div class="share-wrap">
-<a class="share-link" href="https://telegram.me/share/url?text={{ message }}&url={{ link }}" target="_blank" rel="noopener" aria-label="">
-  <div class="share-button share-telegram"><div aria-hidden="true" class="share-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g transform="scale(0.16) translate(-40, -50)"><path d="M49.942 118.96l80.81-33.295c7.977-3.468 35.03-14.566 35.03-14.566s12.486-4.855 11.445 6.936c-.347 4.855-3.12 21.85-5.896 40.23l-8.67 54.45s-.694 7.977-6.6 9.364c-5.906 1.387-15.607-4.855-17.34-6.243-1.387-1.04-26.012-16.647-35.03-24.277-2.428-2.08-5.202-6.243.347-11.098 12.486-11.445 27.4-25.665 36.416-34.682 4.162-4.162 8.324-13.873-9.017-2.08l-48.902 32.948s-5.55 3.468-15.954.347-22.543-7.283-22.543-7.283-8.324-5.202 5.896-10.75z"/></g></svg>
-    </div>
-  </div>
-</a>
-<p>Telegram</p>
-</div>
--->
 
 <!-- Sharingbutton E-Mail -->
 <div class="share-wrap">

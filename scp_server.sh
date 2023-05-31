@@ -3,7 +3,7 @@
 show_usage()
 {
   echo "Usage:"
-  echo "./scp_server.sh [options] host fullpath"
+  echo "./scp_server.sh [options] host hostpath"
   echo
   echo "Options:"
   echo "-c, --clean    delete remote static and template folders before copying"
@@ -65,9 +65,9 @@ fi
 scp -r server/static/ $HOST:$BASE/server
 scp -r server/template/ $HOST:$BASE/server
 
-ssh $HOST "find $BASE -type f | xargs chmod 664"
+ssh $HOST "cd $BASE/server && find . -type f | xargs chmod 644"
 
 if [ "$RESTART" = true ]
   then
-    ssh $HOST "cd $BASE; docker-compose restart cherrypy"
+    ssh $HOST "cd $BASE && docker-compose restart cherrypy"
 fi

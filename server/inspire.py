@@ -39,7 +39,6 @@ class InspirationStation(object):
 
         if preview:
             data = {'obj': obj, 'q1': q1, 'q2': q2, 'q3': q3}
-            message = ''
             link = ''
             blocked = False
         else:
@@ -47,7 +46,6 @@ class InspirationStation(object):
             if not data:
                 raise cherrypy.HTTPError(404)
             blocked = (data['mod']=='block')
-            message = urlencode(cfg['sharingMessage'])
             link = f"{cfg['storyURL']}{uid}"
 
         obj = data['obj']
@@ -61,7 +59,6 @@ class InspirationStation(object):
         return template.render(
             data=data,
             blocked=blocked,
-            message=message,
             link=link
         )
 
@@ -113,6 +110,7 @@ def start_server():
     global_conf = {
         'server.socket_host': '0.0.0.0',
         'server.socket_port': 8080,
+        'log.error_file': cfg.get('errorLog', None),
     } if cfg.get('devMode', False) else {
         'server.socket_host': '0.0.0.0',
         'server.socket_port': 8080,

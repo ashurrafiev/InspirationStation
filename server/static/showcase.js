@@ -57,10 +57,14 @@ function isObjectSelected(obj) {
 
 function selectStories() {
 	selectedStories = [];
+	let redo = 0;
+	const maxRedo = allStories.length;
 	for(let i=0; i<numDoors; i++) {
 		const s = popStoryQueue();
-		if(isObjectSelected(s.obj)) {
-			storyQueue.push(s);
+		if(redo<maxRedo && isObjectSelected(s.obj)) {
+			if(redo<storyQueue.length)
+				storyQueue.push(s);
+			redo++;
 			i--;
 		}
 		else {
@@ -97,10 +101,17 @@ function openDoors() {
 	var shuffle = [];
 	for(let i=0; i<numDoors; i++)
 		shuffle[i] = i;
+	let prevPosX = -1;
 	for(let i=0; i<numDoors; i++) {
 		const door = doors[i];
 		const row = shuffle.splice(Math.floor(Math.random() * shuffle.length), 1)[0];
-		const pos = Math.floor(Math.random() * 4) + 4*row; // works only for numDoors = 7 and pos < 28
+		
+		let posx = -1;
+		while(posx<0 || posx==prevPosX)
+			posx = Math.floor(Math.random() * 4);
+		prevPosX = posx;
+		
+		const pos = posx + 4*row; // works only for numDoors = 7 and pos < 28
 		placeDoor(door, pos);
 		door.doorObj.src = `${mediaPath}/${selectedStories[i].obj}.jpg`;
 		door.doorImg.style.display = 'block';
