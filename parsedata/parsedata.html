@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Storyweb Data Parser</title>
+<script>
+
+function showErrors(errors) {
+	document.getElementById('out').value = '';
+	document.getElementById('errors').innerHTML = errors;
+}
+
+function sanitize(s) {
+    return s.replace(/&/g, "&amp;")
+			.replace(/>/g, "&gt;")
+			.replace(/</g, "&lt;")
+			.replace(/"/g, "&quot;");
+}
+
+function cleanUpId(s) {
+    return s.toLowerCase()
+			.replace(/\s*\/.*/g, "")
+			.replace(/[^a-z0-9\-\s]/g, "")
+			.replace(/[\s\-]+/g, "-");
+}
+
+function parseData() {
+	const text = document.getElementById('in');
+	let errors = '';
+	const lines = text.value.split('\n');
+	
+	const headers = lines[0].split('\t');
+	const idxName = headers.indexOf('Name');
+	if(idxName<0) {
+		errors += "error: line 0: no column 'Name', aborting\n";
+		return showErrors(errors);
+	}
+	const idxText = headers.indexOf('Text for Interactive');
+	if(idxText<0) {
+		errors += "error: line 0: no column 'Text for Interactive', aborting\n";
+		return showErrors(errors);
+	}
+	const idxNum = headers.indexOf('Exhibition Object Number');
+	if(idxNum<0)
+		errors += "warning: line 0: no column 'Exhibition Object Number', ignoring\n";
+	const idxTwam = headers.indexOf('TWAM Collections Number');
+	if(idxTwam<0)
+		errors += "warning: line 0: no column 'TWAM Collections Number', ignoring\n";
+	
+	let out = {};
+	let ids = [];
+	for(let i=1; i<lines.length; i++) {
+		if(!lines[i])
+			continue;
+		const ss = lines[i].split('\t');
+		if(ss.length!=headers.length) {
+			errors += `error: line ${i+1}: number of columns (${ss.length}) don't match up\n`;
+			continue;
+		}
+		
+		const name = ss[idxName].trim();
+		if(!name) {
+			errors += `error: line ${i+1}: empty name\n`;
+			continue;
+		}
+		
+		const obj = {
+			'name': sanitize(name),
+			'fact': sanitize(ss[idxText].trim())
+		};
+		if(!obj['fact'])
+			errors += `warning: line ${i+1}: empty text for interactive\n`;
+		if(idxTwam>=0) {
+			const twam = ss[idxTwam].trim();
+			if(twam)
+				obj['collectionNumber'] = twam;
+		}
+		
+		let num = 0;
+		if(idxNum>=0)
+			num = parseInt(ss[idxNum]);
+		let id = cleanUpId(name);
+		if(num)
+			id = num+'-'+id;
+		if(id in out) {
+			errors += `error: line ${i+1}: duplicate object id ${id}\n`;
+			continue;
+		}
+			
+		out[id] = obj;
+		ids.push(id);
+	}
+	
+	errors += `\nDONE\n${Object.keys(out).length} objects added\n`;
+	showErrors(errors);
+	document.getElementById('out').value = JSON.stringify(out, null, 2);
+	document.getElementById('ids').value = ids.join('\n');
+}
+
+function copyOutput(e) {
+	const text = document.getElementById(e);
+	text.select();
+	navigator.clipboard.writeText(text.value);
+}
+
+</script>
+</head>
+<body>
+
+<p>Paste the spreadsheet data here:</p>
+<textarea id="in" wrap="off" oninput="parseData()">test</textarea>
+
+<pre id="errors"></pre>
+
+<p>Output (save as obj_data.json):</p>
+<textarea id="out" wrap="off" readonly>test</textarea>
+<input type="button" value="Copy" onclick="copyOutput('out')" />
+
+<p>Database IDs (use for naming image/video files):</p>
+<textarea id="ids" wrap="off" readonly>test</textarea>
+<input type="button" value="Copy" onclick="copyOutput('ids')" />
+
+</body>
+</html>
