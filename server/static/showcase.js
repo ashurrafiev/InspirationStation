@@ -5,7 +5,7 @@ var mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
 var displayScale = 1;
 const numDoors = 7;
 const doorX = [45, 575, 1100, 1630];
-const storyTimeout = 15000;
+const storyTimeout = 20000;
 
 var allStories = presetStories;
 

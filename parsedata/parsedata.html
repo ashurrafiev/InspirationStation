@@ -5,6 +5,8 @@
 <title>Storyweb Data Parser</title>
 <script>
 
+var errors = '';
+
 function showErrors(errors) {
 	document.getElementById('out').value = '';
 	document.getElementById('errors').innerHTML = errors;
@@ -24,10 +26,30 @@ function cleanUpId(s) {
 			.replace(/[\s\-]+/g, "-");
 }
 
+function parseFilter() {
+	let list = document.getElementById('filter').value;
+	if(!list)
+		return false;
+	list = list.split('\n').filter(s => s);
+	const regexId = /(?:^|[\\\/])((\d+)[a-z\-\s]*).webm/i;
+	let filter = {};
+	for(let i=0; i<list.length; i++) {
+		const s = list[i];
+		const m = s.match(regexId);
+		if(m)
+			filter[m[2]] = m[1];
+		else
+			errors += `warning: no id in filter line ${i+1}: ${s}\n`;
+	}
+	// console.log(filter);
+	return filter;
+}
+
 function parseData() {
 	const text = document.getElementById('in');
-	let errors = '';
+	errors = '';
 	const lines = text.value.split('\n');
+	const filter = parseFilter();
 	
 	const headers = lines[0].split('\t');
 	const idxName = headers.indexOf('Name');
@@ -68,8 +90,10 @@ function parseData() {
 			'name': sanitize(name),
 			'fact': sanitize(ss[idxText].trim())
 		};
-		if(!obj['fact'])
+		if(!obj['fact']) {
 			errors += `warning: line ${i+1}: empty text for interactive\n`;
+			continue;
+		}
 		if(idxTwam>=0) {
 			const twam = ss[idxTwam].trim();
 			if(twam)
@@ -85,6 +109,13 @@ function parseData() {
 		if(id in out) {
 			errors += `error: line ${i+1}: duplicate object id ${id}\n`;
 			continue;
+		}
+		
+		if(filter) {
+			if(num in filter)
+				id = filter[num];
+			else
+				continue;
 		}
 			
 		out[id] = obj;
@@ -108,16 +139,19 @@ function copyOutput(e) {
 <body>
 
 <p>Paste the spreadsheet data here:</p>
-<textarea id="in" wrap="off" oninput="parseData()">test</textarea>
+<textarea id="in" wrap="off" oninput="parseData()"></textarea>
+
+<p>Filter files/IDs (optional):</p>
+<textarea id="filter" wrap="off" oninput="parseData()"></textarea>
 
 <pre id="errors"></pre>
 
 <p>Output (save as obj_data.json):</p>
-<textarea id="out" wrap="off" readonly>test</textarea>
+<textarea id="out" wrap="off" readonly></textarea>
 <input type="button" value="Copy" onclick="copyOutput('out')" />
 
 <p>Database IDs (use for naming image/video files):</p>
-<textarea id="ids" wrap="off" readonly>test</textarea>
+<textarea id="ids" wrap="off" readonly></textarea>
 <input type="button" value="Copy" onclick="copyOutput('ids')" />
 
 </body>

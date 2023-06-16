@@ -1,44 +1,44 @@
 var presetStories = [
 	{
 		"obj": "2-ntomo-mask",
-		"q1": "a head made of white coffee beans or something, and it has a rake stuck in its head",
+		"q1": "a head made of white coffee beans or something with a rake stuck in its head",
 		"q2": "some beans have fallen out revealing a mossy texture like if it has some sort of skin condition",
-		"q3": "I would never put this mask on my face. It is gross!"
+		"q3": "I would not want to put this mask on my face!"
 	},
 	{
 		"obj": "7-naga-hat",
-		"q1": "a fancy hat",
-		"q2": "it's so fluffy",
-		"q3": "cool ancient swag"
+		"q1": "a funny tufted hat",
+		"q2": "it's made from woven grass",
+		"q3": "how did they weave it all together?"
 	},
 	{
 		"obj": "9-naga-axe",
-		"q1": "a toothbrush",
-		"q2": "it has a key on the other side",
-		"q3": "why would you put a toothbrush on a key?"
+		"q1": "a cleaver with a notch taken out of it",
+		"q2": "there are engravings or carvings on the handle",
+		"q3": "what is the tufted brush part for?"
 	},
 	{
 		"obj": "17-spirit-mask",
-		"q1": "a creepy face",
-		"q2": "it has glowing eyes",
-		"q3": "I am scared"
+		"q1": "a scary-looking face",
+		"q2": "it's eyes reflect the light in a weird way",
+		"q3": "what are the lines on the face meant to be? Scars, perhaps?"
 	},
 	{
-		"obj": "artemis-statue",
+		"obj": "60-artemis-statue",
 		"q1": "a beautiful marble statue of a woman",
 		"q2": "she is missing her hands",
 		"q3": "how big is this statue?"
 	},
 	{
-		"obj": "janus-headdress",
-		"q1": "a creepy two-faced dude",
-		"q2": "he has sharp teeth and horns",
-		"q3": "is he evil?"
+		"obj": "16-janus-headdress",
+		"q1": "a carved head with horns sticking out",
+		"q2": "it is really brightly painted",
+		"q3": "it looks really heavy, how can you wear it?"
 	},
 	{
-		"obj": "leopard-1080",
-		"q1": "a crazy cat",
-		"q2": "it looks insane",
-		"q3": "are you okay?"
+		"obj": "140-leopard-head",
+		"q1": "a beautiful big cat",
+		"q2": "it's eyes seem to be staring",
+		"q3": "I wouldn't like to meet this in the wild"
 	}
 ];
