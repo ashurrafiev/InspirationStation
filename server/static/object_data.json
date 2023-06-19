@@ -1,40 +1,132 @@
 {
-    "2-ntomo-mask": {
-        "name": "N’tomo Mask",
-        "fact": "This mask represents an ancient ancestor of the Bamana people of West Africa. It is a symbol of protection.",
-		"collectionNumber": "NEWHG : 1984.0002"
-    },
-    "7-naga-hat": {
-        "name": "Naga Hat",
-        "fact": "Hats like this one were worn by the Naga peoples of north east India and north west Myanmar. They often symbolised power and authority.",
-		"collectionNumber": "NEWHM : D193"
-    },
-    "9-naga-axe": {
-        "name": "Naga Axe",
-        "fact": "Special axes were used by the Naga peoples of north east India and north west Myanmar. The red and black brush at the end of the axe is made of dyed goat’s hair.",
-		"collectionNumber": "NEWHM : D640"
-    },
-    "11-devil-fish-bag": {
-        "name": "Devilfish Bag / Octopus shot",
-        "fact": "Pouches like these were known as “Octopus bags” to indigenous peoples of the Pacific North West. The octopus featured in many of their local myths and were also known as “Devilfish”.",
-		"collectionNumber": "NEWHM : G025"
-    },
-    "17-spirit-mask": {
-        "name": "NW America Mask",
-        "fact": "The indigenous people of the Pacific North West use masks like this to make the supernatural world visible."
-    },
-    "artemis-statue": {
-        "name": "Artemis Statue",
-        "fact": "Artermis was revered as a fertility diety in the Greek city of Ephesus instead of the goddess of hunting."
-    },
-    "janus-headdress": {
-        "name": "Janus Headdress",
-        "fact": "Performing rituals whilst wearing headdresses like this is believed to connect people with the spirits of their ancestors.",
-		"collectionNumber": "NEWHM : A0680"
-    },
-    "leopard-1080": {
-        "name": "Leopard Head",
-        "fact": "",
-		"collectionNumber": "M0645"
-    }
+  "2-ntomo-mask": {
+    "name": "N’tomo Mask",
+    "fact": "This mask is a symbol of protection and represents an ancient ancestor of the Bamana people of West Africa.",
+    "collectionNumber": "NEWHG : 1984.0002"
+  },
+  "5-birchwood-box": {
+    "name": "Birchwood Box",
+    "fact": "This box was made out of birchbark by the Mi'kmaq people, in Nova Scotia, Canada.",
+    "collectionNumber": "NEWHM : G103"
+  },
+  "7-naga-hat": {
+    "name": "Naga Hat",
+    "fact": "Hats like this were worn by the Naga peoples of India and Myanmar and often symbolised power.",
+    "collectionNumber": "NEWHM : D193"
+  },
+  "9-naga-axe": {
+    "name": "Naga Axe",
+    "fact": "Special axes like this were used by the Naga peoples of north east India and north west Myanmar.",
+    "collectionNumber": "NEWHM : D640"
+  },
+  "11-devil-fish-bag": {
+    "name": "Devilfish Bag",
+    "fact": "Octopuses feature in the myths of indigenous peoples of the Pacific northwest, who also knew them as Devilfish.",
+    "collectionNumber": "NEWHM : G025"
+  },
+  "16-janus-headdress": {
+    "name": "Janus Headdress",
+    "fact": "Wearing headdresses like this whilst performing rituals is thought to connect living people with their ancestors’ spirits.",
+    "collectionNumber": "NEWHM : A0680"
+  },
+  "17-spirit-mask": {
+    "name": "Pacific North West Mask",
+    "fact": "The indigenous people of the Pacific North West use masks like this to make the supernatural world visible.",
+    "collectionNumber": "??"
+  },
+  "25-incense-burner": {
+    "name": "Incense Burner",
+    "fact": "This shows an angry Buddhist deity that would protect the Tibetan Buddhist religion.",
+    "collectionNumber": "NEWHM : D478"
+  },
+  "33-thunderbird-bowl": {
+    "name": "Thunderbird Bowl",
+    "fact": "Thunderbird was a powerful spirit animal to the peoples of the Pacific Northwest, who believed it shot lightning from its eyes and made thunder with its wings.",
+    "collectionNumber": "NEWHM : G042"
+  },
+  "43-nazca-pot": {
+    "name": "Nazca Pot",
+    "fact": "The Nazca people of Peru believed powerful nature sprits controlled many aspects of life and often painted them onto pots like this one.",
+    "collectionNumber": "NEWHM : ARAM073"
+  },
+  "47-roman-helmet-cheekpiece": {
+    "name": "Roman Helmet Cheekpiece",
+    "fact": "This cheekpiece from a Roman helmet depicts one of the mythical twins, Castor or Pollux, who were renowned for their skill as horsemen.",
+    "collectionNumber": "NEWMA : 1925.1.26"
+  },
+  "48-roman-roof-tilewebm": {
+    "name": "Roman Tile",
+    "fact": "A tile of the ninth legion who were stationed in York until they disappeared with no trace in about 120 AD.",
+    "collectionNumber": "NEWMA : 1956.9.A"
+  },
+  "58-griffin-head": {
+    "name": "Griffin Head",
+    "fact": "An Etruscan griffin head that would originally have decorated a ceramic vessel.",
+    "collectionNumber": "NEWGM : 187, 330, 331 (one of)"
+  },
+  "60-artemis-statue": {
+    "name": "Artemis Statue",
+    "fact": "Artemis was revered as a fertility deity in the Greek city of Ephesus instead of the goddess of hunting.",
+    "collectionNumber": "??"
+  },
+  "64-quartz-chalcedony": {
+    "name": "Quartz Chalcedony",
+    "fact": "Red and pink Agate from the Cheviot Hills at the border between England and Scotland.",
+    "collectionNumber": "NEWHM : 2013.H19"
+  },
+  "72-devils-toenails": {
+    "name": "Devils Toenails",
+    "fact": "Fossilised extinct shellfish Gryphaea Arcuata also known as devil's toenails have been used as charms to prevent rheumatism.",
+    "collectionNumber": "G95.32"
+  },
+  "73-snake-stone": {
+    "name": "Snake Stone",
+    "fact": "An ammonite fossil on which the head of a snake has been carved. In legend, St Hilda, Abbess of Whitby, turned a plague of snakes to stone.",
+    "collectionNumber": "NEWHM : 2004.H67"
+  },
+  "80-labyrinthodon": {
+    "name": "Labyrinthodon",
+    "fact": "A miniature plaster model of the fossil amphibian Labyrinthodon by Benjamin Waterhouse Hawkins.",
+    "collectionNumber": "NEWHM : 2009.H2"
+  },
+  "88-rose-quartz": {
+    "name": "Rose Quartz",
+    "fact": "Mineral specimen of Rose Quartz.",
+    "collectionNumber": "NEWUM : 1819"
+  },
+  "94-white-watson-stone": {
+    "name": "White Watson Tablets",
+    "fact": "A stone plaque in which polished rocks are arranged to represent the geology of Derbyshire as it was understood in 1800.",
+    "collectionNumber": "NEWHM : M004.26"
+  },
+  "97-aquamarine": {
+    "name": "Aquamarine",
+    "fact": "Aquamarine gems were believed to protect sailors. In a storm, throwing an aquamarine overboard was thought to subdue Greek god Poseidon’s anger.",
+    "collectionNumber": "NEWUM : 1846"
+  },
+  "105-topaz": {
+    "name": "Topaz",
+    "fact": "In ancient times, topaz was said to ward off asthma and epilepsy, and considered a cure for insomnia when steeped in water as a drink.",
+    "collectionNumber": "NEWHM : M049.33"
+  },
+  "127-stork": {
+    "name": "White Stork",
+    "fact": "These birds fly north in spring to build huge nests, which are often close to people who admire their dedication to raising their young.",
+    "collectionNumber": "2006.H1568"
+  },
+  "140-leopard-head": {
+    "name": "Leopard Head",
+    "fact": "A secretive nocturnal predator, Leopards are seen as powerful, cunning and magical creatures in the mythology of many different cultures",
+    "collectionNumber": "M0645"
+  },
+  "178-dregs-of-silver": {
+    "name": "Dregs of Silver",
+    "fact": "Dregs from the extraction of silver from Galena (lead ore) between 1860 and 1870.",
+    "collectionNumber": "NEWHM : 2004.H107"
+  },
+  "181-sunday-stone": {
+    "name": "Sunday Stone",
+    "fact": "When coal was mined, black dust filled the air and was pumped out with water. When miners rested on Sundays, a thick layer of dust was deposited.",
+    "collectionNumber": "NEWHM : M013.79"
+  }
 }
