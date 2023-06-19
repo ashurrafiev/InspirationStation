@@ -15,6 +15,8 @@ var selectedStories;
 var activeStory = -1;
 
 function checkLoadedStories(stories) {
+	stories = stories.filter(s => window.allOptions.has(s.obj));
+
 	let distinctObjects = stories.length;
 	if(distinctObjects>=numDoors) {
 		const objects = new Set();
@@ -88,7 +90,7 @@ function placeDoor(door, pos) {
 function openDoors() {
 	if(window.loadedData) {
 		window.allData = window.loadedData;
-		window.allOptions = Object.keys(window.allData);
+		window.allOptions = new Set(Object.keys(window.allData));
 		window.loadedData = undefined;
 	}
 	if(window.loadedStories) {
@@ -246,16 +248,16 @@ function loadData() {
 	fetch('object_data.json', {cache: "no-store"}).then(resp => resp.json()).then(d => {
 		window.loadedData = d;
 		dataReady();
-		setTimeout(loadData, 3600000); // 1 hour
 	});
+	setTimeout(loadData, 1800000); // 30 min
 }
 
 function loadStories() {
 	fetch('/showcase', {cache: "no-store"}).then(resp => resp.json()).then(d => {
 		window.loadedStories = d;
 		dataReady();
-		setTimeout(loadStories, 300000); // 5 min
 	});
+	setTimeout(loadStories, 300000); // 5 min
 }
 
 function parseHashParams() {

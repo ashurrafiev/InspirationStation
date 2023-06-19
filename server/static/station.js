@@ -392,8 +392,8 @@ function loadData() {
 			content.style.display = 'block';
 			pullLever();
 		}
-		setTimeout(loadData, 3600000); // 1 hour
 	});
+	setTimeout(loadData, 1800000); // 30 min
 }
 
 function parseHashParams() {
