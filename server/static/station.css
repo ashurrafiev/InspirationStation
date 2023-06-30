@@ -232,7 +232,7 @@ div.page-list input.done:active {
 	background-color: #ede2bf;
 }
 textarea {
-	font-family: 'Lora', serif;
+	font-family: 'Open Sans', sans-serif;
 	font-size: 30px;
 	font-weight: bold;
 	color: #000;
@@ -265,7 +265,7 @@ p.char-count {
 div.story {
 	display: flex;
 	
-	font-family: 'Lora', serif;
+	font-family: 'Open Sans', sans-serif;
 	font-size: 25px;
 	font-weight: normal;
 	color: #000;
@@ -307,6 +307,7 @@ p#story-text::before {
 	position: absolute;
 	left: -30px;
 	top: -20px;
+	font-family: 'Lora', serif;
 	font-size: 75px;
 	color: #ccc;
 	content: "“";
@@ -316,6 +317,7 @@ p#story-text::after {
 	position: absolute;
 	right: -30px;
 	bottom: -55px;
+	font-family: 'Lora', serif;
 	font-size: 75px;
 	color: #ccc;
 	content: "”";

@@ -75,7 +75,7 @@ img#obj {
 div.story {
 	display: flex;
 	
-	font-family: 'Lora', serif;
+	font-family: 'Open Sans', sans-serif;
 	font-size: 1.25rem;
 	font-weight: normal;
 	color: #000;
@@ -116,6 +116,7 @@ p#story-text::before {
 	position: absolute;
 	left: -1.5rem;
 	top: -1rem;
+	font-family: 'Lora', serif;
 	font-size: 3.25rem;
 	color: #ccc;
 	content: "“";
@@ -125,6 +126,7 @@ p#story-text::after {
 	position: absolute;
 	right: -1.5rem;
 	bottom: -2.75rem;
+	font-family: 'Lora', serif;
 	font-size: 3.25rem;
 	color: #ccc;
 	content: "”";

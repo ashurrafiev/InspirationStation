@@ -1,4 +1,16 @@
 @font-face {
+	font-family: 'Open Sans';
+	src: url('OpenSans-Bold.ttf');
+	font-weight: bold;
+	font-display: block;
+}
+@font-face {
+	font-family: 'Open Sans';
+	src: url('OpenSans-Regular.ttf');
+	font-weight: normal;
+	font-display: block;
+}
+@font-face {
 	font-family: 'Lora';
 	src: url('Lora-Bold.ttf');
 	font-weight: bold;
@@ -92,7 +104,7 @@ div#story-box {
 div.story {
 	display: flex;
 	
-	font-family: 'Lora', serif;
+	font-family: 'Open Sans', sans-serif;
 	font-size: 45px;
 	font-weight: normal;
 	color: #000;
@@ -133,6 +145,7 @@ p#story-text::before {
 	position: absolute;
 	left: -54px;
 	top: -36px;
+	font-family: 'Lora', serif;
 	font-size: 135px;
 	color: #ccc;
 	content: "“";
@@ -142,6 +155,7 @@ p#story-text::after {
 	position: absolute;
 	right: -54px;
 	bottom: -99px;
+	font-family: 'Lora', serif;
 	font-size: 135px;
 	color: #ccc;
 	content: "”";

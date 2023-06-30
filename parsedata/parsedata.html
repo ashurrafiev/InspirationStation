@@ -5,9 +5,20 @@
 <title>Storyweb Data Parser</title>
 <script>
 
+const skipNoText = false;
+
 var errors = '';
+var needsMedia = [];
+var needsText = [];
+var needsBoth = [];
 
 function showErrors(errors) {
+	if(needsText.length)
+		errors += `\nNeed text for interactive (${skipNoText ? 'skipped' : 'added without text'}):\n--------\n${needsText.join('\n')}\n`;
+	if(needsMedia.length)
+		errors += `\nNeed media (video, image):\n--------\n${needsMedia.join('\n')}\n`;
+	if(needsBoth.length)
+		errors += `\nNeed both media and text:\n--------\n${needsBoth.join('\n')}\n`;
 	document.getElementById('out').value = '';
 	document.getElementById('errors').innerHTML = errors;
 }
@@ -48,6 +59,9 @@ function parseFilter() {
 function parseData() {
 	const text = document.getElementById('in');
 	errors = '';
+	needsMedia = [];
+	needsText = [];
+	needsBoth = [];
 	const lines = text.value.split('\n');
 	const filter = parseFilter();
 	
@@ -80,9 +94,13 @@ function parseData() {
 			continue;
 		}
 		
+		let num = 0;
+		if(idxNum>=0)
+			num = parseInt(ss[idxNum]);
+			
 		const name = ss[idxName].trim();
 		if(!name) {
-			errors += `error: line ${i+1}: empty name\n`;
+			errors += `error: line ${i+1}, num ${num}: empty name\n`;
 			continue;
 		}
 		
@@ -90,32 +108,35 @@ function parseData() {
 			'name': sanitize(name),
 			'fact': sanitize(ss[idxText].trim())
 		};
-		if(!obj['fact']) {
-			errors += `warning: line ${i+1}: empty text for interactive\n`;
-			continue;
-		}
 		if(idxTwam>=0) {
 			const twam = ss[idxTwam].trim();
 			if(twam)
 				obj['collectionNumber'] = twam;
 		}
 		
-		let num = 0;
-		if(idxNum>=0)
-			num = parseInt(ss[idxNum]);
 		let id = cleanUpId(name);
 		if(num)
 			id = num+'-'+id;
 		if(id in out) {
-			errors += `error: line ${i+1}: duplicate object id ${id}\n`;
+			errors += `error: line ${i+1}, num ${num}: duplicate object id ${id}\n`;
 			continue;
 		}
 		
-		if(filter) {
-			if(num in filter)
+		if(!filter || num in filter) {
+			if(filter)
 				id = filter[num];
+			if(!obj['fact']) {
+				needsText.push(id);
+				if(skipNoText)
+					continue;
+			}
+		}
+		else {
+			if(!obj['fact'])
+				needsBoth.push(id);
 			else
-				continue;
+				needsMedia.push(id);
+			continue;
 		}
 			
 		out[id] = obj;

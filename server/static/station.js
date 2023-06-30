@@ -2,7 +2,7 @@
 const mediaProxyPath = 'http://localhost:8088/media';
 var mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
 
-const timeoutLimit = 60;
+const timeoutLimit = 45;
 
 var objectIds = [];
 
