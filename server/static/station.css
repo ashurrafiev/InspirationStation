@@ -247,6 +247,9 @@ textarea {
 	box-sizing: border-box;
     box-shadow: none;
 }
+li {
+	margin-bottom: 10px;
+}
 p.b {
 	font-weight:bold;
 }

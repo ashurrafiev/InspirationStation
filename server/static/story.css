@@ -183,6 +183,17 @@ div#disclaimer {
 	text-align: center;
 	margin-top: -1rem;
 }
+div#share-prompt {
+  clear: both;
+  top: 0.5rem;
+  font-size: 1.25rem;
+  text-align: center;
+  position: relative;
+  padding-bottom: 0.5rem;
+  background-color: #bbd0d5;
+  font-weight: bold;
+  color: #856404;
+}
 
 @media (max-width: 65rem) {
 	div#disclaimer {

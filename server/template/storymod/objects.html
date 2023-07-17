@@ -4,7 +4,10 @@
 
 <h1>List of Objects</h1>
 
-<div class="blk">Note: object data cannot be edited from here.</div>
+<div class="blk">
+<b>{{ obj_data|count }}</b> objects total.<br/>
+Note: object data cannot be edited from here.
+</div>
 
 {%- for obj_id,obj in obj_data.items() -%}
 <div class="blk tab">

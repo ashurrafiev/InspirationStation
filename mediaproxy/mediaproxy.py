@@ -15,28 +15,35 @@ class MediaProxy(object):
     def media(self, file=''):
         if not file:
             raise cherrypy.HTTPError(404)
-        try:
-            response = urllib.request.urlopen(os.path.join(CLOUD_URL, file))
-        except urllib.error.HTTPError:
-            raise cherrypy.HTTPError(404)
-        
-        time = datetime.strptime(response.getheader('Last-Modified'), "%a, %d %b %Y %X %Z")
-        
+            
         dl = False
         path = os.path.join(CACHE_PATH, file)
-        cache_time = datetime.fromtimestamp(0)
-        if os.path.isfile(path):
-            cache_time = datetime.fromtimestamp(os.path.getmtime(path))
-        if cache_time < time:
-            dl = True
-            data = response.read()
-            with io.open(path, 'wb') as f:
-                f.write(data)
-        else:
-            with io.open(path, 'rb') as f:
-                data = f.read()
+        cached = os.path.isfile(path)
+        content_type = 'image/jpeg' if file.endswith('.jpg') else 'video/webm' if file.endswith('.webm') else False
+            
+        try:
+            response = urllib.request.urlopen(os.path.join(CLOUD_URL, file), timeout=1)
+            time = datetime.strptime(response.getheader('Last-Modified'), "%a, %d %b %Y %X %Z")
+            cache_time = datetime.fromtimestamp(0)
+            if cached:
+                cache_time = datetime.fromtimestamp(os.path.getmtime(path))
+            if cache_time < time:
+                dl = True
+                data = response.read()
+                with io.open(path, 'wb') as f:
+                    f.write(data)
+            content_type = response.getheader('Content-Type')
+        except:
+            pass
         
-        cherrypy.response.headers['Content-Type'] = response.getheader('Content-Type')
+        if not dl:
+            if cached and content_type:
+                with io.open(path, 'rb') as f:
+                    data = f.read()
+            else:
+                raise cherrypy.HTTPError(404)
+        
+        cherrypy.response.headers['Content-Type'] = content_type
         buffer = io.BytesIO()
         buffer.write(data)
         buffer.seek(0)

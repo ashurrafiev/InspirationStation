@@ -280,7 +280,7 @@ function flipPage(id) {
 		const insFact = document.getElementById('story-fact');
 		if(insFact) insFact.innerHTML = selectedData['fact'];
 		
-		let sharePrompt = 'Share it so that others might be inspired<br/>or go back and change it?';
+		let sharePrompt = 'Save it to inspire other people<br/>or go back and change it?';
 		let canSend = insertAnswer('q1') & insertAnswer('q2') & insertAnswer('q3');
 		if(!canSend)
 			sharePrompt = 'Please answer all questions to continue.';
