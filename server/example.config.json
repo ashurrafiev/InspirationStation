@@ -1,0 +1,22 @@
+{
+	"devMode": true,
+	
+	"database": {
+		"name": "database",
+		"host": "127.0.0.1",
+		"user": "username",
+		"pwd": "password"
+	},
+
+	"modAuth": {
+		"jwtKey": "GENERATE-A-SECURE-KEY",
+		"expire": 48,
+		"refresh": 12,
+		"users": {
+			"user1": "password",
+			"user2": "password"
+		}
+	},
+
+	"storyURL": "http://localhost:8080/story/"
+}
