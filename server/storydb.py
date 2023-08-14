@@ -1,5 +1,6 @@
 from psycopg2 import connect
 from psycopg2 import Error as PostgresError
+import datetime
 
 import cherrypy
 
@@ -96,6 +97,14 @@ def get_story_raw(cfg, uid):
 
 def mod_options():
     return ['new','ok','block','star']
+
+def assoc_rows(cols, rows):
+    return [dict(zip(cols, r)) for r in rows]
+    
+def isoformat_time(rows):
+    def fmt(v):
+        return v.isoformat() if isinstance(v, datetime.date) else v
+    return [[fmt(v) for v in r] for r in rows]
 
 def list_stories(cfg, sel, p=0, lim=100, count_only=False, random_order=False):
     order_by = 'random()' if random_order else '"time"'

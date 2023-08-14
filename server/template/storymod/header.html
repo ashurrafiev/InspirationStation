@@ -30,6 +30,12 @@ function selectNone() {
 	}
 }
 
+function downloadAll(total) {
+	if(!confirm(`Download all data in JSON format?\n${total} stories total.`))
+		return;
+	window.open('{{ '/json' | app }}?req=stories', '_blank');
+}
+
 function prepareSelected(id, conf) {
 	const sel = document.getElementsByClassName('storysel');
 	const list = Array();

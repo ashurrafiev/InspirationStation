@@ -55,7 +55,7 @@ python3 inspire.py
 Open http://localhost:8080 in a browser.
 
 
-### Setting up production environmant using docker
+### Setting up production environment using docker
 
 SSH to the server, create a directory for the web server app, for example:
 ```

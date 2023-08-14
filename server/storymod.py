@@ -123,6 +123,24 @@ class StoryMod(object):
             user=user,
             obj_data=obj_data
         )
+        
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def json(self, req='', p=0, lim=0):
+        cfg = load_config()
+        user, _ = auth_user(cfg)
+        
+        lim = int(lim)
+        if lim<=0:
+            lim = 1000000000
+
+        if req=='stories':
+            mod_options = storydb.mod_options()
+            _, rows = storydb.list_stories(cfg, storydb.mod_options(), p=p, lim=lim)
+            rows = storydb.isoformat_time(rows)
+            return storydb.assoc_rows(['uid', 'obj', 'q1', 'q2', 'q3', 'time', 'mod', 'ip', 'editor', 'upd_time'], rows)
+        else:
+            raise cherrypy.HTTPError(400)
 
     @cherrypy.expose
     def edit(self, uid='new', p=0):

@@ -40,7 +40,8 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 
 <div class="blk bar">
 	<div><input type="button" value="Select none" onclick="selectNone()" /></div>
-	<div style="flex-grow:1"><input type="button" value="Create new" onclick="location.href='{{ '/edit' | app }}?uid=new';" /></div>
+	<div><input type="button" value="Create new" onclick="location.href='{{ '/edit' | app }}?uid=new';" /></div>
+	<div style="flex-grow:1"><input type="button" value="Download all" onclick="downloadAll({{ counts.total }})" /></div>
 	<div><b>Apply to all selected items:</b>&ensp;
 	{%- for mod in mod_options %}
 		<label><input type="radio" form="form-setmod-sel" name="status" value="{{ mod }}" {{ 'checked' if mod=='new' }} />{{ mod }}</label>
