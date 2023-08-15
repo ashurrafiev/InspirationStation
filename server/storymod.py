@@ -1,8 +1,12 @@
 import io
+import json
+import csv
+import zipfile
 from datetime import datetime, timedelta, timezone
 import secrets
 
 import cherrypy
+from cherrypy.lib import file_generator
 import jwt
 
 from cfgutils import load_config, load_object_data,\
@@ -116,29 +120,58 @@ class StoryMod(object):
     def objects(self):
         cfg = load_config()
         user, _ = auth_user(cfg)
-
         obj_data = load_object_data()
         template = self.tenv.get_template("objects.html")
         return template.render(
             user=user,
             obj_data=obj_data
         )
-        
+
     @cherrypy.expose
-    @cherrypy.tools.json_out()
-    def json(self, req='', p=0, lim=0):
+    def downloads(self):
         cfg = load_config()
         user, _ = auth_user(cfg)
+        template = self.tenv.get_template("downloads.html")
+        return template.render(user=user)
         
-        lim = int(lim)
-        if lim<=0:
-            lim = 1000000000
+    @cherrypy.expose
+    def data(self, req='', fmt=''):
+        cfg = load_config()
+        user, _ = auth_user(cfg)
+
+        def send(cols, rows):
+            if fmt=='json':
+                buffer = json.dumps(storydb.assoc_rows(cols, rows), indent=2)
+            elif fmt=='csv':
+                out = io.StringIO()
+                writer = csv.writer(out, quoting=csv.QUOTE_NONNUMERIC)
+                writer.writerow(cols)
+                writer.writerows(rows)
+                buffer = out.getvalue()
+            else:
+                raise cherrypy.HTTPError(400)
+
+            now = int(datetime.now(tz=timezone.utc).timestamp())
+            zip_buffer = io.BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, allowZip64=False) as zip_file:
+                zip_file.writestr(f'{req}{now}.{fmt}', buffer)
+
+            cherrypy.response.headers['Content-Type'] = 'application/zip'
+            cherrypy.response.headers['Content-Disposition'] = f'attachment; filename="{req}{now}.{fmt}.zip"'
+            zip_buffer.seek(0)
+            return file_generator(zip_buffer)
 
         if req=='stories':
-            mod_options = storydb.mod_options()
-            _, rows = storydb.list_stories(cfg, storydb.mod_options(), p=p, lim=lim)
+            _, rows = storydb.list_stories(cfg, storydb.mod_options(), p=0, lim=1000000)
             rows = storydb.isoformat_time(rows)
-            return storydb.assoc_rows(['uid', 'obj', 'q1', 'q2', 'q3', 'time', 'mod', 'ip', 'editor', 'upd_time'], rows)
+            return send(['uid', 'obj', 'q1', 'q2', 'q3', 'time', 'mod', 'ip', 'editor', 'upd_time'], rows)
+        elif req=='objects':
+            obj_data = load_object_data()
+            cols = ['id', 'name', 'fact', 'collectionNumber']
+            def unzip(cols, id, obj):
+                return [ id if c == 'id' else obj.get(c, None) for c in cols ]
+            rows = [ unzip(cols, id, obj) for id, obj in obj_data.items() ]
+            return send(cols, rows)
         else:
             raise cherrypy.HTTPError(400)
 
