@@ -1,8 +1,12 @@
 
+const scriptVersion = '2023.08.16';
+
 const mediaProxyPath = 'http://localhost:8088/media';
 var mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
 
 const timeoutLimit = 45;
+
+var usageLog = [];
 
 var objectIds = [];
 
@@ -21,6 +25,13 @@ var countdown, timeout, timeoutTimer;
 function switchKBTarget(e) {
 	if(keybonk!==undefined)
 		keybonk.switchTarget(e);
+}
+
+function logUsageEvent(e, msg='') {
+	const now = new Date().toISOString();
+	const line = `${now}\t${e}\t${msg}`;
+	usageLog.push(line);
+	// console.log(line);
 }
 
 function onUserInput() {
@@ -48,6 +59,7 @@ function rerollOptions() {
 			}
 		}
 	}
+	logUsageEvent('DISPLAY_OBJECTS', objectIds.toString());
 }
 
 function pullLever() {
@@ -136,6 +148,8 @@ function openObject(slot) {
 	const objectId = objectIds[slot];
 	if(!(objectId in allData))
 		return;
+	const slots = ['left', 'middle', 'right'];
+	logUsageEvent('OPEN_OBJECT', `${slots[slot]},${objectId}`);
 	selectedSlot = slot;
 	selectedData = allData[objectId];
 	
@@ -192,6 +206,7 @@ function openObject(slot) {
 }
 
 function closeObject() {
+	logUsageEvent('CLOSE_OBJECT');
 	document.getElementById('q1').value = '';
 	document.getElementById('q2').value = '';
 	document.getElementById('q3').value = '';
@@ -265,6 +280,7 @@ function flipPage(id) {
 		uiPage = document.getElementById('ui-page-'+id);
 	else
 		uiPage = id;
+	logUsageEvent('ON_PAGE', uiPage.id);
 	uiPage.style.display = 'block';
 	
 	if(id=='q1' || id=='q2' || id=='q3') {
@@ -281,17 +297,22 @@ function flipPage(id) {
 		if(insFact) insFact.innerHTML = selectedData['fact'];
 		
 		let sharePrompt = 'Save it to inspire other people<br/>or go back and change it?';
+		let status = 'ok';
 		let canSend = insertAnswer('q1') & insertAnswer('q2') & insertAnswer('q3');
-		if(!canSend)
+		if(!canSend) {
 			sharePrompt = 'Please answer all questions to continue.';
+			status = 'unfinished';
+		}
 		const storyText = document.getElementById('story-content-wrap');
 		if(storyText.scrollWidth > 558 || storyText.scrollHeight > 540) {
 			canSend = false;
 			console.log(`storyText size: ${storyText.scrollWidth} x ${storyText.scrollHeight}`);
 			sharePrompt = 'Oops! Your story is too long.<br/>Please shorten it a bit.';
+			status = 'too-long';
 		}
 		document.getElementById('btnshare').disabled = !canSend;
 		document.getElementById('share-prompt').innerHTML = sharePrompt;
+		logUsageEvent('DONE_CHECK', status);
 	}
 	else if(id=='send') {
 		postStory();
@@ -366,6 +387,7 @@ function startCountdown() {
 				continueTimer();
 			}
 			else {
+				logUsageEvent('TIMEOUT', uiPage.id);
 				closeObject();
 			}
 		}
@@ -387,6 +409,7 @@ function startCountdown() {
 function loadData() {
 	fetch('object_data.json', {cache: "no-store"}).then(resp => resp.json()).then(d => {
 		window.loadedData = d;
+		logUsageEvent('DATA_LOADED');
 		const content = document.getElementById('content');
 		if(content.style.display!='block') {
 			content.style.display = 'block';
@@ -394,6 +417,22 @@ function loadData() {
 		}
 	});
 	setTimeout(loadData, 1800000); // 30 min
+}
+
+function sendUsageLog() {
+/*
+	// const blob = new Blob(usageLog, {type: 'text/plain'});
+	const data = new FormData();
+	data.append("log", usageLog);
+	fetch('/postlog', {
+		cache: "no-store",
+		method: "POST",
+		body: data
+	}).then(resp => resp.json()).then(d => {
+		//
+	});
+	setTimeout(loadStories, 900000); // 15 min
+*/
 }
 
 function parseHashParams() {
@@ -424,6 +463,12 @@ function init() {
 		document.body.style.height = `${pix*100}%`;
 	}
 	
+	logUsageEvent('INIT');
+	logUsageEvent('INFO', 'scriptVersion='+scriptVersion);
+	logUsageEvent('INFO', 'userAgent='+navigator.userAgent);
+	logUsageEvent('INFO', 'devicePixelRatio='+pix);
+	logUsageEvent('INFO', 'mediaPath='+mediaPath);
+	
 	keybonk = new Keybonk('keybonk', undefined, 62);
 	keybonk.onEmpty = null;
 	keybonk.onEnter = function() {
@@ -442,6 +487,7 @@ function init() {
 	}
 	else {
 		document.getElementById('content').style.display = 'block';
+		logUsageEvent('DATA_LOADED', 'static');
 		pullLever();
 	}
 	
@@ -474,6 +520,7 @@ function init() {
 	}).onStopDrag = function() {
 		turn.drag.angle = -45;
 		resetLeverTurn();
+		logUsageEvent('PULL_LEVER');
 		pullLever();
 	}
 }

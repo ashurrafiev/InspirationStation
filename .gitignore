@@ -8,6 +8,7 @@ data.js
 media/
 cache/
 setup/
+logs/
 *.ttf
 
 .idea/
