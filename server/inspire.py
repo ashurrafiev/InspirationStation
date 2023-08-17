@@ -1,7 +1,7 @@
 import io
 import re
 import os.path
-from urllib.parse import quote as urlencode
+from datetime import datetime, timezone
 
 import cherrypy
 from cherrypy.lib import file_generator
@@ -83,6 +83,25 @@ class InspirationStation(object):
             'story': cfg['storyURL'] + uid,
             'qr': '/qr/' + uid
         }
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def postlog(self, log='', e=''):
+        if not e:
+            raise cherrypy.HTTPError(400)
+        # empty log is expected to have e=1
+        if e!='1' and not log:
+            raise cherrypy.HTTPError(400)
+        now = datetime.now(tz=timezone.utc)
+        with open(f'logs/{now.strftime("usage-%Y-%m")}.txt', 'a') as f:
+            if log:
+                print(log, file=f)
+            t = now.isoformat(timespec='milliseconds').replace('+00:00', 'Z')
+            header = f'{t}\tSERVER_RECEIVE_LOG\tip={cherrypy.request.remote.ip}'
+            if e=='1':
+                header += ',empty'
+            print(header, file=f)
+        return { 'res': 'OK' }
         
     @cherrypy.expose
     @cherrypy.tools.json_out()

@@ -1,10 +1,12 @@
 
-const scriptVersion = '2023.08.16';
+const scriptVersion = '2023.08.17';
 
 const mediaProxyPath = 'http://localhost:8088/media';
 var mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
 
-const timeoutLimit = 45;
+const timeoutLimit = 45; // seconds
+const loadDataPeriod = 30; // minutes
+const sendUsageLogPeriod = 1; // minutes
 
 var usageLog = [];
 
@@ -206,7 +208,7 @@ function openObject(slot) {
 }
 
 function closeObject() {
-	logUsageEvent('CLOSE_OBJECT');
+	logUsageEvent('CLOSE_OBJECT', objectIds[selectedSlot]);
 	document.getElementById('q1').value = '';
 	document.getElementById('q2').value = '';
 	document.getElementById('q3').value = '';
@@ -342,10 +344,12 @@ function confirmCloseObject() {
 
 function postStory() {
 	const objectId = objectIds[selectedSlot];
+	logUsageEvent('POST_STORY', objectId);
+	
 	const q1 = encodeURIComponent(document.getElementById('q1').value.trim());
 	const q2 = encodeURIComponent(document.getElementById('q2').value.trim());
 	const q3 = encodeURIComponent(document.getElementById('q3').value.trim());
-	
+
 	const abortc = new AbortController();
 	setTimeout(() => abortc.abort(), 3000)
 	const url = `/post?obj=${objectId}&q1=${q1}&q2=${q2}&q3=${q3}`;
@@ -356,8 +360,8 @@ function postStory() {
 		else
 			throw resp.status;
 	}).then(d => {
-		// document.getElementById('storylink').href = d['story'];
 		document.getElementById('qrcode').src = d['qr'];
+		logUsageEvent('STORY_UID', d['uid']);
 		flipPage('qr');
 	}).catch(e => {
 		if(e==400)
@@ -416,23 +420,22 @@ function loadData() {
 			pullLever();
 		}
 	});
-	setTimeout(loadData, 1800000); // 30 min
+	setTimeout(loadData, loadDataPeriod*60000);
 }
 
 function sendUsageLog() {
-/*
-	// const blob = new Blob(usageLog, {type: 'text/plain'});
 	const data = new FormData();
-	data.append("log", usageLog);
-	fetch('/postlog', {
+	data.append("e", usageLog.length ? '0' : '1');
+	data.append("log", usageLog.join('\n'));
+	fetch("/postlog", {
 		cache: "no-store",
 		method: "POST",
 		body: data
 	}).then(resp => resp.json()).then(d => {
-		//
+		if(d.res=='OK')
+			usageLog = [];
 	});
-	setTimeout(loadStories, 900000); // 15 min
-*/
+	setTimeout(sendUsageLog, sendUsageLogPeriod*60000);
 }
 
 function parseHashParams() {
@@ -468,7 +471,8 @@ function init() {
 	logUsageEvent('INFO', 'userAgent='+navigator.userAgent);
 	logUsageEvent('INFO', 'devicePixelRatio='+pix);
 	logUsageEvent('INFO', 'mediaPath='+mediaPath);
-	
+	setTimeout(sendUsageLog, sendUsageLogPeriod*60000);
+
 	keybonk = new Keybonk('keybonk', undefined, 62);
 	keybonk.onEmpty = null;
 	keybonk.onEnter = function() {
