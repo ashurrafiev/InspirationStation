@@ -1,6 +1,9 @@
+import glob
 import io
 import json
+import os.path
 import csv
+import re
 import zipfile
 from datetime import datetime, timedelta, timezone
 import secrets
@@ -64,6 +67,16 @@ def auth_user(cfg=None):
     if not user:
         raise cherrypy.HTTPRedirect(cherrypy.url('/login'))
     return user, exp
+
+def zip_data(name, buffer):
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, allowZip64=False) as z:
+        z.writestr(name, buffer)
+
+    cherrypy.response.headers['Content-Type'] = 'application/zip'
+    cherrypy.response.headers['Content-Disposition'] = f'attachment; filename="{name}.zip"'
+    zip_buffer.seek(0)
+    return file_generator(zip_buffer)
 
 
 class StoryMod(object):
@@ -131,9 +144,20 @@ class StoryMod(object):
     def downloads(self):
         cfg = load_config()
         user, _ = auth_user(cfg)
+        usage_logs = [os.path.splitext(os.path.split(p)[1])[0] for p in sorted(glob.iglob('logs/station-*.txt'))]
         template = self.tenv.get_template("downloads.html")
-        return template.render(user=user)
-        
+        return template.render(
+            user=user,
+            usage_logs=usage_logs
+        )
+
+    @cherrypy.expose
+    def logs(self, name=''):
+        if not name or not re.match(r"^station-[0-9\-]+$", name):
+            raise cherrypy.HTTPError(400)
+        with open(f'logs/{name}.txt', 'r') as f:
+            return zip_data(name+'.txt', f.read())
+
     @cherrypy.expose
     def data(self, req='', fmt=''):
         cfg = load_config()
@@ -152,14 +176,7 @@ class StoryMod(object):
                 raise cherrypy.HTTPError(400)
 
             now = int(datetime.now(tz=timezone.utc).timestamp())
-            zip_buffer = io.BytesIO()
-            with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, allowZip64=False) as zip_file:
-                zip_file.writestr(f'{req}{now}.{fmt}', buffer)
-
-            cherrypy.response.headers['Content-Type'] = 'application/zip'
-            cherrypy.response.headers['Content-Disposition'] = f'attachment; filename="{req}{now}.{fmt}.zip"'
-            zip_buffer.seek(0)
-            return file_generator(zip_buffer)
+            return zip_data(f'{req}{now}.{fmt}', buffer)
 
         if req=='stories':
             _, rows = storydb.list_stories(cfg, storydb.mod_options(), p=0, lim=1000000)

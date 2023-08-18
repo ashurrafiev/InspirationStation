@@ -1,4 +1,5 @@
 import io
+import pathlib
 import re
 import os.path
 from datetime import datetime, timezone
@@ -93,7 +94,9 @@ class InspirationStation(object):
         if e!='1' and not log:
             raise cherrypy.HTTPError(400)
         now = datetime.now(tz=timezone.utc)
-        with open(f'logs/{now.strftime("usage-%Y-%m")}.txt', 'a') as f:
+        pathlib.Path('logs').mkdir(exist_ok=True)
+        path = os.path.join('logs', now.strftime("station-%Y-%m")+'.txt')
+        with open(path, 'a') as f:
             if log:
                 print(log, file=f)
             t = now.isoformat(timespec='milliseconds').replace('+00:00', 'Z')

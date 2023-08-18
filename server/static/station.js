@@ -6,7 +6,7 @@ var mediaPath = 'https://storyweb.ams3.cdn.digitaloceanspaces.com';
 
 const timeoutLimit = 45; // seconds
 const loadDataPeriod = 30; // minutes
-const sendUsageLogPeriod = 1; // minutes
+const sendUsageLogPeriod = 10; // minutes
 
 var usageLog = [];
 

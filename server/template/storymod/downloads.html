@@ -15,21 +15,27 @@ function downloadAll(total) {
 <h1>Downloadable Data</h1>
 
 <div class="blk bar">
-<div style="flex-grow:1">Full database of stories</div>
 <div><a href="{{ '/data?req=stories&fmt=json' | app }}">JSON</a></div>
 <div><a href="{{ '/data?req=stories&fmt=csv' | app }}">CSV</a></div>
+<div style="flex-grow:1">Full database of stories</div>
 </div>
 
 <div class="blk bar">
-<div style="flex-grow:1">Database of museum objects</div>
 <div><a href="{{ '/data?req=objects&fmt=json' | app }}">JSON</a></div>
 <div><a href="{{ '/data?req=objects&fmt=csv' | app }}">CSV</a></div>
+<div style="flex-grow:1">Database of museum objects</div>
 </div>
 
 <h1>User Interaction Logs</h1>
 
 <div class="blk">
-(coming soon)
+{%- if usage_logs %}
+	{%- for file in usage_logs %}
+        <p><a href="{{ '/logs?name=' | app }}{{ file }}">{{ file }}</a></p>
+    {%- endfor %}
+{%- else %}
+    <p>No files.</p>
+{%- endif %}
 </div>
 
 
