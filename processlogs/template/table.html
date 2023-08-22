@@ -1,0 +1,29 @@
+
+{%- if title %}
+<h2>{{ title }}</h2>
+{%- endif %}
+
+{%- if timespan %}
+<p>From {{ timespan[0]|time}} to {{ timespan[1]|time }}</p>
+{%- endif %}
+{%- if date %}
+<p>Date: {{ date|date}}</p>
+{%- endif %}
+
+{%- if table %}
+	<table class="tab">
+	{%- if cols %}
+	<thead><tr>{%- for c in cols %}<th>{{ c|e }}</th>{%- endfor %}</tr></thead>
+	{%- endif %}
+	<tbody>
+	{%- for row in table %}
+        <tr>{%- for d in row %}<td>{{ d|e }}</td>{%- endfor %}</tr>
+    {%- endfor %}
+	{%- if totals %}
+        <tr class="totals">{%- for d in totals %}<td>{{ d|e }}</td>{%- endfor %}</tr>
+    {%- endif %}
+	</tbody>
+	</table>
+{%- else %}
+    <p>No data.</p>
+{%- endif %}
