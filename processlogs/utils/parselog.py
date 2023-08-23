@@ -14,6 +14,9 @@ def parse_log(path:str) -> list:
     with open(path, 'r') as f:
         return [parse_line(line[:-1]) for line in f]
 
+def filter_time(log:list, t_start=None, t_end=None) -> list:
+    return list(filter(lambda e : (t_start is None or e['t']>=t_start) and (t_end is None or e['t']<t_end), log))
+
 def split_daily(log:list) -> list:
     d = log[0]['t'].date()
     out = list()
@@ -46,8 +49,7 @@ def find_object_sequences(log:list) -> list:
     return find_sequences(log, 'OPEN_OBJECT', 'CLOSE_OBJECT')
 
 def count_sequences_by_object(seqs:list) -> dict:
-    count = Counter([seq[-1]['info'] for seq in seqs])
-    return { c[0]:c[1] for c in count.most_common() }
+    return dict(Counter([seq[-1]['info'] for seq in seqs]))
 
 def filter_event(log:list, event:str, info_regex=None) -> list:
     return list(filter(lambda e : (e['event']==event and (not info_regex or re.match(info_regex, e['info']))), log))
