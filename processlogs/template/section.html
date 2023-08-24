@@ -1,0 +1,10 @@
+{%- if title %}
+<h2>{{ title }}</h2>
+{%- endif %}
+
+{%- if timespan %}
+<p>{{ timespan[0]|time}} &mdash; {{ timespan[1]|time }}</p>
+{%- endif %}
+{%- if date %}
+<p>{{ date|date}}</p>
+{%- endif %}

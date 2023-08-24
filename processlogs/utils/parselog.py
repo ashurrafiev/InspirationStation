@@ -5,9 +5,8 @@ from collections import Counter
 def parse_log(path:str) -> list:
     def parse_line(line:str) -> dict:
         vs = line.split('\t', 2)
-        vs[0] = datetime.strptime(vs[0], "%Y-%m-%dT%H:%M:%S.%fZ")
         return {
-            't': vs[0],
+            't': datetime.strptime(vs[0], "%Y-%m-%dT%H:%M:%S.%fZ"),
             'event': vs[1],
             'info': vs[2]
         }
@@ -31,8 +30,9 @@ def split_daily(log:list) -> list:
     out.append(last)
     return out
 
-def find_sequences(log:list, open_event:str, close_event:str) -> list:
+def find_sequences(log, open_event:str, close_event:str) -> list:
     out = list()
+    last = list()
     on = False
     for e in log:
         if on:
@@ -48,10 +48,21 @@ def find_sequences(log:list, open_event:str, close_event:str) -> list:
 def find_object_sequences(log:list) -> list:
     return find_sequences(log, 'OPEN_OBJECT', 'CLOSE_OBJECT')
 
-def count_sequences_by_object(seqs:list) -> dict:
+def count_sequences_by_object(seqs) -> dict:
     return dict(Counter([seq[-1]['info'] for seq in seqs]))
 
-def filter_event(log:list, event:str, info_regex=None) -> list:
+def filter_event(log, event:str, info_regex=None) -> list:
     return list(filter(lambda e : (e['event']==event and (not info_regex or re.match(info_regex, e['info']))), log))
 
-
+def heatmap(log, bin=10, start_hour=6, end_hour=18) -> list[int]:
+    bins = (24-(end_hour-start_hour)) * 60 // bin
+    out = [0] * bins
+    for e in log:
+        m = (e['t'].hour - start_hour) * 60 + e['t'].minute
+        if m<0:
+            continue
+        i = m // bin
+        if i>=bins:
+            continue
+        out[i] += 1
+    return out

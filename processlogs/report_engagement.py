@@ -4,7 +4,7 @@ from utils.parselog import *
 from utils.render import RenderHTML, write_csv
 
 args = cli.parse_args()
-log = filter_time(parse_log(args.input), args.t_start, args.t_end)
+log = cli.input_data(args)
 
 def count_displayed(log:list) -> dict:
     d = list()
@@ -27,14 +27,10 @@ totals = [ 'Total', sum(c_disp.values()), sum(c_obj.values()), sum(c_started.val
 
 if args.format=='.html':
     r = RenderHTML(output=args.output)
-    r.begin_print('Test Report')
-    r.print_t('table',
-            title='User engagement by object',
-            timespan=(log[0]['t'], log[-1]['t']),
-            cols=cols,
-            table=table,
-            totals=totals
-        )
+    title = 'User engagement by object'
+    r.begin_print(title)
+    r.print_t('section', title=title, timespan=(log[0]['t'], log[-1]['t']))
+    r.print_t('table', cols=cols, table=table, totals=totals)
     r.end_print()
 elif args.format=='.csv':
     write_csv(table, output=args.output, cols=cols, totals=totals)

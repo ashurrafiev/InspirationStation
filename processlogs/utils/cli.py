@@ -1,7 +1,8 @@
-import sys
 import os
 import argparse
 from datetime import datetime, timedelta
+
+from .parselog import *
 
 def parse_datetime(s):
     if s[-1]=='Z':
@@ -44,3 +45,5 @@ def parse_args(init_func=None, description=None):
     
     return args
 
+def input_data(args) -> list:
+    return filter_time(parse_log(args.input), args.t_start, args.t_end)
