@@ -3,6 +3,8 @@
 
 (as logged by [station.js](../server/static/station.js))
 
+Monthly user interaction logs can be downloaded as `station-YYYY-MM.zip` files from the moderator dashboard's Downloads page.
+
 Each log line contains three tab-separated values: ISO-formatted UTC timestamp, event name, and additional event information. The latter can be empty.
 
 Example:
@@ -32,7 +34,7 @@ System information. Provided after each `INIT` event.
 
 **Info:** `variable=value` 
 
-Currently logged variables:
+Currently, the following variables are logged:
 
 | variable | description |
 | :--- | :--- |
@@ -78,7 +80,7 @@ User goes to a new UI screen by clicking a button (Back, Next, Cancel, etc.).
 
 The presence of any `ON_PAGE` in an object sequence indicates that user chose _Yes_ to start a story.
 
-**Info:** `ui-page-id`
+**Info:** opened UI page: `ui-page-id`
 
 List of UI pages:
 
@@ -96,4 +98,60 @@ List of UI pages:
 | `ui-page-qr` | You can point your phone at this code... |
 | `ui-page-confirm-close` | Are you sure you want to abandon your story? |
 
-(TBC)
+
+### DONE_CHECK
+
+The status of completion-checking the story. This check happens when user enters the "Done" page,
+therefore, this event should appear after each `ON_PAGE ui-page-done`.
+
+**Info:** Completion check status: `status`.
+
+| status | description |
+| :--- | :--- |
+| `ok` | All questions are answered. |
+| `unfinished` | Some questions are not answered. |
+| `too-long` | Oops! Your story is too long. Please shorten it a bit. |
+
+
+### POST_STORY
+
+The story is sent to the server. The upload may still fail with `ON_PAGE ui-page-send-rejected` (if bad words are detected)
+or `ON_PAGE ui-page-send-err` (if there is a connection or server error).
+
+**Info:** ID of the museum object: `object-id`.
+
+
+### STORY_UID
+
+The story has been successfully uploaded to the server.
+
+**Info:** UID of the submitted story: `story-uid`
+
+UID can be used to identify the story in the moderator dashboard.
+
+
+### TIMEOUT
+
+The UI has timed out because of no input from the user for 45 seconds. This event is always followed by `CLOSE_OBJECT`.
+
+**Info:** UI page where this happened:`ui-page-id`
+
+See `ON_PAGE` for the list of page IDs.
+
+
+### CLOSE_OBJECT
+
+The object has been closed either by the user or by timeout. This event ends the interaction sequence started by the `OPEN_OBJECT` event.
+
+**Info:** ID of the closed object: `object-id`.
+
+The ID should match the most recent `OPEN_OBJECT` event.
+
+
+### SERVER_RECEIVE_LOG
+
+The list of events has been received by the server. This event is added _after_ all the events contained in the upload.
+
+> The `SERVER_RECEIVE_LOG` event is printed by the server using the server clock for the timestamp.
+
+**Info:** IP address, from which the server received the list of events; also "empty" if the list contained no events: `ip=sender-ip[,empty]`
