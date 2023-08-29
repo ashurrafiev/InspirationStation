@@ -1,12 +1,14 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import Counter
 
-def parse_log(path:str) -> list:
+def parse_log(path:str, timezone:int=0) -> list:
     def parse_line(line:str) -> dict:
         vs = line.split('\t', 2)
+        dt = datetime.strptime(vs[0], "%Y-%m-%dT%H:%M:%S.%fZ")
+        dt += timedelta(hours=timezone)
         return {
-            't': datetime.strptime(vs[0], "%Y-%m-%dT%H:%M:%S.%fZ"),
+            't': dt,
             'event': vs[1],
             'info': vs[2]
         }

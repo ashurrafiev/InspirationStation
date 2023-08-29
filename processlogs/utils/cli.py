@@ -27,6 +27,7 @@ def parse_args(init_func=None, description=None):
     parser.add_argument('--until', dest='t_end', type=parse_datetime, help='format: yyyy-mm-ddThh:mm[:ss[.ff]]')
     parser.add_argument('-d', '--day', type=parse_datetime, help='overrides --from and --until, format: yyyy-mm-dd')
     parser.add_argument('-o', '--output')
+    parser.add_argument('-z', '--timezone', type=int, default=0)
     parser.add_argument('--html', dest='format', action='store_const', const='.html')
     parser.add_argument('--csv', dest='format', action='store_const', const='.csv')
     if init_func:
@@ -46,4 +47,4 @@ def parse_args(init_func=None, description=None):
     return args
 
 def input_data(args) -> list:
-    return filter_time(parse_log(args.input), args.t_start, args.t_end)
+    return filter_time(parse_log(args.input, args.timezone), args.t_start, args.t_end)
