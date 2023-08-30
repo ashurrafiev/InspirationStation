@@ -63,14 +63,14 @@ Indicates that the interactive received object data from the server. The databas
 
 ### DISPLAY_OBJECTS
 
-A new set of objects is shown on the screen. Usually happens after [`PULL_LEVER`](#pulllever) or when the page is loaded.
+A new set of objects is shown on the screen. Usually happens after [`PULL_LEVER`](#pull_lever) or when the page is loaded.
 
 **Info:** the set of three displayed objects, comma-separated: `left-object,middle-object,right-object`
 
 
 ### PULL_LEVER
 
-User pulls the lever to reroll displayed objects. This event should always be followed by [`DISPLAY_OBJECTS`](#displayobjects).
+User pulls the lever to reroll displayed objects. This event should always be followed by [`DISPLAY_OBJECTS`](#display_objects).
 
 **Info:** none
 
@@ -79,7 +79,7 @@ User pulls the lever to reroll displayed objects. This event should always be fo
 
 User clicked an object to open it.
 
-Every object interaction sequence of events happens between `OPEN_OBJECT` and [`CLOSE_OBJECT`](#closeobject)
+Every object interaction sequence of events happens between `OPEN_OBJECT` and [`CLOSE_OBJECT`](#close_object)
 events, including editing and posting a story.
 
 **Info:** which box is clicked (left, middle, or right) and clicked object ID: `position,object-id`
@@ -143,7 +143,7 @@ UID can be used to identify the story in the moderator dashboard.
 
 ### TIMEOUT
 
-The UI has timed out because of no input from the user for 45 seconds. This event is always followed by [`CLOSE_OBJECT`](#closeobject).
+The UI has timed out because of no input from the user for 45 seconds. This event is always followed by [`CLOSE_OBJECT`](#close_object).
 
 **Info:** UI page where this happened:`ui-page-id`
 
@@ -153,7 +153,7 @@ See [`ON_PAGE`](#onpage) for the list of page IDs.
 ### CLOSE_OBJECT
 
 The object has been closed either by the user or by timeout. This event ends the interaction sequence started
-by the [`OPEN_OBJECT`](#openobject) event.
+by the [`OPEN_OBJECT`](#open_object) event.
 
 **Info:** ID of the closed object: `object-id`.
 
