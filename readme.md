@@ -9,6 +9,7 @@ Content:
 * `traefik.toml` Traefik setup for the backend web server app.
 * `mediaproxy/` local proxy server for the kiosk PC.
 * `parsedata/` helper utility for parsing object data from an Excel/CSV to JSON database.
+* `processlogs/` user interaction log [documentation](processlogs/events.md) and [report generation scripts](processlogs/readme.md). 
 * `scp_server.sh` helper utility for uploading backend app sources to the server.
 
 Excluded assets (to be added manually):

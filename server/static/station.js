@@ -9,6 +9,7 @@ const loadDataPeriod = 30; // minutes
 const sendUsageLogPeriod = 10; // minutes
 
 var usageLog = [];
+var enableUsageLog = false;
 
 var objectIds = [];
 
@@ -30,10 +31,11 @@ function switchKBTarget(e) {
 }
 
 function logUsageEvent(e, msg='') {
+	if(!enableUsageLog)
+		return;
 	const now = new Date().toISOString();
 	const line = `${now}\t${e}\t${msg}`;
 	usageLog.push(line);
-	// console.log(line);
 }
 
 function onUserInput() {
@@ -424,6 +426,8 @@ function loadData() {
 }
 
 function sendUsageLog() {
+	if(!enableUsageLog)
+		return;
 	const data = new FormData();
 	data.append("e", usageLog.length ? '0' : '1');
 	data.append("log", usageLog.join('\n'));
@@ -449,6 +453,10 @@ function parseHashParams() {
 		if(param=='mproxy') {
 			mediaPath = mediaProxyPath;
 			console.log('Using media proxy at '+mediaProxyPath);
+		}
+		else if(param=='postlog') {
+			enableUsageLog = true;
+			console.log('Usage logging enabled');
 		}
 		else {
 			console.warn('Unknown hash parameter '+param);

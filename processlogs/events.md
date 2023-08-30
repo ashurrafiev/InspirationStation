@@ -1,7 +1,18 @@
 
 # User Interaction Log
 
-(as logged by [station.js](../server/static/station.js))
+
+Usage log is enabled only if `station.html` is opened with `#postlog` parameter, i.e.:
+```
+/static/station.html#postlog
+```
+
+Multiple hash parameters are comma-separated:
+```
+/static/station.html#postlog,mproxy
+```
+
+**Important!** if the interactive page is opened with `#postlog` in a browser outside the museum, it will upload events into the same usage log. Watch for the IP address in `SERVER_RECEIVE_LOG` event info to filter out any impostors.
 
 Monthly user interaction logs can be downloaded as `station-YYYY-MM.zip` files from the moderator dashboard's Downloads page.
 
@@ -15,22 +26,21 @@ Example:
 
 Here, an `OPEN_OBJECT` event happened at 10:27 AM (British summer time adds +1 to UTC) on Saturday, 19th of August 2023.
 
-Event information is context specific. Following is the description of the events and their respective information.
-
-**Important!** if the interactive page is opened in a browser outside the museum, it will also upload events into the same usage log. Watch for the IP address in `SERVER_RECEIVE_LOG` event info.
+Event information is context specific. The following is the description of events and their respective information.
+See [station.js](../server/static/station.js) for implementation details.
 
 ### INIT
 
 Museum interactive is loaded. This is the first event after the PC is powered up and successfully started the interactive.
 
-This event is immediately followed by a number of `INFO` events contaning system information.
+This event is immediately followed by a number of [`INFO`](#info) events contaning system information.
 
 **Info:** none
 
 
 ### INFO
 
-System information. Provided after each `INIT` event.
+System information. Provided after each [`INIT`](#init) event.
 
 **Info:** `variable=value` 
 
@@ -53,14 +63,14 @@ Indicates that the interactive received object data from the server. The databas
 
 ### DISPLAY_OBJECTS
 
-A new set of objects is shown on the screen. Usually happens after `PULL_LEVER` or when the page is loaded.
+A new set of objects is shown on the screen. Usually happens after [`PULL_LEVER`](#pulllever) or when the page is loaded.
 
 **Info:** the set of three displayed objects, comma-separated: `left-object,middle-object,right-object`
 
 
 ### PULL_LEVER
 
-User pulls the lever to reroll displayed objects. This event should always be followed by `DISPLAY_OBJECTS`.
+User pulls the lever to reroll displayed objects. This event should always be followed by [`DISPLAY_OBJECTS`](#displayobjects).
 
 **Info:** none
 
@@ -69,7 +79,8 @@ User pulls the lever to reroll displayed objects. This event should always be fo
 
 User clicked an object to open it.
 
-Every object interaction sequence of events happens between `OPEN_OBJECT` and `CLOSE_OBJECT` events, including editing and posting a story.
+Every object interaction sequence of events happens between `OPEN_OBJECT` and [`CLOSE_OBJECT`](#closeobject)
+events, including editing and posting a story.
 
 **Info:** which box is clicked (left, middle, or right) and clicked object ID: `position,object-id`
 
@@ -132,16 +143,17 @@ UID can be used to identify the story in the moderator dashboard.
 
 ### TIMEOUT
 
-The UI has timed out because of no input from the user for 45 seconds. This event is always followed by `CLOSE_OBJECT`.
+The UI has timed out because of no input from the user for 45 seconds. This event is always followed by [`CLOSE_OBJECT`](#closeobject).
 
 **Info:** UI page where this happened:`ui-page-id`
 
-See `ON_PAGE` for the list of page IDs.
+See [`ON_PAGE`](#onpage) for the list of page IDs.
 
 
 ### CLOSE_OBJECT
 
-The object has been closed either by the user or by timeout. This event ends the interaction sequence started by the `OPEN_OBJECT` event.
+The object has been closed either by the user or by timeout. This event ends the interaction sequence started
+by the [`OPEN_OBJECT`](#openobject) event.
 
 **Info:** ID of the closed object: `object-id`.
 
