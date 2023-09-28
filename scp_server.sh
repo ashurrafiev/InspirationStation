@@ -56,6 +56,7 @@ scp server/*.py $HOST:$BASE/server
 scp server/config.server.json $HOST:$BASE/server/config.json
 scp server/requirements.txt $HOST:$BASE/server
 scp server/blocked_words.txt $HOST:$BASE/server
+scp server/known_words.txt $HOST:$BASE/server
 
 if [ "$CLEAN" = true ]
   then
