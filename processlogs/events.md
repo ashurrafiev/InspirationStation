@@ -147,7 +147,7 @@ The UI has timed out because of no input from the user for 45 seconds. This even
 
 **Info:** UI page where this happened:`ui-page-id`
 
-See [`ON_PAGE`](#onpage) for the list of page IDs.
+See [`ON_PAGE`](#on_page) for the list of page IDs.
 
 
 ### CLOSE_OBJECT

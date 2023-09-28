@@ -11,8 +11,8 @@ def load_config() -> dict:
     with io.open('config.json') as f:
         return json.load(f)
 
-def load_blocked_words() -> dict:
-    with io.open('blocked_words.txt') as f:
+def load_word_set(path) -> set[str]:
+    with io.open(path) as f:
         words = set()
         for line in f:
             w = line.rstrip()

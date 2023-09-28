@@ -8,7 +8,7 @@ import cherrypy
 from cherrypy.lib import file_generator
 import qrcode
 
-from cfgutils import load_config, load_blocked_words, load_object_data, check_uid, template_env
+from cfgutils import load_config, load_word_set, load_object_data, check_uid, template_env
 from storymod import StoryMod
 import storydb
 
@@ -16,15 +16,29 @@ import storydb
 class InspirationStation(object):
     def __init__(self):
         self.tenv = template_env()
-        self.blocked_words = load_blocked_words()
+        self.blocked_words = load_word_set('blocked_words.txt')
+        self.known_words = load_word_set('known_words.txt')
 
     def contains_profanity(self, text):
-        if not self.blocked_words:
+        if not self.blocked_words or not self.known_words:
             return False
-        for w in re.split(r"\s+", text):
-            if w and w in self.blocked_words:
+        word_count = 0
+        unknown_words = 0
+        # split words strippig down punctuation at the end of each word
+        for w in re.split(r"[^A-Za-z]*(?:\s+|$)", text):
+            if not w: # word had no letters, skip
+                continue
+            word_count += 1
+            w = w.lower()
+            if w in self.blocked_words:
                 return True
-        return False
+            # words in known_words.txt are cropped to 8 letters max
+            if w[:8] not in self.known_words:
+                unknown_words += 1
+                if unknown_words>5: # if over 5 unknown words, block rightaway
+                    return True
+        # block if no words with letters or too many unknown words
+        return word_count==0 or (unknown_words/word_count)>0.5
 
     @cherrypy.expose
     def index(self):
@@ -73,7 +87,7 @@ class InspirationStation(object):
         obj_data = load_object_data()
         if obj not in obj_data:
             raise cherrypy.HTTPError(400)
-        if self.contains_profanity(q1) or self.contains_profanity(q2) or self.contains_profanity(q3):
+        if self.contains_profanity(' '.join([q1, q2, q3])):
             raise cherrypy.HTTPError(400)
 
         cfg = load_config()
