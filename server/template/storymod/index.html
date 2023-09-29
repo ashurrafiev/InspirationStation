@@ -26,7 +26,8 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 	<label><input type="radio" name="lim" value="50" {{ 'checked' if lim==50 }} />50</label>
 	<label><input type="radio" name="lim" value="100" {{ 'checked' if lim==100 }} />100</label>
 </div>
-<div><input type="submit" value="Update" /></div>
+<div style="flex-grow:1"><input type="submit" value="Update" /></div>
+<div style="text-align:right"><input type="button" value="Create story" onclick="location.href='{{ '/edit' | app }}?uid=new';" /></div>
 </div>
 </form>
 
@@ -37,22 +38,5 @@ Review <a href="{{ '/recentlogins' | app }}">recent logins</a> to the dashboard.
 </div>
 {%- endfor -%}
 {%- include 'pages.html' -%}
-
-<div class="blk bar">
-	<div><input type="button" value="Select none" onclick="selectNone()" /></div>
-	<div style="flex-grow:1"><input type="button" value="Create new" onclick="location.href='{{ '/edit' | app }}?uid=new';" /></div>
-	<div><b>Apply to all selected items:</b>&ensp;
-	{%- for mod in mod_options %}
-		<label><input type="radio" form="form-setmod-sel" name="status" value="{{ mod }}" {{ 'checked' if mod=='new' }} />{{ mod }}</label>
-	{%- endfor %}
-	</div>
-	<div>
-	<form id="form-setmod-sel" action="{{ '/setmod' | app }}" method="post" onsubmit="return prepareSelected('setmod-sel', confirmSetMod)" >
-		<input type="hidden" name="p" value="{{ page }}" />
-		<input type="hidden" id="setmod-sel" name="sel" value="" />
-		<input type="submit" value="Apply" />
-	</form>
-	</div>
-</div>
 
 </body>

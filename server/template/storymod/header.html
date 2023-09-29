@@ -30,31 +30,6 @@ function selectNone() {
 	}
 }
 
-function prepareSelected(id, conf) {
-	const sel = document.getElementsByClassName('storysel');
-	const list = Array();
-	for(let i=0; i<sel.length; i++) {
-		const e = sel.item(i);
-		if(e.id.startsWith('sel-') && e.checked) {
-			list.push(e.id.substring(4));
-		}
-	}
-	const len = list.length;
-	if(len<1) {
-		alert('Nothing selected.');
-		return false;
-	}
-	if(!confirm(conf(len)))
-		return false;
-	document.getElementById(id).value = list.join('+');
-	return true;
-}
-
-function confirmSetMod(len) {
-	const mod = document.querySelector('input[form="form-setmod-sel"][name="status"]:checked').value;
-	return `Are you sure to apply status "${mod}" to selected items?\n(${len} selected)`;
-}
-
 function requestEdit(id) {
 	location.href = `{{ '/edit' | app }}?p={{ page }}&uid=${id}`;
 }
@@ -74,7 +49,7 @@ function requestSetMod(uid) {
 	const mod = document.querySelector(`input[name="status-${uid}"]:checked`).value;
 	xhttp.open('GET', `{{ '/setmod' | app }}?sel=${uid}&status=${mod}&fetch=1`);
 	xhttp.send();
-	document.getElementById('apply-'+uid).disabled = true;
+	document.getElementsByName('status-'+uid).forEach(e => e.disabled = true);
 }
 
 function showBlocked(id) {

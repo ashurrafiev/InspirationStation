@@ -1,7 +1,6 @@
 {%- set id = story[0] -%}
-<div class="status-{{ story[6] }}" style="cursor:pointer" onclick="document.getElementById('sel-{{ id }}').click()">{{ story[6] }}</div><div>
+<div class="status-{{ story[6] }}">{{ story[6] }}</div><div>
 <div class="bar">
-	<div><input type="checkbox" id="sel-{{ id }}" class="storysel" /></div>
 	<div>{{ story[5].replace(microsecond=0) }}</div>
 	<div>IP:&nbsp;{{ story[7] }}</div>
 	<div style="flex-grow:1;text-align:right"><span class="ghost">ID:&nbsp;{{ id }}</span></div>
@@ -29,9 +28,8 @@
 {%- endif -%}
 	<div><b>Status:</b>&ensp;
 	{%- for mod in mod_options %}
-		<label><input type="radio" name="status-{{ id }}" value="{{ mod }}" {{ 'checked' if mod==story[6] }} />{{ mod }}</label>
+		<label><input type="radio" name="status-{{ id }}" value="{{ mod }}" {{ 'checked' if mod==story[6] }} onclick="requestSetMod('{{ id }}')" />{{ mod }}</label>
 	{%- endfor %}
 	</div>
-	<div><input id="apply-{{ id }}" type="button" value="Apply" onclick="requestSetMod('{{ id }}')" ></div>
 </div>
 </div>
