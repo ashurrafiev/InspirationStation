@@ -1,7 +1,42 @@
 
-# User Engagement Report
+# User Engagement Report tools
+
+These Python scripts are used to process [user interaction logs](events.md).
+
+### Engagement by object
 
 [report_engagement.py](report_engagement.py)
+
+Reports the total number of interactions per museum object in the following categories:
+* **Shown** How many times an object has been randomly displayed after the lever is pulled.
+* **Clicked** How many times an object has been clicked on the main screen.
+* **Started story** User clicked _Yes_ to start a story with the object.
+* **Finished story** User answered something to all questions.
+* **Posted story** User agreed to save the story.
+
+Usage: see [command line arguments](#command-line-arguments)
+
+
+### Engagement heatmap
+
+[report_heatmap.py](report_heatmap.py)
+
+Creates a heatmap plot of user engagement frequency throughout the day. Each histogram bin is represents 5 minutes (10 minutes for `SERVER_RECEIVE_LOG`).
+
+HTML version includes cumulative graph for the whole period followed by daily graphs. CSV version contains only cumulative information for the whole period.
+
+* **Interactive is online** `SERVER_RECEIVE_LOG` sent every 10 min after the interactive comes online until the power is down.
+* **Lever pulled** `PULL_LEVER`
+* **Object clicked** `OPEN_OBJECT`
+* **Editing or navigating story UI** `ON_PAGE` counts every UI page, including going back and forth, so editing one story should go through at least 4 pages.
+* **Story posted** `POST_STORY`
+
+Usage: see [command line arguments](#command-line-arguments)
+
+
+### Command line arguments
+
+Both tools use the same command line options.
 
 #### Usage:
 

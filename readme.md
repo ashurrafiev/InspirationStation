@@ -80,3 +80,36 @@ docker-compose up -d
 
 You can later restart the docker using `docker-compose down` followed by `docker-compose up -d`.
 The docker must be restarted every time you make changes to Python sources!
+
+
+# Downloadable Data Format
+
+Some data can be download in JSON or CSV format (zipped) from the moderators' dashboard Downloads section.
+
+### Full database of stories
+
+| field/column | description |
+| :--- | :--- |
+| **uid** | Story unique ID, used for story URL |
+| **obj** | Object ID, for example `2-ntomo-mask` |
+| **q1** | Answer to Question 1 |
+| **q2** | Answer to Question 2 |
+| **q3** | Answer to Question 3 |
+| **time** | UTC time of posting the story |
+| **mod** | Moderation status: `new`, `block`, `ok`, or `star` |
+| **ip** | IP address from which the story has been posted from (expected Museum IP address) |
+| **editor** | User name of the moderator who reviewed the story, or `null` |
+| **upd_time** | UTC time of moderation, or `null` if is hasn't been moderated |
+
+### Database of museum objects
+
+| field/column | description |
+| :--- | :--- |
+| **id** | Object ID, for example `2-ntomo-mask`. Should be the same as the video file name and cover image file name |
+| **name** | Displayed name, for example `N’tomo Mask` |
+| **fact** | Text for interactive |
+| **collectionNumber** | TWAM collection number or `??` |
+
+### User Interaction Logs
+
+See [usage log documentation](processlogs/events.md).
